@@ -6,31 +6,29 @@
 
 *Kunji (कुंजी) means "key" in Hindi.*
 
-[![CI](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml/badge.svg)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-3ddc84.svg)](LICENSE)
-![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-8b8b8b.svg)
+[![CI](https://img.shields.io/github/actions/workflow/status/testwithsuraj/kunji/ci.yml?branch=main&style=flat-square&label=CI&labelColor=1f2328)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-3ddc84?style=flat-square&labelColor=1f2328)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%2B-3ddc84?style=flat-square&labelColor=1f2328&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Providers](https://img.shields.io/badge/providers-10%2B-3ddc84?style=flat-square&labelColor=1f2328)](#providers)
+[![Platforms](https://img.shields.io/badge/windows%20%7C%20macos%20%7C%20linux-3ddc84?style=flat-square&labelColor=1f2328&label=runs%20on)](#install)
 
 </div>
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                                                              │
-│   kunji chat                                                 │
-│                                                              │
-│  Provider    Anthropic                                       │
-│  Model       claude-sonnet                                   │
-│  Key         OS keychain                                     │
-│  State       READY                                           │
-│  Budget      $0.38 / $2.00 today                             │
-│                                                              │
-└──────────────────────────────────────────────────────────────┘
+┌─  kunji chat  ─────────────────────────────────────────────────┐
+│  Provider     Model            Key         Budget        State │
+│────────────────────────────────────────────────────────────────│
+│  Anthropic    claude-sonnet    keychain    $0.38 / $2    READY │
+└────────────────────────────────────────────────────────────────┘
 enter send  ·  alt+enter newline  ·  / commands  ·  ctrl+d quit
 
 › explain recursion in one line
-  A function that solves a problem by calling itself on a
-  smaller piece of it, until it reaches a case simple enough
-  to answer directly.
+  A function that solves a problem by calling itself on a smaller
+  piece of it, until it reaches a case simple enough to answer.
   claude-sonnet · 18 in · 31 out · $0.0005 · 1.2s
+
+› /model groq:llama-3.3-70b-versatile
+✓ Switched to groq:llama-3.3-70b-versatile  conversation kept
 ```
 
 Kunji is a terminal app for chatting with any AI model using **your own API keys**.

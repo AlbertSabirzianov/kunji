@@ -38,7 +38,7 @@ CI runs the same checks on Windows, macOS and Linux.
 - **No new network calls** without discussing them in an issue first, and every one must be
   documented in `docs/PRIVACY.md` and be possible to switch off.
 - **Responsive UI.** New screens use the components in `src/kunji/ui/components.py`
-  (`Card`, `ResponsiveTable`, `Frame`, `Steps`). Check them at 40, 80 and 140 columns.
+  (`Strip`, `Card`, `ResponsiveTable`, `Frame`, `Steps`). Prefer `Strip` (one-row table) for summaries — it keeps screens short. Check them at 40, 80 and 140 columns.
 - **Colours** come from `ui/theme.py` (explicit hex values). Don't use named colours like
   `"white"` — terminals remap them.
 - **Tests** for every new behaviour. Network calls are mocked with `httpx.MockTransport`.

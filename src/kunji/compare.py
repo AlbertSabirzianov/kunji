@@ -17,7 +17,7 @@ from kunji.config import Config
 from kunji.engine import TurnResult, stream_turn
 from kunji.providers import Message, ProviderError, resolve_ref
 from kunji.providers.registry import all_specs, key_for
-from kunji.ui import Card, Frame, answer, fmt_elapsed, get_console, hint
+from kunji.ui import Column, Frame, ResponsiveTable, answer, fmt_elapsed, get_console, hint
 
 
 @dataclass
@@ -110,13 +110,22 @@ def run_compare(cfg: Config, prompt: str, refs: list[str]) -> list[Lane]:
     if len(ok) >= 2:
         fastest = min(ok, key=lambda r: r.elapsed)
         priced = [r for r in ok if r.cost_usd is not None]
-        rows = [("Fastest", f"{fastest.ref}  ·  {fmt_elapsed(fastest.elapsed)}")]
-        if priced:
-            cheapest = min(priced, key=lambda r: r.cost_usd or 0)
-            rows.append(("Cheapest", f"{cheapest.ref}  ·  {fmt_money(cfg, cheapest.cost_usd)}"))
-        longest = max(ok, key=lambda r: r.usage.output_tokens)
-        rows.append(("Longest", f"{longest.ref}  ·  {longest.usage.output_tokens:,} tokens"))
-        console.print(Card(rows, title="Compare"))
+        rows = []
+        for r in sorted(ok, key=lambda r: r.elapsed):
+            badges = []
+            if r is fastest:
+                badges.append("fastest")
+            if priced and r is min(priced, key=lambda x: x.cost_usd or 0):
+                badges.append("cheapest")
+            rows.append([r.ref, fmt_elapsed(r.elapsed), f"{r.usage.output_tokens:,}",
+                         fmt_money(cfg, r.cost_usd), Text(" ".join(badges), style="k.ok")])
+        console.print(ResponsiveTable([
+            Column("Model", min_width=12, ratio=1),
+            Column("Time", min_width=5, justify="right"),
+            Column("Tokens", priority=2, min_width=6, justify="right"),
+            Column("Cost", priority=1, min_width=6, justify="right"),
+            Column("", priority=3, min_width=8),
+        ], rows, title="Compare", compact=True))
     elif not ok:
         hint("  No model answered. Check keys with: kunji keys test")
     return lanes

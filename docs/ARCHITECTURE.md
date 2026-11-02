@@ -19,7 +19,7 @@ src/kunji/
 ├── constants.py        URLs and the public verification keys
 └── ui/
     ├── theme.py        Colours (hex only) and the shared Rich console
-    ├── components.py   Card, Frame, ResponsiveTable, Steps, StreamView, Tail…
+    ├── components.py   Strip, Card, Frame, ResponsiveTable, Steps, StreamView, Tail…
     └── input.py        prompt_toolkit chat input, questionary pickers
 ```
 

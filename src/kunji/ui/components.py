@@ -153,13 +153,15 @@ class ResponsiveTable:
 
     def __init__(self, columns: Sequence[Column], rows: Sequence[Sequence[Any]],
                  selected: int | None = None, title: str | None = None,
-                 empty: str = "Nothing here yet.", cap: int | None = None):
+                 empty: str = "Nothing here yet.", cap: int | None = None,
+                 compact: bool = False):
         self.columns = list(columns)
         self.rows = rows
         self.selected = selected
         self.title = title
         self.empty = empty
         self.cap = cap
+        self.compact = compact  # title in the border, no blank padding lines
 
     def natural_widths(self) -> list[int]:
         widths = []
@@ -215,11 +217,42 @@ class ResponsiveTable:
                               style="k.selected")
             else:
                 table.add_row(*[_as_text(c) for c in cells])
+        if self.compact:
+            yield Panel(table, box=box.SQUARE, border_style="k.border", padding=(0, 0),
+                        width=width, title=chip(self.title) if self.title else None,
+                        title_align="left")
+            return
         body: RenderableType = table
         if self.title:
             body = Group(chip(self.title), Text(""), table)
         yield Panel(body, box=box.SQUARE, border_style="k.border",
                     padding=(0, 0) if narrow else (1, 1), width=width)
+
+
+class Strip:
+    """One-row summary: labels as column headers, values underneath.
+
+    Takes 5 lines instead of a tall card. On narrow terminals the lowest-priority
+    columns are hidden first (priority 0 = always shown).
+
+        Strip([("Provider", "Anthropic"), ("Model", "claude-sonnet"), ("State", ok, 0)],
+              title="kunji chat")
+    """
+
+    def __init__(self, items: Sequence[tuple], title: str | None = None,
+                 cap: int | None = None):
+        self.items = list(items)
+        self.title = title
+        self.cap = cap
+
+    def __rich_console__(self, console: Console, options: ConsoleOptions) -> RenderResult:
+        columns, values = [], []
+        for index, item in enumerate(self.items):
+            label, value = item[0], item[1]
+            priority = item[2] if len(item) > 2 else index
+            columns.append(Column(label, priority=priority, min_width=4))
+            values.append(value)
+        yield ResponsiveTable(columns, [values], title=self.title, cap=self.cap, compact=True)
 
 
 def fmt_elapsed(seconds: float) -> str:

@@ -18,11 +18,11 @@ from kunji.providers import Message, ProviderError, ProviderSpec, make_provider,
 from kunji.providers.registry import all_specs, key_for
 from kunji.ui import (
     Capped,
-    Card,
     Column,
     ResponsiveTable,
     Steps,
     StreamView,
+    Strip,
     answer,
     error,
     get_console,
@@ -107,16 +107,17 @@ class ChatSession:
         _, source = key_for(self.spec)
         status = usage.check_budget(self.cfg, self.spec.id)
         rows = [
-            ("Provider", self.spec.name),
-            ("Model", self.model),
-            ("Key", "local, no key needed" if not self.spec.needs_key else
-             ("OS keychain" if source == "keychain" else source.replace("env:", "env "))),
-            ("State", status_text("READY")),
+            ("Provider", self.spec.name, 2),
+            ("Model", self.model, 0),
+            ("Key", "local" if not self.spec.needs_key else
+             ("keychain" if source == "keychain" else source.replace("env:", "")), 4),
+            ("Today", fmt_money(self.cfg, usage.spent_today_usd()), 3),
+            ("State", status_text("READY"), 1),
         ]
         if status.state != "none":
-            rows.append(("Budget", f"{fmt_money(self.cfg, None, display_amount=status.spent)} / "
-                         f"{fmt_money(self.cfg, None, display_amount=status.limit)} today"))
-        self.console.print(Card(rows, title="kunji chat"))
+            rows.insert(4, ("Budget", f"{fmt_money(self.cfg, None, display_amount=status.spent)}"
+                            f" / {fmt_money(self.cfg, None, display_amount=status.limit)}", 3))
+        self.console.print(Strip(rows, title="kunji chat"))
         self.console.print(Capped(keys_line([
             ("enter", "send"), ("alt+enter", "newline"), ("/", "commands"), ("ctrl+d", "quit"),
         ])))
@@ -290,19 +291,21 @@ class ChatSession:
     def cmd_cost(self, _: str) -> None:
         status = usage.check_budget(self.cfg, self.spec.id)
         rows = [
-            ("This session", fmt_money(self.cfg, self.session_cost) +
-             (f"  (+{self.unpriced} unpriced)" if self.unpriced else "")),
-            (f"Today · {self.spec.id}", fmt_money(self.cfg, usage.spent_today_usd(self.spec.id))),
-            ("Today · all", fmt_money(self.cfg, usage.spent_today_usd())),
+            ("Session", fmt_money(self.cfg, self.session_cost) +
+             (f" +{self.unpriced}?" if self.unpriced else ""), 0),
+            (f"Today {self.spec.id}", fmt_money(self.cfg, usage.spent_today_usd(self.spec.id)), 2),
+            ("Today all", fmt_money(self.cfg, usage.spent_today_usd()), 1),
         ]
         if status.state != "none":
-            rows.append(("Budget", f"{fmt_money(self.cfg, None, display_amount=status.limit)} "
-                         f"({status.scope})"))
+            rows.append(("Budget", fmt_money(self.cfg, None, display_amount=status.limit)
+                         + f" ({status.scope})", 3))
         price = self.catalog.price_for(self.spec.id, self.model, self.spec.openrouter_prefix)
-        rows.append(("Price / 1M tok", "unknown — set one with kunji config" if price is None else
+        rows.append(("Price / 1M", "unknown" if price is None else
                      f"{fmt_money(self.cfg, price.input)} in · "
-                     f"{fmt_money(self.cfg, price.output)} out  ({price.source})"))
-        self.console.print(Card(rows, title="Cost"))
+                     f"{fmt_money(self.cfg, price.output)} out", 4))
+        self.console.print(Strip(rows, title="Cost"))
+        if price is None:
+            hint("  No known price for this model. Set one: see docs/CONFIG.md (pricing)")
 
     def cmd_retry(self, _: str) -> None:
         if not self.messages:

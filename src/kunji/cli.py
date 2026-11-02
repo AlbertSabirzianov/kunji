@@ -27,6 +27,7 @@ from kunji.ui import (
     ResponsiveTable,
     Steps,
     StreamView,
+    Strip,
     answer,
     chip,
     error,
@@ -359,12 +360,12 @@ def keys_add(
     cfg.save()
 
     console.print()
-    console.print(Card([
-        ("Provider", spec.name),
-        ("API key", mask(key) if spec.needs_key else "not needed"),
-        ("Stored in", keystore.backend_name() if spec.needs_key else "—"),
-        ("Default model", chosen or "—"),
-        ("State", status_text("ACTIVE" if found else "UNVERIFIED")),
+    console.print(Strip([
+        ("Provider", spec.name, 1),
+        ("Key", mask(key) if spec.needs_key else "not needed", 3),
+        ("Stored in", keystore.backend_name() if spec.needs_key else "—", 4),
+        ("Default model", chosen or "—", 0),
+        ("State", status_text("ACTIVE" if found else "UNVERIFIED"), 2),
     ], title="Provider added"))
     hint("  Start chatting: kunji chat" + ("" if cfg.get("default_model", "").startswith(spec.id)
                                          else f" -m {spec.id}:{chosen}"))
@@ -553,11 +554,11 @@ def usage_cmd(
     ], rows, title=f"Usage · last {days} day{'s' if days != 1 else ''}",
         empty="No usage yet."))
     total = sum(r.cost_usd for r in rows_data)
-    console.print(Card([
-        ("Total", fmt_money(cfg, total)),
-        ("Today", fmt_money(cfg, ledger.spent_today_usd())),
-        ("Requests", f"{sum(r.requests for r in rows_data):,}"),
-    ]))
+    console.print(Strip([
+        ("Total", fmt_money(cfg, total), 0),
+        ("Today", fmt_money(cfg, ledger.spent_today_usd()), 1),
+        ("Requests", f"{sum(r.requests for r in rows_data):,}", 2),
+    ], title="Totals"))
     if any(r.unknown_cost for r in rows_data):
         hint("  +? = some requests had no known price. Set one: "
              "kunji config set pricing.\"provider:model\" ... (see docs/CONFIG.md)")
@@ -721,11 +722,11 @@ def version() -> None:
     """Show version and update status."""
     cfg = load_config()
     latest = checkin.check_updates(cfg)
-    console.print(Card([
-        ("Version", __version__),
-        ("Latest", latest or "you're up to date"),
-        ("Python", platform.python_version()),
-        ("System", f"{platform.system()} {platform.release()}"),
+    console.print(Strip([
+        ("Version", __version__, 0),
+        ("Latest", latest or "up to date", 1),
+        ("Python", platform.python_version(), 2),
+        ("System", f"{platform.system()} {platform.release()}", 3),
     ], title="kunji"))
 
 

@@ -75,3 +75,18 @@ def test_frame_and_form_fit(console_at, width):
                                               ("API key", "sk-ant••••3f9a")],
                        subtitle="Keys stay in your OS keychain"))
     assert_fits(console, width)
+
+
+@pytest.mark.parametrize("width", WIDTHS)
+def test_strip_is_five_lines_and_fits(console_at, width):
+    from kunji.ui import Strip
+
+    set_max_width(100)
+    console = console_at(width)
+    console.print(Strip([("Provider", "Anthropic", 2), ("Model", "claude-sonnet", 0),
+                         ("Key", "keychain", 4), ("State", status_text("READY"), 1)],
+                        title="kunji chat"))
+    assert_fits(console, width)
+    lines = lines_of(console)
+    assert len(lines) == 5
+    assert "claude-sonnet" in "\n".join(lines)
