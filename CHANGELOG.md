@@ -6,13 +6,6 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
-### Changed
-- Compact one-row summary tables (`Strip`) for the chat header, `/cost`, `keys add`,
-  `usage` totals and `version` — 5 lines instead of ~11, more room for the conversation.
-- `kunji compare` summary is now a table: time, tokens, cost and fastest/cheapest badges
-  for every model.
-- README badges restyled for readability on light and dark GitHub themes.
-
 ## [0.1.0] - 2026-11-02
 
 ### Added
@@ -29,3 +22,10 @@ All notable changes are listed here. The format follows
 - Responsive, minimal theme that adapts to any terminal width.
 - Update notice via PyPI and signed (Ed25519) cloud check-in client (off until a server URL
   is configured).
+
+### Design
+- Compact one-row summary tables (`Strip`) for the chat header, `/cost`, `keys add`,
+  `usage` totals and `version` — 5 lines instead of ~11, more room for the conversation.
+- `kunji compare` summary is now a table: time, tokens, cost and fastest/cheapest badges
+  for every model.
+- README badges restyled for readability on light and dark GitHub themes.
