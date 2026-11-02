@@ -1,0 +1,34 @@
+name: Bug report
+description: Something isn't working
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Never paste API keys.** For security issues use
+        [private reporting](https://github.com/testwithsuraj/kunji/security/advisories/new) instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you run, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. kunji keys add groq
+        2. kunji chat
+        3. ...
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `kunji doctor` and `kunji version`
+      render: text
+  - type: input
+    id: terminal
+    attributes:
+      label: Terminal and OS
+      placeholder: Windows Terminal on Windows 11, iTerm2 on macOS 15, …

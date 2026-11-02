@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "about": "Curated price overrides fetched by kunji at runtime (24h cache). Keys are 'provider:model', values are [input, output] in USD per 1M tokens. Only add prices you have checked on the provider's official pricing page, and note the source in the pull request.",
+  "models": {}
+}

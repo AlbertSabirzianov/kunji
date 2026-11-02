@@ -1,0 +1,26 @@
+# winget manifest TEMPLATE (singleton format). Don't submit this file by hand —
+# after a GitHub release, run (Windows):
+#   winget install wingetcreate
+#   wingetcreate new https://github.com/testwithsuraj/kunji/releases/download/v0.1.0/kunji-windows-x64.exe
+# wingetcreate fills in the hash and opens a pull request to microsoft/winget-pkgs.
+# For later versions:
+#   wingetcreate update testwithsuraj.kunji -v 0.2.0 -u <new exe url> --submit
+PackageIdentifier: testwithsuraj.kunji
+PackageVersion: 0.1.0
+PackageLocale: en-US
+Publisher: kunji
+PublisherUrl: https://github.com/testwithsuraj
+PackageName: kunji
+PackageUrl: https://github.com/testwithsuraj/kunji
+License: Apache-2.0
+LicenseUrl: https://github.com/testwithsuraj/kunji/blob/main/LICENSE
+ShortDescription: Bring your own key. Every AI model in one clean terminal.
+Tags: [ai, cli, llm, openai, anthropic, gemini, ollama, byok]
+Commands: [kunji]
+Installers:
+  - Architecture: x64
+    InstallerType: portable
+    InstallerUrl: https://github.com/testwithsuraj/kunji/releases/download/v0.1.0/kunji-windows-x64.exe
+    InstallerSha256: REPLACE_WITH_SHA256_FROM_SHA256SUMS.txt
+ManifestType: singleton
+ManifestVersion: 1.6.0

@@ -1,0 +1,6 @@
+# Security-sensitive areas need a maintainer review.
+*                         @testwithsuraj
+/src/kunji/keystore.py    @testwithsuraj
+/src/kunji/checkin.py     @testwithsuraj
+/src/kunji/constants.py   @testwithsuraj
+/.github/                 @testwithsuraj
