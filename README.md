@@ -61,9 +61,13 @@ uv tool install kunji
 python -m pip install --user kunji
 ```
 
-Standalone binaries for Windows, macOS and Linux (no Python needed) are attached to each
-[GitHub release](https://github.com/testwithsuraj/kunji/releases). `winget`, Scoop and
-Homebrew packages are on the [roadmap](ROADMAP.md).
+| System | Easiest way |
+| --- | --- |
+| Windows | `pipx install kunji`, or download `kunji-windows-x64.exe` from the [latest release](https://github.com/testwithsuraj/kunji/releases/latest) (no Python needed) |
+| macOS | `pipx install kunji` |
+| Linux | `pipx install kunji`, or download `kunji-linux-x64` from the latest release |
+
+`winget`, Scoop and Homebrew packages are on the [roadmap](ROADMAP.md).
 
 ## Quick start
 

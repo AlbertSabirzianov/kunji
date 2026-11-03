@@ -1,4 +1,5 @@
-# Homebrew formula TEMPLATE. Copy into your tap repo (testwithsuraj/homebrew-tap,
+# Homebrew formula TEMPLATE. Needs the macOS binary first (set repo variable BUILD_MACOS=true).
+# Copy into your tap repo (testwithsuraj/homebrew-tap,
 # file Formula/kunji.rb), fill in the sha256 from SHA256SUMS.txt, then users run:
 #   brew install testwithsuraj/tap/kunji
 class Kunji < Formula

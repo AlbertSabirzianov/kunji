@@ -1,36 +1,74 @@
-# Release: push a tag like v0.1.0 (it must match __version__ in src/kunji/__init__.py).
-#   git tag v0.1.0 && git push origin v0.1.0
+# Release workflow — publishes to PyPI and creates the GitHub Release.
 #
-# One-time setup:
-#   1. pypi.org → Your projects → Publishing → add a "trusted publisher":
-#        owner: testwithsuraj   repo: kunji   workflow: release.yml   environment: pypi
-#   2. GitHub repo → Settings → Environments → create "pypi" (add yourself as reviewer
-#      so every release needs one click of approval).
+# HOW TO RELEASE (automatic):
+#   1. Change __version__ in src/kunji/__init__.py (e.g. "0.2.0").
+#   2. Add a "## [0.2.0] - YYYY-MM-DD" section to CHANGELOG.md (it becomes the release notes).
+#   3. Push to main. This workflow starts by itself, builds everything, then waits for your
+#      one-click approval (Actions → Release → Review deployments → pypi → Approve).
+#   The tag v0.2.0 and the GitHub Release page are created automatically.
+#
+# Other ways to start it: push a tag `vX.Y.Z` yourself, or Actions → Release → Run workflow.
+# If the tag vX.Y.Z already exists, the automatic trigger does nothing (no double releases).
+#
+# macOS binary: off for now. To turn it on later, no code change needed:
+#   GitHub → Settings → Secrets and variables → Actions → Variables → New variable
+#   BUILD_MACOS = true
+#
+# One-time setup (already done):
+#   - pypi.org → Publishing → trusted publisher: owner testwithsuraj, repo kunji,
+#     workflow release.yml, environment pypi
+#   - GitHub → Settings → Environments → "pypi" with you as required reviewer
 # No PyPI token is stored anywhere — trusted publishing uses short-lived OIDC tokens.
 
 name: Release
 
 on:
   push:
+    branches: [main]
+    paths: ["src/kunji/__init__.py"]
     tags: ["v*.*.*"]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   verify:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      release: ${{ steps.check.outputs.release }}
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Tag matches package version
+      - name: Decide whether to release
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION=$(python -c "import re;print(re.search(r'__version__ = \"(.+?)\"', open('src/kunji/__init__.py').read()).group(1))")
-          test "v$VERSION" = "${GITHUB_REF_NAME}" || { echo "Tag ${GITHUB_REF_NAME} != v$VERSION"; exit 1; }
+          VERSION=$(python3 -c "import re;print(re.search(r'__version__ = \"(.+?)\"', open('src/kunji/__init__.py').read()).group(1))")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            test "v$VERSION" = "${GITHUB_REF_NAME}" || { echo "::error::Tag ${GITHUB_REF_NAME} does not match version $VERSION"; exit 1; }
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          elif git ls-remote --exit-code --tags "https://github.com/${GITHUB_REPOSITORY}" "refs/tags/v$VERSION" >/dev/null; then
+            echo "::notice::v$VERSION is already tagged — nothing to release. Bump __version__ to release."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Changelog has a section for this version
+        if: steps.check.outputs.release == 'true'
+        run: python3 scripts/release_notes.py "${{ steps.check.outputs.version }}" > /dev/null
 
   dist:
     needs: verify
+    if: needs.verify.outputs.release == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -45,9 +83,10 @@ jobs:
           name: dist
           path: dist/
 
-  # Windows + Linux binaries are required for a release.
+  # Required standalone binaries. To add a platform, add a line to the matrix.
   binaries:
     needs: verify
+    if: needs.verify.outputs.release == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -67,7 +106,7 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install -e ".[dev]"
       - run: pyinstaller packaging/kunji.spec --noconfirm --clean
-      - name: Rename binary
+      - name: Rename and smoke-test the binary
         shell: bash
         run: |
           mkdir -p out
@@ -78,17 +117,14 @@ jobs:
           name: ${{ matrix.name }}
           path: out/${{ matrix.name }}
 
-  # macOS binary is optional: GitHub's Mac machines are sometimes unavailable
-  # ("job was not acquired by Runner"). That must never block PyPI or the release.
+  # Optional macOS binary — only runs when the repository variable BUILD_MACOS is "true".
+  # It can never block PyPI or the release (GitHub's Mac machines are sometimes unavailable).
   binaries-macos:
     needs: verify
+    if: needs.verify.outputs.release == 'true' && vars.BUILD_MACOS == 'true'
     runs-on: macos-latest
     timeout-minutes: 45
     continue-on-error: true
-    strategy:
-      matrix:
-        include:
-          - name: kunji-macos-arm64
     steps:
       - uses: actions/checkout@v7
         with:
@@ -98,19 +134,17 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install -e ".[dev]"
       - run: pyinstaller packaging/kunji.spec --noconfirm --clean
-      - name: Rename binary
-        shell: bash
-        run: |
-          mkdir -p out
-          if [ "${{ runner.os }}" = "Windows" ]; then cp dist/kunji.exe "out/${{ matrix.name }}"; else cp dist/kunji "out/${{ matrix.name }}"; fi
-          "./out/${{ matrix.name }}" --version
+      - run: |
+          mkdir -p out && cp dist/kunji out/kunji-macos-arm64
+          ./out/kunji-macos-arm64 --version
       - uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.name }}
-          path: out/${{ matrix.name }}
+          name: kunji-macos-arm64
+          path: out/kunji-macos-arm64
 
   publish-pypi:
-    needs: [dist, binaries]
+    needs: [verify, dist, binaries]
+    if: needs.verify.outputs.release == 'true'
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
@@ -123,22 +157,30 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
 
   github-release:
-    needs: [publish-pypi, binaries-macos]
-    # Runs even if the optional macOS build failed or never started.
+    needs: [verify, publish-pypi, binaries-macos]
+    # Runs whenever PyPI succeeded, even if the optional macOS job was skipped or failed.
     if: ${{ always() && needs.publish-pypi.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/download-artifact@v8
         with:
           path: artifacts/
-      - name: Checksums
+      - name: Collect files and checksums
         run: |
           mkdir release
           find artifacts -type f -exec cp {} release/ \;
           cd release && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - name: Write release notes from CHANGELOG.md
+        run: python3 scripts/release_notes.py "${{ needs.verify.outputs.version }}" > notes.md
       - uses: softprops/action-gh-release@v3
         with:
+          tag_name: v${{ needs.verify.outputs.version }}
+          name: kunji v${{ needs.verify.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          body_path: notes.md
           files: release/*
-          generate_release_notes: true

@@ -24,8 +24,10 @@ All notable changes are listed here. The format follows
   is configured).
 
 ### Build
-- Release no longer waits for the macOS binary; if GitHub has no Mac machine free, PyPI and
-  the Windows/Linux downloads still publish.
+- Standalone downloads for Windows (`kunji-windows-x64.exe`) and Linux; macOS users install
+  with `pipx install kunji` (a macOS download can be switched on later).
+- Releases run automatically when the version number changes, with notes taken from this
+  changelog.
 
 ### Design
 - Compact one-row summary tables (`Strip`) for the chat header, `/cost`, `keys add`,
