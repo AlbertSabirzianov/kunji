@@ -131,6 +131,9 @@ jobs:
           name: dist
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Re-running a release must not fail if PyPI already has these files.
+          skip-existing: true
 
   github-release:
     needs: [verify, publish-pypi]
