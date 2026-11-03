@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="hi" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kunji — अपनी API key से हर AI मॉडल, एक टर्मिनल में</title>
+<meta name="description" content="kunji एक मुफ़्त, ओपन-सोर्स टर्मिनल ऐप है जिससे आप अपनी API key से OpenAI, Anthropic, Gemini, Groq और Ollama जैसे किसी भी AI मॉडल से चैट कर सकते हैं।">
+<link rel="canonical" href="https://testwithsuraj.github.io/kunji/hi/"><link rel="alternate" hreflang="en" href="https://testwithsuraj.github.io/kunji/"><link rel="alternate" hreflang="hi" href="https://testwithsuraj.github.io/kunji/hi/"><link rel="alternate" hreflang="x-default" href="https://testwithsuraj.github.io/kunji/">
+<meta property="og:title" content="kunji — अपनी API key से हर AI मॉडल, एक टर्मिनल में">
+<meta property="og:description" content="kunji एक मुफ़्त, ओपन-सोर्स टर्मिनल ऐप है जिससे आप अपनी API key से OpenAI, Anthropic, Gemini, Groq और Ollama जैसे किसी भी AI मॉडल से चैट कर सकते हैं।">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="hi_IN">
+<meta property="og:url" content="https://testwithsuraj.github.io/kunji/hi/">
+<meta property="og:image" content="https://testwithsuraj.github.io/kunji/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://testwithsuraj.github.io/kunji/og.png">
+<meta name="theme-color" content="#ECEFEC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101814" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script>(function(){var t;try{t=localStorage.getItem('starlight-theme')}catch(e){}var d=t==='dark'||((!t||t==='auto')&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light'})();</script>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">सीधे सामग्री पर जाएँ</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="./" aria-label="kunji home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#14201A"/><circle cx="11" cy="16" r="5" fill="none" stroke="#3DDC84" stroke-width="3"/><path d="M16 16h11M22 16v4M26 16v3" stroke="#3DDC84" stroke-width="3" stroke-linecap="round"/></svg>kunji</a>
+    <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="मेन्यू"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <nav id="nav" class="nav" aria-label="Main">
+      <a href="features.html">फ़ीचर्स</a>
+      <a href="../docs/">डॉक्स</a>
+      <a href="https://github.com/testwithsuraj/kunji" class="gh">GitHub<span class="stars" data-stars hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.3l2 4.2 4.6.6-3.4 3.2.9 4.5L8 11.6l-4.1 2.2.9-4.5L1.4 6.1 6 5.5z"/></svg><span data-stars-count></span><span class="sr-only"> स्टार</span></span></a>
+      <span class="tools">
+        <a class="lang" href="../" hreflang="en" lang="en" title="View in English">English</a>
+        <button class="icon-btn theme-btn" type="button" aria-label="लाइट और डार्क थीम बदलें" title="लाइट और डार्क थीम बदलें"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap hero">
+  <div>
+    <h1><span>अपनी key.</span> <span>हर AI मॉडल.</span> <span>एक टर्मिनल.</span></h1>
+    <p class="lede">kunji आपके टर्मिनल के लिए एक मुफ़्त, ओपन-सोर्स चैट ऐप है। किसी भी प्रोवाइडर की अपनी API key लगाइए, बातचीत के बीच मॉडल बदलिए, और हर जवाब का खर्च देखिए।</p>
+    <div class="install">
+      <code>pip install kunji</code>
+      <button class="copy" type="button" data-copy="pip install kunji" data-copied="कॉपी हो गया">कॉपी</button>
+    </div>
+    <p class="alt">अगर <code>pip</code> न मिले, तो <code>python -m pip install kunji</code> चलाइए।<br>Windows पर Python नहीं है? <a href="https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe">kunji.exe डाउनलोड करें</a></p>
+    <p class="facts"><a href="https://github.com/testwithsuraj/kunji/releases/latest" data-version="वर्ज़न">वर्ज़न 0.1.2</a> <span>मुफ़्त और ओपन सोर्स</span> <span>Windows, macOS, Linux</span></p>
+  </div>
+
+  <figure class="term" aria-label="kunji का इंटरैक्टिव डेमो">
+    <div class="term-bar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div class="tabs" role="tablist" aria-label="डेमो">
+        <button class="tab" role="tab" type="button" data-demo="chat" aria-selected="true">चैट</button>
+        <button class="tab" role="tab" type="button" data-demo="switch" aria-selected="false" tabindex="-1">मॉडल बदलें</button>
+        <button class="tab" role="tab" type="button" data-demo="compare" aria-selected="false" tabindex="-1">तुलना</button>
+        <button class="tab" role="tab" type="button" data-demo="commit" aria-selected="false" tabindex="-1">@commit</button>
+        <button class="tab" role="tab" type="button" data-demo="budget" aria-selected="false" tabindex="-1">बजट</button>
+      </div>
+    </div>
+    <div class="screen" id="screen" role="tabpanel" aria-live="off"></div>
+    <div class="progress" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+  </figure>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>उनके लिए जो एक से ज़्यादा मॉडल इस्तेमाल करते हैं</h2>
+    <p class="intro">आप OpenAI, Anthropic या Google को पहले से सीधे भुगतान करते हैं। kunji इन सबको एक साफ़ प्रॉम्प्ट में ले आता है, और बिल पर आपका कंट्रोल बना रहता है।</p>
+    <dl class="features">
+      <div><dt>बातचीत रोके बिना मॉडल बदलें</dt><dd><code>/model groq:llama-3.3-70b-versatile</code> लिखिए और बात जारी रखिए। पूरी बातचीत नए मॉडल तक पहुँचती है।</dd></div>
+      <div><dt>हर जवाब का खर्च</dt><dd>हर जवाब के नीचे टोकन और कीमत, सेशन के लिए <code>/cost</code>, और हफ़्ते के लिए <code>kunji usage</code>। रुपये (₹) में भी।</dd></div>
+      <div><dt>रोज़ का बजट</dt><dd>हर प्रोवाइडर या सबके लिए एक लिमिट तय करें। 80% पर चेतावनी, 100% पर रुकावट, ताकि बिल कभी चौंकाए नहीं।</dd></div>
+      <div><dt>मॉडल की आमने-सामने तुलना</dt><dd><code>kunji compare "…"</code> एक प्रॉम्प्ट कई मॉडल को एक साथ भेजता है और बताता है कि कौन सबसे तेज़ और सबसे सस्ता रहा।</dd></div>
+      <div><dt>सेव किए प्रॉम्प्ट</dt><dd><code>kunji @commit</code> आपके स्टेज किए बदलावों से commit मैसेज लिख देता है। <code>@explain</code>, <code>@review</code> और <code>@translate</code> पहले से मौजूद हैं, और आप अपने बना सकते हैं।</dd></div>
+      <div><dt>पुरानी चैट फिर से खोलें</dt><dd>हर बातचीत आपके कंप्यूटर पर सेव होती है। आख़िरी चैट <code>kunji chat -c</code> से जारी रखें, या सबमें खोजें।</dd></div>
+    </dl>
+    <p class="more"><a href="features.html">सभी फ़ीचर्स देखें</a></p>
+  </div>
+</section>
+
+<section id="providers">
+  <div class="wrap">
+    <h2>दस प्रोवाइडर, और कोई भी कम्पैटिबल सर्वर</h2>
+    <p class="intro">Ollama के साथ लोकल मॉडल मुफ़्त चलाइए, या एक कमांड से LM Studio, vLLM या अपना प्रॉक्सी जोड़िए।</p>
+    <p class="providers">OpenAI, Anthropic, Google Gemini, Groq, OpenRouter, DeepSeek, Mistral, xAI, Together AI, Ollama <span>और आपका अपना OpenAI-compatible सर्वर।</span></p>
+    <p class="more"><a href="../docs/providers/">प्रोवाइडर सेट करें (अंग्रेज़ी डॉक्स)</a></p>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="wrap">
+    <h2>आपकी key आपके कंप्यूटर से बाहर नहीं जाती</h2>
+    <p class="intro">Key, Windows Credential Manager, macOS Keychain या Linux Secret Service में रखी जाती है, किसी टेक्स्ट फ़ाइल में कभी नहीं। आपके प्रॉम्प्ट सीधे आपके चुने हुए प्रोवाइडर तक जाते हैं। बीच में kunji का कोई सर्वर नहीं है।</p>
+    <div class="scroll">
+      <table class="privacy">
+        <thead><tr><th scope="col">क्या</th><th scope="col">कहाँ जाता है</th><th scope="col">बंद कर सकते हैं?</th></tr></thead>
+        <tbody>
+          <tr><td>आपकी API key</td><td>सिर्फ़ उसी key के प्रोवाइडर तक</td><td class="na">—</td></tr>
+          <tr><td>आपके प्रॉम्प्ट और जवाब</td><td>सिर्फ़ आपके और प्रोवाइडर के बीच</td><td class="na">—</td></tr>
+          <tr><td>इस्तेमाल, चैट और खर्च</td><td>आपके कंप्यूटर पर ही रहते हैं</td><td>कभी भी डिलीट करें</td></tr>
+          <tr><td>कीमतों की सूची और वर्ज़न चेक</td><td>पब्लिक डाउनलोड, आपके बारे में कुछ नहीं भेजा जाता</td><td>हाँ, एक सेटिंग से</td></tr>
+          <tr><td>kunji के सर्वर तक कुछ भी</td><td class="never">कभी नहीं</td><td class="na">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>एक मिनट में शुरू करें</h2>
+    <p class="intro">Python 3.11 या नया चाहिए। पूरी गाइड: <a href="../docs/getting-started/installation/">इंस्टॉलेशन डॉक्स</a> (अंग्रेज़ी में)।</p>
+    <ol class="steps">
+      <li><h3>इंस्टॉल करें</h3><p>Windows, macOS और Linux पर चलता है। अगर <code>pip</code> न मिले तो <code>python -m pip install kunji</code> चलाइए।</p><pre>pip install kunji</pre></li>
+      <li><h3>kunji खोलें</h3><p>मेन्यू key जोड़ने में मदद करता है। kunji पहले जाँचता है कि key काम करती है, फिर उसे OS keychain में रखता है।</p><pre>kunji</pre></li>
+      <li><h3>चैट करें</h3><p><strong>Start a new chat</strong> चुनिए। सारी कमांड देखने के लिए <code>/</code> लिखिए।</p><pre>› नमस्ते</pre></li>
+    </ol>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <div>
+      <h2>मुफ़्त, ओपन सोर्स, और आपका।</h2>
+      <p>डॉक्स पढ़िए, या आगे की अपडेट के लिए GitHub पर kunji को स्टार कीजिए।</p>
+    </div>
+    <div class="buttons">
+      <a class="btn primary" href="../docs/getting-started/quickstart/">क्विक स्टार्ट पढ़ें</a>
+      <a class="btn ghost" href="https://github.com/testwithsuraj/kunji">GitHub पर स्टार करें</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>कुंजी यानी “key”। भारत में बना, Apache-2.0 लाइसेंस के तहत ओपन सोर्स।</p>
+    <ul class="foot-links"><li><a href="../docs/">डॉक्यूमेंटेशन</a></li><li><a href="features.html">फ़ीचर्स</a></li><li><a href="../privacy.html">प्राइवेसी</a></li><li><a href="../terms.html">शर्तें</a></li><li><a href="https://github.com/testwithsuraj/kunji/blob/main/LICENSE">लाइसेंस</a></li><li><a href="https://github.com/testwithsuraj/kunji/issues/new/choose">समस्या बताएँ</a></li></ul>
+  </div>
+</footer>
+<script src="../app.js" defer></script>
+</body>
+</html>

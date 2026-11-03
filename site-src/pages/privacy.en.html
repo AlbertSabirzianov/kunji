@@ -1,0 +1,67 @@
+<div class="wrap doc">
+  <h1>Privacy policy</h1>
+  <p class="updated">Last updated: 3 November 2026</p>
+
+  <p class="summary">In short: kunji has no account, no analytics and no server in the middle.
+  Your API keys stay in your computer's keychain, and your prompts go only to the AI provider
+  you choose.</p>
+
+  <h2>Who this covers</h2>
+  <p>This policy covers the kunji command-line app (“the app”) and this website
+  (testwithsuraj.github.io/kunji). kunji is an open-source project; you can check everything
+  described here in the <a href="https://github.com/testwithsuraj/kunji">source code</a>.</p>
+
+  <h2>What the app stores on your computer</h2>
+  <ul>
+    <li><strong>API keys</strong> — in your operating system's credential store (Windows
+      Credential Manager, macOS Keychain or Linux Secret Service), or read from environment
+      variables you set. They are never written to a kunji file.</li>
+    <li><strong>Settings, usage and cost history, chat input history</strong> — in your user
+      folders. Run <code>kunji config path</code> to see where, and delete them any time.</li>
+    <li><strong>A random install ID</strong> — a random number created on first use. It is not
+      based on your hardware, name or account.</li>
+  </ul>
+
+  <h2>What the app sends, and to whom</h2>
+  <ul>
+    <li><strong>To the AI provider you choose</strong> (for example OpenAI, Anthropic, Google or
+      Groq): your messages and that provider's API key, so it can answer. That provider's own
+      privacy policy and terms apply to what you send them.</li>
+    <li><strong>To PyPI</strong>, at most once a day: a request for the latest kunji version
+      number. Nothing about you is included. Turn off with
+      <code>kunji config set updates.check false</code>.</li>
+    <li><strong>To OpenRouter and GitHub</strong>, at most once a day: a download of public model
+      price lists for the cost meter. Nothing about you is included. Turn off with
+      <code>kunji config set network.catalog false</code>.</li>
+    <li><strong>To kunji servers:</strong> nothing, unless you set up a kunji cloud account in a
+      future version. If that feature is added, this policy will be updated first and it will
+      be off by default.</li>
+  </ul>
+  <p>The app never sends your API keys, prompts, answers, files or usage history to the kunji
+  project.</p>
+
+  <h2>This website</h2>
+  <ul>
+    <li>No cookies, no analytics, no ads, no tracking pixels. Fonts are served from this site,
+      not a font service.</li>
+    <li>The home page asks GitHub for the project's star count and PyPI for the latest version
+      number, directly from your browser. Those services receive a normal web request (such as
+      your IP address), as described in their own privacy policies.</li>
+    <li>The site is hosted on GitHub Pages. GitHub may log visits for security and operations;
+      see <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>kunji is a developer tool and is not directed at children. We do not knowingly collect
+  information from anyone.</p>
+
+  <h2>Changes</h2>
+  <p>When this policy changes, the date at the top changes and the update is listed in the
+  <a href="https://github.com/testwithsuraj/kunji/blob/main/CHANGELOG.md">changelog</a>.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about privacy: open an
+  <a href="https://github.com/testwithsuraj/kunji/issues/new/choose">issue on GitHub</a>.
+  To report a security problem privately, use
+  <a href="https://github.com/testwithsuraj/kunji/security/advisories/new">private vulnerability reporting</a>.</p>
+</div>

@@ -104,6 +104,7 @@ export default defineConfig({
             { label: "FAQ", slug: "help/faq" },
             { label: "Changelog", slug: "releases/changelog" },
             { label: "Contributing", slug: "help/contributing" },
+            { label: "kunji website", link: "/kunji/" },
           ],
         },
       ],

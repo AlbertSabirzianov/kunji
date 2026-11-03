@@ -1,0 +1,185 @@
+<div class="wrap page-hero">
+  <h1>kunji क्या-क्या करता है</h1>
+  <p class="lede">आपके हर AI मॉडल के लिए एक टर्मिनल ऐप: अपनी key, सामने खर्च, और बीच में कोई नहीं।</p>
+  <ul class="jump" aria-label="इस पेज पर">
+    <li><a href="#models">हर मॉडल</a></li>
+    <li><a href="#switch">मॉडल बदलें</a></li>
+    <li><a href="#costs">खर्च और बजट</a></li>
+    <li><a href="#compare">तुलना</a></li>
+    <li><a href="#prompts">सेव किए प्रॉम्प्ट</a></li>
+    <li><a href="#history">चैट हिस्ट्री</a></li>
+    <li><a href="#files">फ़ाइल और पाइप</a></li>
+    <li><a href="#menu">मेन्यू</a></li>
+    <li><a href="#local">लोकल मॉडल</a></li>
+    <li><a href="#privacy">प्राइवेसी</a></li>
+  </ul>
+</div>
+
+<section id="models"><div class="wrap feature">
+  <div>
+    <h2>हर मॉडल, एक जगह</h2>
+    <p>दस प्रोवाइडर पहले से जुड़े हैं, और कोई भी OpenAI-compatible सर्वर भी चलता है। Key एक बार जोड़िए, kunji सेव करने से पहले उसे जाँच लेता है।</p>
+    <ul>
+      <li>OpenAI, Anthropic, Google Gemini, Groq, OpenRouter, DeepSeek, Mistral, xAI, Together AI, Ollama</li>
+      <li><code>kunji providers add</code> से LM Studio, vLLM, LiteLLM या अपना कंपनी प्रॉक्सी</li>
+      <li>हर प्रोवाइडर से सीधी, ताज़ा मॉडल लिस्ट</li>
+    </ul>
+    <a href="../docs/providers/">प्रोवाइडर सेटअप गाइड (अंग्रेज़ी)</a>
+  </div>
+  <pre class="mini"><span class="dim">$</span> kunji keys add groq
+<span class="ok">✓</span> Verifying with Groq  <span class="dim">0.4s  21 models available</span>
+<span class="ok">✓</span> Saving key to Windows Credential Manager  <span class="dim">0.1s</span>
+<span class="ok">◆</span> Default model (type to search) <span class="ok">llama-3.3-70b-versatile</span></pre>
+</div></section>
+
+<section id="switch"><div class="wrap feature">
+  <div>
+    <h2>दोबारा शुरू किए बिना मॉडल बदलें</h2>
+    <p>एक मॉडल से पूछिए, फिर दूसरे से जवाब जाँचने या सुधारने को कहिए। पूरी बातचीत साथ जाती है।</p>
+    <ul>
+      <li>मॉडल नामों के लिए Tab कम्प्लीशन के साथ <code>/model</code></li>
+      <li>हर प्रोवाइडर का अपना डिफ़ॉल्ट मॉडल, और एक मुख्य डिफ़ॉल्ट</li>
+    </ul>
+    <a href="../docs/guides/models/">मॉडल चुनना और बदलना</a>
+  </div>
+  <pre class="mini"><span class="ok">›</span> /model anthropic:claude-sonnet-4-5
+<span class="ok">✓</span> Switched to anthropic:claude-sonnet-4-5  <span class="dim">conversation kept</span>
+<span class="ok">›</span> ऊपर लिखे फ़ंक्शन को रिव्यू करो</pre>
+</div></section>
+
+<section id="costs"><div class="wrap feature">
+  <div>
+    <h2>खर्च जानिए, और लिमिट लगाइए</h2>
+    <p>हर जवाब अपने टोकन और कीमत दिखाता है। रोज़ का बजट 80% पर चेतावनी देता है और 100% पर रोक देता है, हर प्रोवाइडर के लिए या सबके लिए, आपकी अपनी करेंसी में।</p>
+    <ul>
+      <li>चैट में <code>/cost</code>, हफ़्ते या महीने के लिए <code>kunji usage</code></li>
+      <li><code>kunji budget set all 500</code>, खर्च ₹, $, € या किसी भी करेंसी में</li>
+    </ul>
+    <a href="../docs/guides/costs-and-budgets/">खर्च और बजट</a>
+  </div>
+  <pre class="mini">  <span class="dim">gpt-4o · 1,204 in · 380 out · ₹0.79 · 3.4s</span>
+
+<span class="warn">! 80% of today's budget used for OpenAI: ₹161.40 / ₹200.00</span></pre>
+</div></section>
+
+<section id="compare"><div class="wrap feature">
+  <div>
+    <h2>मॉडल की आमने-सामने तुलना</h2>
+    <p>एक प्रॉम्प्ट कई मॉडल को एक साथ भेजिए, फिर हर जवाब देखिए और जानिए कौन सबसे तेज़ और सबसे सस्ता रहा।</p>
+    <ul>
+      <li>किसी काम के लिए सबसे सस्ता पर काफ़ी अच्छा मॉडल खोजें</li>
+      <li>ज़रूरी जवाबों को दोबारा जाँचें</li>
+    </ul>
+    <a href="../docs/guides/compare-models/">मॉडल की तुलना</a>
+  </div>
+  <pre class="mini"><span class="dim">$</span> kunji compare "explain recursion" -m openai:gpt-4o-mini -m groq:llama-3.3-70b-versatile
+<span class="ok">✓</span> openai:gpt-4o-mini  <span class="dim">1.9s · 31 tok</span>
+<span class="ok">✓</span> groq:llama-3.3-70b-versatile  <span class="dim">0.6s · 27 tok</span>
+  groq:llama-3.3-70b   0.6s   <span class="ok">fastest cheapest</span></pre>
+</div></section>
+
+<section id="prompts"><div class="wrap feature">
+  <div>
+    <h2>रोज़ के काम के लिए सेव किए प्रॉम्प्ट</h2>
+    <p>अक्सर इस्तेमाल होने वाले निर्देश, एक शब्द में। छह पहले से मौजूद हैं, और आप अपने भी सादी Markdown फ़ाइलों में लिख सकते हैं।</p>
+    <ul>
+      <li><code>@commit</code> आपके स्टेज किए बदलावों से commit मैसेज लिखता है</li>
+      <li><code>@explain</code>, <code>@review</code>, <code>@fix</code>, <code>@summarize</code>, <code>@translate</code></li>
+      <li>कमांड लाइन से या चैट के अंदर, दोनों जगह</li>
+    </ul>
+    <a href="../docs/guides/saved-prompts/">सेव किए प्रॉम्प्ट</a>
+  </div>
+  <pre class="mini"><span class="dim">$</span> git add . &amp;&amp; kunji @commit
+  Add password reset by email
+
+  Users can now request a reset link from the
+  login page. Links expire after 30 minutes.</pre>
+</div></section>
+
+<section id="history"><div class="wrap feature">
+  <div>
+    <h2>पुरानी चैट फिर से खोलें</h2>
+    <p>हर बातचीत आपके कंप्यूटर पर सेव होती है। कल वहीं से शुरू कीजिए जहाँ छोड़ा था, या पुराने जवाब खोजिए।</p>
+    <ul>
+      <li><code>kunji chat -c</code> आख़िरी चैट जारी रखता है</li>
+      <li><code>kunji history search docker</code> पुरानी चैट ढूँढता है</li>
+      <li>कोई भी चैट Markdown में एक्सपोर्ट करें</li>
+    </ul>
+    <a href="../docs/guides/chat-history/">चैट हिस्ट्री</a>
+  </div>
+  <pre class="mini"><span class="dim">$</span> kunji history
+  <span class="dim">ID       Title                         Updated</span>
+  3fa2c1   fix the login redirect bug    03 Nov 22:10
+  9b07de   compare postgres vs sqlite    02 Nov 18:44</pre>
+</div></section>
+
+<section id="files"><div class="wrap feature">
+  <div>
+    <h2>फ़ाइल और पाइप</h2>
+    <p>कोड और लॉग अटैच कीजिए, या किसी भी कमांड का आउटपुट सीधे मॉडल को भेजिए। स्क्रिप्ट के लिए सादा आउटपुट भी।</p>
+    <ul>
+      <li>चैट में <code>/file app.py</code>, पाथ कम्प्लीशन के साथ</li>
+      <li><code>kunji ask -f app.py "what does this do?"</code></li>
+      <li>स्क्रिप्ट और CI के लिए <code>--raw</code> आउटपुट</li>
+    </ul>
+    <a href="../docs/guides/pipes-and-scripts/">पाइप और स्क्रिप्ट</a>
+  </div>
+  <pre class="mini"><span class="dim">$</span> npm test 2&gt;&amp;1 | kunji ask "why does this fail?"
+  The test expects a 200 but the route returns 302
+  because the session cookie isn't set in the test…</pre>
+</div></section>
+
+<section id="menu"><div class="wrap feature">
+  <div>
+    <h2>कमांड टाइप नहीं करना? मेन्यू है</h2>
+    <p>सिर्फ़ <code>kunji</code> चलाइए, तीर वाली keys से चलने वाला मेन्यू खुलेगा जो Exit तक खुला रहता है। हर काम स्क्रिप्ट के लिए कमांड के रूप में भी है।</p>
+    <a href="../docs/getting-started/menu/">मेन्यू</a>
+  </div>
+  <pre class="mini"><span class="ok">◆</span> What would you like to do?
+ <span class="ok">❯</span> Start a new chat          <span class="dim">anthropic:claude-sonnet</span>
+   Continue last chat        <span class="dim">fix the login redirect…</span>
+   Run a saved prompt        <span class="dim">@explain, @commit, …</span>
+   Compare models
+   Usage and budgets</pre>
+</div></section>
+
+<section id="local"><div class="wrap feature">
+  <div>
+    <h2>मुफ़्त लोकल मॉडल</h2>
+    <p>Ollama के साथ मॉडल आपके अपने कंप्यूटर पर चलते हैं: न key, न बिल, और इंटरनेट के बिना भी। एक ही चैट में लोकल और क्लाउड मॉडल मिलाइए।</p>
+    <a href="../docs/guides/local-models-ollama/">Ollama के साथ मुफ़्त लोकल मॉडल</a>
+  </div>
+  <pre class="mini"><span class="dim">$</span> ollama pull llama3.2
+<span class="dim">$</span> kunji keys add ollama
+<span class="dim">$</span> kunji chat -m ollama:llama3.2</pre>
+</div></section>
+
+<section id="privacy"><div class="wrap feature">
+  <div>
+    <h2>शुरू से प्राइवेट</h2>
+    <p>Key आपके OS keychain में रहती है और सिर्फ़ अपने प्रोवाइडर तक जाती है। प्रॉम्प्ट सीधे आपके चुने प्रोवाइडर तक जाते हैं। न kunji का सर्वर, न अकाउंट, न एनालिटिक्स।</p>
+    <ul>
+      <li>Key हमेशा छिपी (masked) दिखती है और एरर मैसेज से हटा दी जाती है</li>
+      <li>चैट, प्रॉम्प्ट और इस्तेमाल आपके कंप्यूटर पर ही रहते हैं</li>
+      <li>Apache-2.0 के तहत ओपन सोर्स, कोई भी जाँच सकता है</li>
+    </ul>
+    <a href="../docs/concepts/privacy-and-security/">प्राइवेसी और सिक्योरिटी</a>
+  </div>
+  <pre class="mini"><span class="dim">$</span> kunji keys list
+  <span class="dim">Provider    Key                 Status</span>
+  anthropic   sk-ant••••••••3f9a  <span class="ok">KEY SET</span>
+  groq        gsk_ab••••••••91c2  <span class="ok">KEY SET</span></pre>
+</div></section>
+
+<section class="cta">
+  <div class="wrap">
+    <div>
+      <h2>आज़माने के लिए तैयार?</h2>
+      <p><code style="background:transparent;color:inherit">pip install kunji</code> से एक मिनट में इंस्टॉल करें।</p>
+    </div>
+    <div class="buttons">
+      <a class="btn primary" href="../docs/getting-started/installation/">kunji इंस्टॉल करें</a>
+      <a class="btn ghost" href="../docs/">डॉक्स पढ़ें</a>
+    </div>
+  </div>
+</section>

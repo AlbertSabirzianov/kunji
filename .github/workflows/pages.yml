@@ -1,4 +1,4 @@
-# Publishes the website to GitHub Pages:
+# Publishes the website to GitHub Pages (pages built from site-src/ by scripts/build_site.py):
 #   https://testwithsuraj.github.io/kunji/        landing page   (site/)
 #   https://testwithsuraj.github.io/kunji/docs/   documentation  (docs-site/, Starlight)
 #
@@ -12,6 +12,8 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "site-src/**"
+      - "scripts/build_site.py"
       - "docs-site/**"
       - "src/kunji/**"
       - "scripts/gen_docs.py"
@@ -39,8 +41,9 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Generate reference pages from kunji's code
+      - name: Build website pages and generate docs reference from kunji's code
         run: |
+          python scripts/build_site.py
           python -m pip install -e .
           python scripts/gen_docs.py
       - uses: actions/setup-node@v4

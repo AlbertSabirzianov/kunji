@@ -1,0 +1,96 @@
+<div class="wrap hero">
+  <div>
+    <h1><span>Your keys.</span> <span>Every AI model.</span> <span>One terminal.</span></h1>
+    <p class="lede">kunji is a free, open-source chat app for your terminal. Bring your own API key from any provider, switch models mid-conversation, and see what every reply costs.</p>
+    <div class="install">
+      <code>pip install kunji</code>
+      <button class="copy" type="button" data-copy="pip install kunji" data-copied="Copied">Copy</button>
+    </div>
+    <p class="alt">If <code>pip</code> isn't found, use <code>python -m pip install kunji</code>.<br>No Python on Windows? <a href="https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe">Download kunji.exe</a></p>
+    <p class="facts"><a href="https://github.com/testwithsuraj/kunji/releases/latest" data-version="Version">Version 0.1.2</a> <span>Free and open source</span> <span>Windows, macOS, Linux</span></p>
+  </div>
+
+  <figure class="term" aria-label="Interactive kunji demo">
+    <div class="term-bar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div class="tabs" role="tablist" aria-label="Demos">
+        <button class="tab" role="tab" type="button" data-demo="chat" aria-selected="true">Chat</button>
+        <button class="tab" role="tab" type="button" data-demo="switch" aria-selected="false" tabindex="-1">Switch model</button>
+        <button class="tab" role="tab" type="button" data-demo="compare" aria-selected="false" tabindex="-1">Compare</button>
+        <button class="tab" role="tab" type="button" data-demo="commit" aria-selected="false" tabindex="-1">@commit</button>
+        <button class="tab" role="tab" type="button" data-demo="budget" aria-selected="false" tabindex="-1">Budget</button>
+      </div>
+    </div>
+    <div class="screen" id="screen" role="tabpanel" aria-live="off"></div>
+    <div class="progress" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+  </figure>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Made for people who use more than one model</h2>
+    <p class="intro">You already pay OpenAI, Anthropic or Google directly. kunji puts all of them behind one clean prompt, and keeps you in control of the bill.</p>
+    <dl class="features">
+      <div><dt>Switch models without losing the thread</dt><dd>Type <code>/model groq:llama-3.3-70b-versatile</code> and keep talking. The conversation carries over.</dd></div>
+      <div><dt>See the cost of every reply</dt><dd>Tokens and price under each answer, <code>/cost</code> for the session, <code>kunji usage</code> for the week. In your currency, including ₹.</dd></div>
+      <div><dt>Daily budgets</dt><dd>Set a limit per provider or overall. kunji warns at 80% and stops at 100%, so a long night never turns into a surprise bill.</dd></div>
+      <div><dt>Compare models side by side</dt><dd><code>kunji compare "…"</code> sends one prompt to several models at once and shows which was fastest and cheapest.</dd></div>
+      <div><dt>Saved prompts</dt><dd><code>kunji @commit</code> writes a commit message from your staged changes. <code>@explain</code>, <code>@review</code> and <code>@translate</code> are built in, and you can add your own.</dd></div>
+      <div><dt>Chats you can come back to</dt><dd>Every conversation is saved on your computer. Continue the last one with <code>kunji chat -c</code>, or search them all.</dd></div>
+    </dl>
+    <p class="more"><a href="features.html">See all features</a></p>
+  </div>
+</section>
+
+<section id="providers">
+  <div class="wrap">
+    <h2>Ten providers, plus any compatible server</h2>
+    <p class="intro">Run local models with Ollama for free, or add LM Studio, vLLM or your own proxy with one command.</p>
+    <p class="providers">OpenAI, Anthropic, Google Gemini, Groq, OpenRouter, DeepSeek, Mistral, xAI, Together AI, Ollama <span>and your own OpenAI-compatible server.</span></p>
+    <p class="more"><a href="docs/providers/">Set up a provider</a></p>
+  </div>
+</section>
+
+<section id="privacy">
+  <div class="wrap">
+    <h2>Your keys never leave your machine</h2>
+    <p class="intro">Keys are stored in Windows Credential Manager, macOS Keychain or Linux Secret Service, never in a text file. Your prompts go straight to the provider you chose. kunji has no server in between.</p>
+    <div class="scroll">
+      <table class="privacy">
+        <thead><tr><th scope="col">What</th><th scope="col">Where it goes</th><th scope="col">Can you turn it off?</th></tr></thead>
+        <tbody>
+          <tr><td>Your API keys</td><td>Only to that key's own provider</td><td class="na">—</td></tr>
+          <tr><td>Your prompts and answers</td><td>Only between you and the provider</td><td class="na">—</td></tr>
+          <tr><td>Usage, chats and costs</td><td>Stay on your computer</td><td>Delete them any time</td></tr>
+          <tr><td>Price list and version check</td><td>Public downloads, nothing about you is sent</td><td>Yes, one setting each</td></tr>
+          <tr><td>Anything to kunji servers</td><td class="never">Never</td><td class="na">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Start in a minute</h2>
+    <p class="intro">Needs Python 3.11 or newer. Full guide: <a href="docs/getting-started/installation/">installation docs</a>.</p>
+    <ol class="steps">
+      <li><h3>Install</h3><p>Works on Windows, macOS and Linux. If <code>pip</code> isn't found, run <code>python -m pip install kunji</code>.</p><pre>pip install kunji</pre></li>
+      <li><h3>Open kunji</h3><p>The menu helps you add a key. kunji checks it works, then keeps it in your OS keychain.</p><pre>kunji</pre></li>
+      <li><h3>Chat</h3><p>Pick <strong>Start a new chat</strong>. Type <code>/</code> to see every command.</p><pre>› hello</pre></li>
+    </ol>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <div>
+      <h2>Free, open source, and yours.</h2>
+      <p>Read the docs, or star kunji on GitHub to follow what's next.</p>
+    </div>
+    <div class="buttons">
+      <a class="btn primary" href="docs/getting-started/quickstart/">Read the quick start</a>
+      <a class="btn ghost" href="https://github.com/testwithsuraj/kunji">Star on GitHub</a>
+    </div>
+  </div>
+</section>

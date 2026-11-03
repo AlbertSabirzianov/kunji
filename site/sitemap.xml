@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://testwithsuraj.github.io/kunji/</loc></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://testwithsuraj.github.io/kunji/</loc><xhtml:link rel="alternate" hreflang="en" href="https://testwithsuraj.github.io/kunji/"/><xhtml:link rel="alternate" hreflang="hi" href="https://testwithsuraj.github.io/kunji/hi/"/></url>
+  <url><loc>https://testwithsuraj.github.io/kunji/hi/</loc><xhtml:link rel="alternate" hreflang="en" href="https://testwithsuraj.github.io/kunji/"/><xhtml:link rel="alternate" hreflang="hi" href="https://testwithsuraj.github.io/kunji/hi/"/></url>
+  <url><loc>https://testwithsuraj.github.io/kunji/features.html</loc><xhtml:link rel="alternate" hreflang="en" href="https://testwithsuraj.github.io/kunji/features.html"/><xhtml:link rel="alternate" hreflang="hi" href="https://testwithsuraj.github.io/kunji/hi/features.html"/></url>
+  <url><loc>https://testwithsuraj.github.io/kunji/hi/features.html</loc><xhtml:link rel="alternate" hreflang="en" href="https://testwithsuraj.github.io/kunji/features.html"/><xhtml:link rel="alternate" hreflang="hi" href="https://testwithsuraj.github.io/kunji/hi/features.html"/></url>
   <url><loc>https://testwithsuraj.github.io/kunji/privacy.html</loc></url>
   <url><loc>https://testwithsuraj.github.io/kunji/terms.html</loc></url>
 </urlset>
