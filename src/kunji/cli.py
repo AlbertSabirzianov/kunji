@@ -984,11 +984,31 @@ def doctor() -> None:
             steps.warn("No providers yet", "run: kunji keys add")
         latest = checkin.check_updates(cfg, force=True) if cfg.get("updates.check", True) else None
         if latest:
-            steps.warn(f"Update available: {latest}", "pip install -U kunji")
+            steps.warn(f"Update available: {latest}", "run: kunji upgrade")
         else:
             steps.ok(f"kunji {__version__}", "up to date or offline")
     if problems:
         raise typer.Exit(1)
+
+
+@app.command()
+def upgrade(
+    check: bool = typer.Option(False, "--check", help="Only check, don't install."),
+) -> None:
+    """Upgrade kunji to the newest version."""
+    from kunji import upgrade as up
+
+    cfg = load_config()
+    with Steps() as steps:
+        latest = steps.run("Checking for a new version", checkin.check_updates, cfg, True,
+                           done=lambda v: f"{v} available" if v else "")
+    if not latest:
+        success(f"You're on the latest version ({__version__})")
+        return
+    if check:
+        hint("  Upgrade with: kunji upgrade")
+        return
+    raise typer.Exit(up.start_upgrade(console))
 
 
 @app.command()

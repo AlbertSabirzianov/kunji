@@ -297,6 +297,8 @@ class Steps:
         if self.live:
             self.live.refresh()
             self.live.__exit__(*exc)
+            if not self.console.is_terminal and self.lines:
+                self.console.print()  # non-terminal Live output ends without a newline
 
     def _finish(self, label: str, ok: bool, note: str = "", style: str | None = None) -> None:
         elapsed = time.monotonic() - self.started

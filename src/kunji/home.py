@@ -12,7 +12,7 @@ import questionary
 import typer
 from rich.text import Text
 
-from kunji import history, keystore, prompts
+from kunji import checkin, history, keystore, prompts, upgrade
 from kunji import usage as ledger
 from kunji.attachments import AttachmentError
 from kunji.catalog import fmt_money
@@ -22,7 +22,7 @@ from kunji.keystore import KeyStoreError
 from kunji.prompts import PromptError
 from kunji.providers import ProviderError
 from kunji.providers.registry import all_specs, key_for, parse_ref
-from kunji.ui import Strip, chip, error, get_console, hint, status_text, success
+from kunji.ui import Capped, Strip, chip, error, get_console, hint, status_text, success
 from kunji.ui.input import PICKER_STYLE
 
 BACK = "__back__"
@@ -57,6 +57,7 @@ class Home:
     def __init__(self) -> None:
         self.console = get_console()
         self.cfg = self._load()
+        checkin.check_updates_in_background(self.cfg)
 
     @staticmethod
     def _load() -> Config:
@@ -99,6 +100,9 @@ class Home:
             ("Today", fmt_money(self.cfg, ledger.spent_today_usd()), 1),
             ("State", status_text("READY" if default else "SETUP"), 4),
         ]))
+        line = upgrade.notice(self.cfg)
+        if line:
+            self.console.print(Capped(line))
 
     # Main loop -------------------------------------------------------------------
     def run(self) -> None:
@@ -137,6 +141,9 @@ class Home:
             questionary.Separator(" "),
             choice("Exit", EXIT),
         ]
+        latest = upgrade.available(self.cfg)
+        if latest:
+            items.insert(len(items) - 2, choice("Upgrade kunji", "upgrade", f"{latest} is ready"))
         if not has_model:
             items.insert(0, choice("Add a provider", "add_provider", "start here"))
         return items
@@ -404,6 +411,11 @@ class Home:
             self.run_safely(cli.config_show)
         elif action == "path":
             self.run_safely(cli.config_path_cmd)
+
+    def do_upgrade(self) -> None:
+        code = upgrade.start_upgrade(self.console)
+        if code == 0 and not upgrade.is_standalone():
+            raise SystemExit(0)  # restart needed to use the new version
 
     def do_doctor(self) -> None:
         from kunji.cli import doctor

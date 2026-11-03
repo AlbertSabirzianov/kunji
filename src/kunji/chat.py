@@ -130,6 +130,12 @@ class ChatSession:
             rows.insert(4, ("Budget", f"{fmt_money(self.cfg, None, display_amount=status.spent)}"
                             f" / {fmt_money(self.cfg, None, display_amount=status.limit)}", 3))
         self.console.print(Strip(rows, title="kunji chat"))
+        if not self.from_menu:
+            from kunji.upgrade import notice
+
+            line = notice(self.cfg)
+            if line:
+                self.console.print(Capped(line))
         if self.resumed and self.record:
             n = self.record.turns
             hint(f"  Resumed chat {self.record.id}: {self.record.title}  "
@@ -182,7 +188,7 @@ class ChatSession:
                  f"{self.record.id}")
         latest = checkin.cached_update_notice()
         if latest:
-            hint(f"  kunji {latest} is available — upgrade: pip install -U kunji")
+            hint(f"  kunji {latest} is available — upgrade: kunji upgrade")
 
     # Sending -------------------------------------------------------------------
     def budget_allows(self, spec: ProviderSpec) -> bool:

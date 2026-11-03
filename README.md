@@ -171,7 +171,7 @@ kunji budget set all 200                      # ₹200/day across every provider
 kunji config set fallback '["groq:llama-3.3-70b-versatile", "ollama:qwen2.5"]'
 ```
 
-All options: [docs/CONFIG.md](docs/CONFIG.md).
+All options: [docs/CONFIG.md](docs/CONFIG.md). Every command with examples: [docs/COMMANDS.md](docs/COMMANDS.md).
 
 ## Free and Pro
 

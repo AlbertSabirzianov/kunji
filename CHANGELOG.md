@@ -6,19 +6,30 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-03
+
 ### Added
-- Interactive home menu: run `kunji` and use the arrow keys for chat, saved chats, prompts,
-  compare, models, providers, usage, budgets and settings. It stays open until you choose
-  Exit, and leaving a chat returns to the menu.
-- Saved prompts: `kunji @commit`, `@explain`, `@review`, `@fix`, `@summarize`, `@translate`,
-  `@name` inside chat, and your own prompts with `kunji prompts add/edit/remove`.
-  `@commit` reads your staged git changes.
-- Chat history: chats are saved locally; `kunji chat -c` / `--resume <id>`, `kunji history`
-  (list, search, show, export, delete), `/history` in chat, `chat.history` setting.
-- File attachments: `/file path` in chat (with path completion), `-f` on `ask` and
-  `@prompts`; text files up to 200 KB each.
-- Landing page at https://testwithsuraj.github.io/kunji/ (`site/`, deployed by GitHub Pages)
-  with live GitHub stars and latest version, plus Privacy policy, Terms of use and a 404 page.
+- **A menu, so you don't have to remember commands.** Run `kunji` and pick what you want
+  with the arrow keys: chat, saved chats, prompts, compare, models, providers, usage,
+  budgets and settings. It stays open until you choose Exit, and leaving a chat brings you
+  back to it. First time? It starts by helping you add a provider.
+- **Saved prompts.** Ready-made instructions you run in one word:
+  `kunji @commit` writes a commit message from your staged git changes, and `@explain`,
+  `@review`, `@fix`, `@summarize` and `@translate` are built in. Use them inside a chat too
+  (`@explain this error …`), or create your own with `kunji prompts add`.
+- **Chats you can come back to.** Every chat is saved on your computer.
+  `kunji chat -c` continues the last one, `kunji history` lists them all, and
+  `kunji history search` finds old answers.
+- **Attach files.** `/file app.py` in a chat (Tab completes the path), or
+  `kunji ask -f app.py "what does this do?"`. Text files up to 200 KB each.
+- **Upgrade notices and `kunji upgrade`.** When a new version is out, kunji tells you at
+  startup and upgrades itself with one command.
+- **Website** at https://testwithsuraj.github.io/kunji/ with install steps, privacy policy
+  and terms.
+
+### Changed
+- Install instructions use `pip install kunji` everywhere.
+- Saved-chat titles use what you typed, not the expanded prompt.
 
 ## [0.1.0] - 2026-11-02
 
