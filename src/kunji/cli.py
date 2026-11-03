@@ -57,6 +57,12 @@ app.add_typer(keys_app, name="keys")
 app.add_typer(budget_app, name="budget")
 app.add_typer(config_app, name="config")
 app.add_typer(providers_app, name="providers")
+prompts_app = typer.Typer(help="Saved prompts you run with kunji @name.",
+                          invoke_without_command=True)
+history_app = typer.Typer(help="Saved chats: list, search, show, export, delete.",
+                          invoke_without_command=True)
+app.add_typer(prompts_app, name="prompts")
+app.add_typer(history_app, name="history")
 
 console = get_console()
 
@@ -109,9 +115,16 @@ def root(
         False, "--version", "-V", callback=version_callback, is_eager=True,
         help="Show the version and exit."),
 ) -> None:
-    """Run [bold]kunji[/] with no command to start chatting."""
+    """Run [bold]kunji[/] with no command to open the interactive menu."""
     if ctx.invoked_subcommand is None:
-        chat(model=model, system=None)
+        if model:
+            chat(model=model, system=None, resume=None, last=False)
+        elif sys.stdin.isatty() and sys.stdout.isatty():
+            from kunji.home import run_home
+
+            run_home()
+        else:
+            welcome(load_config())
 
 
 def welcome(cfg: Config) -> None:
@@ -131,49 +144,59 @@ def welcome(cfg: Config) -> None:
 def chat(
     model: str = typer.Option(None, "--model", "-m", help="provider:model, e.g. openai:gpt-4o"),
     system: str = typer.Option(None, "--system", "-s", help="System prompt for this session."),
+    resume: str = typer.Option(None, "--resume", "-r", help="Continue a saved chat by its id."),
+    last: bool = typer.Option(False, "--continue", "-c", help="Continue your most recent chat."),
 ) -> None:
     """Interactive chat with streaming answers, /commands and a live cost meter."""
+    from kunji import history
     from kunji.chat import ChatSession
 
     cfg = load_config()
-    if not model and not cfg.get("default_model"):
+    record = None
+    if resume:
+        record = history.find(resume)
+    elif last:
+        record = history.latest()
+        if record is None:
+            hint("No saved chats yet — starting a new one.")
+    if not model and not cfg.get("default_model") and record is None:
         welcome(cfg)
         raise typer.Exit()
     require_interactive("Chat", 'For scripts use: kunji ask "your question"')
-    ChatSession(cfg, model, system).run()
+    ChatSession(cfg, model, system, resume=record).run()
 
 
-@app.command()
-def ask(
-    prompt: list[str] = typer.Argument(None, help="Your question. Piped input is added below it."),
-    model: str = typer.Option(None, "--model", "-m", help="provider:model"),
-    system: str = typer.Option(None, "--system", "-s", help="System prompt."),
-    raw: bool = typer.Option(False, "--raw", help="Plain text output (default when piped)."),
-) -> None:
-    """One question, one answer. Works with pipes: [dim]npm test 2>&1 | kunji ask "fix this"[/]"""
-    from kunji.engine import stream_turn
+def read_piped() -> str:
+    if sys.stdin.isatty():
+        return ""
+    piped = sys.stdin.read()
+    if len(piped) > 200_000:
+        warn("Input is large; only the last 200k characters were sent.")
+        piped = piped[-200_000:]
+    return piped
 
-    cfg = load_config()
-    question = " ".join(prompt or []).strip()
-    piped = ""
-    if not sys.stdin.isatty():
-        piped = sys.stdin.read()
-        if len(piped) > 200_000:
-            warn("Input is large; only the last 200k characters were sent.")
-            piped = piped[-200_000:]
-    if not question and not piped.strip():
-        error("Nothing to ask.", 'Usage: kunji ask "your question"')
-        raise typer.Exit(2)
+
+def combine(question: str, piped: str, files: list[str] | None) -> str:
+    from kunji import attachments
+
     content = question
     if piped.strip():
         content = f"{question}\n\n```\n{piped.rstrip()}\n```" if question else piped
+    if files:
+        content = attachments.with_files(content, attachments.load_many(files))
+    return content
+
+
+def one_shot(cfg: Config, content: str, model: str | None, system: str | None,
+             raw: bool) -> None:
+    from kunji.engine import stream_turn
+
     spec, model_id = resolve_ref(cfg, model)
     sys_prompt = system if system is not None else str(cfg.get("chat.system_prompt") or "")
     messages = [Message("user", content)]
-    plain = raw or not sys.stdout.isatty()
-    if plain:
-        result = stream_turn(cfg, spec, model_id, messages, sys_prompt,
-                             on_text=lambda t: (sys.stdout.write(t), sys.stdout.flush()))
+    if raw or not sys.stdout.isatty():
+        stream_turn(cfg, spec, model_id, messages, sys_prompt,
+                    on_text=lambda t: (sys.stdout.write(t), sys.stdout.flush()))
         sys.stdout.write("\n")
         return
     from rich.live import Live
@@ -186,6 +209,47 @@ def ask(
                              on_text=lambda t: setattr(view, "text", view.text + t))
     console.print(Capped(answer(result.text)))
     console.print(meta_line(result, cfg))
+
+
+FILE_OPTION = typer.Option(None, "--file", "-f", help="Attach a text file (repeat for more).")
+
+
+@app.command()
+def ask(
+    prompt: list[str] = typer.Argument(None, help="Your question. Piped input is added below it."),
+    model: str = typer.Option(None, "--model", "-m", help="provider:model"),
+    system: str = typer.Option(None, "--system", "-s", help="System prompt."),
+    file: list[str] = FILE_OPTION,
+    raw: bool = typer.Option(False, "--raw", help="Plain text output (default when piped)."),
+) -> None:
+    """One question, one answer. Works with pipes: [dim]npm test 2>&1 | kunji ask "fix this"[/]"""
+    cfg = load_config()
+    question = " ".join(prompt or []).strip()
+    piped = read_piped()
+    if not question and not piped.strip() and not file:
+        error("Nothing to ask.", 'Usage: kunji ask "your question"')
+        raise typer.Exit(2)
+    one_shot(cfg, combine(question, piped, file), model, system, raw)
+
+
+@app.command("run-prompt", hidden=True)
+def run_prompt(
+    name: str = typer.Argument(..., help="Prompt name, e.g. commit"),
+    text: list[str] = typer.Argument(None),
+    model: str = typer.Option(None, "--model", "-m", help="provider:model"),
+    file: list[str] = FILE_OPTION,
+    raw: bool = typer.Option(False, "--raw", help="Plain text output."),
+) -> None:
+    """Run a saved prompt. Normally called as: kunji @name [text]"""
+    from kunji import prompts
+
+    cfg = load_config()
+    prompt = prompts.get(name)
+    user_input = combine(" ".join(text or []).strip(), read_piped(), file)
+    content = prompts.render(prompt, user_input)
+    if sys.stdout.isatty() and not raw:
+        hint(f"  @{prompt.name}: {prompt.description}")
+    one_shot(cfg, content, model, None, raw)
 
 
 @app.command()
@@ -531,6 +595,216 @@ def providers_remove(provider_id: str = typer.Argument(...)) -> None:
     success(f"Removed {provider_id}")
 
 
+# Saved prompts ------------------------------------------------------------------
+
+
+@prompts_app.callback()
+def prompts_list(ctx: typer.Context) -> None:
+    """List saved prompts. Run one with: kunji @name [text]"""
+    if ctx.invoked_subcommand:
+        return
+    from kunji import prompts
+
+    rows = [[f"@{p.name}", p.description, "built-in" if p.builtin else "yours"]
+            for p in prompts.all_prompts().values()]
+    console.print(ResponsiveTable([
+        Column("Prompt", min_width=8), Column("What it does", min_width=12, ratio=1),
+        Column("Source", priority=2, min_width=8),
+    ], rows, title="Saved prompts", compact=True))
+    hint('  Run: kunji @explain "text"   Pipe: git diff | kunji @review   '
+         "New: kunji prompts add <name>")
+
+
+@prompts_app.command("show")
+def prompts_show(name: str = typer.Argument(..., help="Prompt name")) -> None:
+    """Print a prompt's template."""
+    from kunji import prompts
+
+    prompt = prompts.get(name)
+    console.print(Frame(Text(prompt.template), title=f"@{prompt.name}"))
+    hint(f"  {prompt.description}")
+
+
+def _edit_text(initial: str) -> str | None:
+    require_interactive("Editing a prompt", "Use: kunji prompts add <name> --text \"...\"")
+    return typer.edit(initial, extension=".md")
+
+
+@prompts_app.command("add")
+def prompts_add(
+    name: str = typer.Argument(..., help="Short name, e.g. standup"),
+    text: str = typer.Option(None, "--text", "-t", help="The prompt. Use {input} for your text."),
+    description: str = typer.Option("", "--description", "-d", help="One line shown in lists."),
+) -> None:
+    """Create your own prompt (opens your editor if --text is not given)."""
+    from kunji import prompts
+
+    name = name.lstrip("@").lower()
+    if prompts.path_for(name).exists():
+        error(f"@{name} already exists.", f"Change it with: kunji prompts edit {name}")
+        raise typer.Exit(1)
+    template = text
+    if template is None:
+        starter = ("---\ndescription: What this prompt does\n---\n\n"
+                   "Write your instructions here. {input} is replaced by the text you give.\n\n"
+                   "{input}\n")
+        edited = _edit_text(starter)
+        if not edited:
+            error("Nothing saved.")
+            raise typer.Exit(1)
+        parsed = prompts._parse_file(name, edited)
+        template, description = parsed.template, description or parsed.description
+    path = prompts.save(name, template, description)
+    success(f"Saved @{name}", str(path))
+    hint(f'  Try it: kunji @{name} "some text"')
+
+
+@prompts_app.command("edit")
+def prompts_edit(name: str = typer.Argument(..., help="Prompt name")) -> None:
+    """Edit a prompt in your editor (editing a built-in saves your own copy)."""
+    from kunji import prompts
+
+    prompt = prompts.get(name)
+    edited = _edit_text(prompts.template_file(prompt))
+    if not edited:
+        hint("No changes.")
+        return
+    parsed = prompts._parse_file(prompt.name, edited)
+    path = prompts.save(prompt.name, parsed.template, parsed.description)
+    success(f"Saved @{prompt.name}", str(path))
+
+
+@prompts_app.command("remove")
+def prompts_remove(name: str = typer.Argument(..., help="Prompt name")) -> None:
+    """Delete one of your prompts (built-ins come back if you remove your copy)."""
+    from kunji import prompts
+
+    name = name.lstrip("@").lower()
+    if prompts.remove(name):
+        success(f"Removed @{name}")
+    elif name in prompts.BUILTIN:
+        hint(f"@{name} is built in and can't be removed. "
+             f"Edit it instead: kunji prompts edit {name}")
+    else:
+        error(f"No prompt named @{name}.")
+        raise typer.Exit(1)
+
+
+@prompts_app.command("path")
+def prompts_path() -> None:
+    """Show the folder where your prompts are stored."""
+    from kunji import prompts
+
+    console.print(str(prompts.prompts_dir()))
+
+
+# Chat history -------------------------------------------------------------------
+
+
+def _history_table(records, title: str, empty: str, snippets: dict | None = None) -> None:
+    rows = []
+    for r in records:
+        rows.append([r.id, (snippets or {}).get(r.id, r.title), r.model.split(":", 1)[-1],
+                     str(r.turns), time.strftime("%d %b %H:%M", time.localtime(r.updated))])
+    console.print(ResponsiveTable([
+        Column("ID", min_width=6),
+        Column("Title" if not snippets else "Match", min_width=12, ratio=1),
+        Column("Model", priority=2, min_width=8),
+        Column("Msgs", priority=3, min_width=4, justify="right"),
+        Column("Updated", priority=1, min_width=12),
+    ], rows, title=title, compact=True, empty=empty))
+
+
+@history_app.callback()
+def history_list(
+    ctx: typer.Context,
+    limit: int = typer.Option(20, "--limit", "-n", help="How many chats to show."),
+) -> None:
+    """Your saved chats, newest first. Continue one with: kunji chat --resume <id>"""
+    if ctx.invoked_subcommand:
+        return
+    from kunji import history
+
+    cfg = load_config()
+    records = history.list_all()
+    _history_table(records[:limit], "Saved chats", "No saved chats yet. Start one: kunji chat")
+    if len(records) > limit:
+        hint(f"  …and {len(records) - limit} older. Show more with --limit {len(records)}")
+    if not cfg.get("chat.history", True):
+        warn("Saving new chats is turned off.", "Turn on: kunji config set chat.history true")
+    elif records:
+        hint("  Continue: kunji chat --resume <id>   or the latest: kunji chat -c")
+
+
+@history_app.command("search")
+def history_search(text: list[str] = typer.Argument(..., help="Words to look for.")) -> None:
+    """Search titles and messages of saved chats."""
+    from kunji import history
+
+    query = " ".join(text)
+    hits = history.search(query)
+    _history_table([h.record for h in hits], f"Chats matching “{query}”", "Nothing matched.",
+                   snippets={h.record.id: h.snippet for h in hits})
+
+
+@history_app.command("show")
+def history_show(chat_id: str = typer.Argument(..., help="Chat id (first characters are enough).")
+                 ) -> None:
+    """Print a saved chat."""
+    from kunji import history
+
+    record = history.find(chat_id)
+    console.print(Strip([("Chat", record.id, 0), ("Model", record.model, 1),
+                         ("Messages", str(len(record.messages)), 2)], title=record.title))
+    for m in record.messages:
+        if m.get("role") == "user":
+            console.print(Capped(Text.assemble(("› ", "k.accent"), str(m.get("content", "")))))
+        else:
+            console.print(Capped(answer(str(m.get("content", "")))))
+        console.print()
+
+
+@history_app.command("export")
+def history_export(
+    chat_id: str = typer.Argument(..., help="Chat id"),
+    output: str = typer.Option(None, "--output", "-o", help="File to write (default: <id>.md)"),
+) -> None:
+    """Save a chat as a markdown file."""
+    from pathlib import Path
+
+    from kunji import history
+
+    record = history.find(chat_id)
+    path = Path(output or f"kunji-chat-{record.id}.md")
+    path.write_text(history.to_markdown(record), encoding="utf-8")
+    success(f"Exported to {path}")
+
+
+@history_app.command("delete")
+def history_delete(
+    chat_id: str = typer.Argument(None, help="Chat id to delete."),
+    everything: bool = typer.Option(False, "--all", help="Delete every saved chat."),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Don't ask for confirmation."),
+) -> None:
+    """Delete one saved chat, or all of them."""
+    from kunji import history
+
+    if everything:
+        if not yes:
+            require_interactive("Confirmation", "Use: kunji history delete --all --yes")
+            from kunji.ui.input import confirm
+
+            if not confirm("Delete ALL saved chats? This can't be undone.", default=False):
+                raise typer.Exit(1)
+        success(f"Deleted {history.delete_all()} chats")
+        return
+    if not chat_id:
+        error("Which chat?", "Usage: kunji history delete <id>   or   --all")
+        raise typer.Exit(2)
+    record = history.delete(chat_id)
+    success(f"Deleted chat {record.id}", record.title)
+
+
 # Usage & budget -----------------------------------------------------------------
 
 
@@ -710,7 +984,7 @@ def doctor() -> None:
             steps.warn("No providers yet", "run: kunji keys add")
         latest = checkin.check_updates(cfg, force=True) if cfg.get("updates.check", True) else None
         if latest:
-            steps.warn(f"Update available: {latest}", "pipx upgrade kunji")
+            steps.warn(f"Update available: {latest}", "pip install -U kunji")
         else:
             steps.ok(f"kunji {__version__}", "up to date or offline")
     if problems:
@@ -733,10 +1007,28 @@ def version() -> None:
 # Entry point --------------------------------------------------------------------
 
 
+def _rewrite_prompt_shortcut(argv: list[str]) -> list[str]:
+    """`kunji @commit ...` → `kunji run-prompt commit ...`"""
+    if len(argv) > 1 and argv[1].startswith("@") and len(argv[1]) > 1:
+        return [argv[0], "run-prompt", argv[1][1:], *argv[2:]]
+    return argv
+
+
 def main() -> None:
+    from kunji.attachments import AttachmentError
+    from kunji.history import HistoryError
+    from kunji.prompts import PromptError
+
     started = time.monotonic()
+    sys.argv = _rewrite_prompt_shortcut(sys.argv)
     try:
         app()
+    except (PromptError, HistoryError) as exc:
+        error(str(exc), exc.hint)
+        sys.exit(1)
+    except AttachmentError as exc:
+        error(str(exc))
+        sys.exit(1)
     except ProviderError as exc:
         error(exc.message, exc.hint)
         sys.exit(1)

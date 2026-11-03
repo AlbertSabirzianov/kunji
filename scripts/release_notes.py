@@ -17,8 +17,11 @@ ROOT = Path(__file__).resolve().parent.parent
 INSTALL = """## Install
 
 ```bash
-pipx install kunji          # Windows, macOS, Linux (Python 3.11+)
+pip install kunji           # Windows, macOS, Linux (Python 3.11+)
 ```
+
+If `pip` isn't found: `python -m pip install kunji` (Windows) or
+`python3 -m pip install kunji` (macOS/Linux). Upgrading? `pip install -U kunji`.
 
 No Python on Windows? Download **kunji-windows-x64.exe** below, rename it to `kunji.exe`
 and run it from a terminal. Linux: **kunji-linux-x64**.

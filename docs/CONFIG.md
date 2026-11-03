@@ -10,6 +10,7 @@ fallback = ["groq:llama-3.3-70b-versatile", "ollama:qwen2.5"]
 [chat]
 system_prompt = ""        # default system prompt
 max_tokens = 4096         # max tokens per answer
+history = true            # save chats on this computer (kunji history)
 
 [display]
 currency = "USD"          # USD, INR, EUR, GBP, JPY or any code

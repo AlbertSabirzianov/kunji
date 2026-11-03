@@ -18,7 +18,7 @@ from kunji.constants import APP_NAME
 DEFAULTS: dict[str, Any] = {
     "default_model": "",
     "fallback": [],
-    "chat": {"system_prompt": "", "max_tokens": 4096},
+    "chat": {"system_prompt": "", "max_tokens": 4096, "history": True},
     "display": {"currency": "USD", "usd_rate": 1.0, "max_width": 100},
     "budget": {"daily": {}},
     "updates": {"check": True},

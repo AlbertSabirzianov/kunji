@@ -9,9 +9,10 @@ Public roadmap. Want something? Open a feature request — upvotes (👍) decide
 
 ## 🔜 0.2 — Everyday comfort
 - [ ] `winget`, Scoop and Homebrew packages
-- [ ] Saved prompt shortcuts: `kunji @commit`, `@explain`, `@translate`
-- [ ] Attach files and images: `/file path`, drag-and-drop paths
-- [ ] Conversation history: list, resume and search past chats
+- [x] Saved prompt shortcuts: `kunji @commit`, `@explain`, `@translate`
+- [x] Attach text files: `/file path` (images later)
+- [x] Conversation history: list, resume and search past chats
+- [x] Interactive home menu
 - [ ] `/copy` last answer to clipboard
 - [ ] Light-terminal theme and `display.theme` setting
 

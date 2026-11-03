@@ -7,7 +7,8 @@ from collections.abc import Callable, Iterable
 
 import questionary
 from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.completion import Completer, Completion, PathCompleter
+from prompt_toolkit.document import Document
 from prompt_toolkit.history import FileHistory, InMemoryHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.styles import Style
@@ -20,10 +21,13 @@ SLASH_COMMANDS: dict[str, str] = {
     "/models": "List models of the current provider (/models <filter>)",
     "/system": "Show or set the system prompt",
     "/cost": "Cost of this session and today",
+    "/file": "Attach a text file to your next message (/file clear to remove)",
+    "/prompts": "List saved prompts; use one with @name <text>",
+    "/history": "Recent saved chats (/history <text> to search)",
     "/retry": "Regenerate the last answer",
-    "/clear": "Start a fresh conversation",
-    "/save": "Save the conversation as markdown",
-    "/exit": "Quit kunji",
+    "/new": "Start a new conversation",
+    "/save": "Export the conversation as a markdown file",
+    "/exit": "Leave the chat (back to the menu if you came from it)",
 }
 
 PROMPT_STYLE = Style.from_dict(
@@ -58,12 +62,26 @@ PICKER_STYLE = questionary.Style(
 
 
 class SlashCompleter(Completer):
-    def __init__(self, model_refs: Callable[[], Iterable[str]]):
+    def __init__(self, model_refs: Callable[[], Iterable[str]],
+                 prompt_names: Callable[[], Iterable[str]] | None = None):
         self.model_refs = model_refs
+        self.prompt_names = prompt_names or (lambda: [])
+        self.paths = PathCompleter(expanduser=True)
 
     def get_completions(self, document, complete_event):
         text = document.text_before_cursor
-        if not text.startswith("/") or "\n" in text:
+        if "\n" in text:
+            return
+        if text.startswith("@") and " " not in text:
+            for name in self.prompt_names():
+                if name.startswith(text[1:].lower()):
+                    yield Completion(f"@{name}", start_position=-len(text))
+            return
+        if text.startswith("/file ") and text[6:] != "clear":
+            sub = Document(text[6:], len(text) - 6)
+            yield from self.paths.get_completions(sub, complete_event)
+            return
+        if not text.startswith("/"):
             return
         if " " not in text:
             for cmd, desc in SLASH_COMMANDS.items():
@@ -101,14 +119,15 @@ def _bindings() -> KeyBindings:
 
 
 def chat_prompt(history_file: str | None, model_refs: Callable[[], Iterable[str]],
-                toolbar: Callable[[], str]) -> PromptSession:
+                toolbar: Callable[[], str],
+                prompt_names: Callable[[], Iterable[str]] | None = None) -> PromptSession:
     try:
         history = FileHistory(history_file) if history_file else InMemoryHistory()
     except OSError:
         history = InMemoryHistory()
     return PromptSession(
         history=history,
-        completer=SlashCompleter(model_refs),
+        completer=SlashCompleter(model_refs, prompt_names),
         complete_while_typing=True,
         key_bindings=_bindings(),
         multiline=True,

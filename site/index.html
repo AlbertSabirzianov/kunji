@@ -34,10 +34,10 @@
       <h1><span>Your keys.</span> <span>Every AI model.</span> <span>One terminal.</span></h1>
       <p class="lede">kunji is a free, open-source chat app for your terminal. Bring your own API key from any provider, switch models mid-conversation, and see what every reply costs.</p>
       <div class="install">
-        <code id="cmd">pipx install kunji</code>
-        <button class="copy" type="button" data-copy="pipx install kunji">Copy</button>
+        <code id="cmd">pip install kunji</code>
+        <button class="copy" type="button" data-copy="pip install kunji">Copy</button>
       </div>
-      <p class="alt">No Python on Windows? <a href="https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe">Download kunji.exe</a></p>
+      <p class="alt">If <code>pip</code> isn't found, use <code>python -m pip install kunji</code>.<br>No Python on Windows? <a href="https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe">Download kunji.exe</a></p>
       <p class="facts"><a href="https://github.com/testwithsuraj/kunji/releases/latest" data-version>Version 0.1.0</a> <span>Free and open source</span> <span>Windows, macOS, Linux</span></p>
     </div>
 
@@ -61,7 +61,9 @@
         <div><dt>Daily budgets</dt><dd>Set a limit per provider or overall. kunji warns at 80% and stops at 100%, so a long night never turns into a surprise bill.</dd></div>
         <div><dt>Compare models side by side</dt><dd><code>kunji compare "…"</code> sends one prompt to several models at once and shows which was fastest and cheapest.</dd></div>
         <div><dt>Automatic fallback</dt><dd>When a provider is rate-limited or down, kunji retries on the next model you picked.</dd></div>
-        <div><dt>Works with pipes</dt><dd><code>npm test 2>&amp;1 | kunji ask "why does this fail?"</code> sends any command's output straight to a model.</dd></div>
+        <div><dt>Saved prompts</dt><dd><code>kunji @commit</code> writes a commit message from your staged changes. <code>@explain</code>, <code>@review</code> and <code>@translate</code> are built in, and you can add your own.</dd></div>
+        <div><dt>Chats you can come back to</dt><dd>Every conversation is saved on your computer. Continue the last one with <code>kunji chat -c</code>, or search them all.</dd></div>
+        <div><dt>Works with pipes and files</dt><dd><code>npm test 2>&amp;1 | kunji ask "why does this fail?"</code> sends any command's output to a model. Attach files with <code>/file app.py</code>.</dd></div>
       </dl>
     </div>
   </section>
@@ -98,7 +100,7 @@
       <h2>Start in a minute</h2>
       <p class="intro">Needs Python 3.11 or newer. On Windows you can use the standalone <a href="https://github.com/testwithsuraj/kunji/releases/latest">kunji.exe</a> instead.</p>
       <ol class="steps">
-        <li><h3>Install</h3><p>pipx keeps kunji in its own space, so it never clashes with your other tools.</p><pre>pipx install kunji</pre></li>
+        <li><h3>Install</h3><p>Works on Windows, macOS and Linux. If <code>pip</code> isn't found, run <code>python -m pip install kunji</code>.</p><pre>pip install kunji</pre></li>
         <li><h3>Add a key</h3><p>Pick a provider, paste your key. kunji checks it works before saving it.</p><pre>kunji keys add</pre></li>
         <li><h3>Chat</h3><p>Type <code>/</code> to see every command, <kbd>ctrl+d</kbd> to quit.</p><pre>kunji</pre></li>
       </ol>

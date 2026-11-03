@@ -21,6 +21,11 @@ server.
 - API keys — in your OS keychain.
 - Settings, usage ledger, chat input history, caches — in your user folders
   (`kunji config path`). Delete them any time.
+- Saved chats — in `data/chats/` (one file per chat). Delete with `kunji history delete`,
+  or stop saving with `kunji config set chat.history false`.
+- Your saved prompts — Markdown files in the `prompts` folder (`kunji prompts path`).
+- Files you attach with `/file` or `-f` are read locally and sent only to the provider you
+  are chatting with. `@commit` runs `git diff` on your computer; nothing else is executed.
 
 ## The install id
 

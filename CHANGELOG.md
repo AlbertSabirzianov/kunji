@@ -7,6 +7,16 @@ All notable changes are listed here. The format follows
 ## [Unreleased]
 
 ### Added
+- Interactive home menu: run `kunji` and use the arrow keys for chat, saved chats, prompts,
+  compare, models, providers, usage, budgets and settings. It stays open until you choose
+  Exit, and leaving a chat returns to the menu.
+- Saved prompts: `kunji @commit`, `@explain`, `@review`, `@fix`, `@summarize`, `@translate`,
+  `@name` inside chat, and your own prompts with `kunji prompts add/edit/remove`.
+  `@commit` reads your staged git changes.
+- Chat history: chats are saved locally; `kunji chat -c` / `--resume <id>`, `kunji history`
+  (list, search, show, export, delete), `/history` in chat, `chat.history` setting.
+- File attachments: `/file path` in chat (with path completion), `-f` on `ask` and
+  `@prompts`; text files up to 200 KB each.
 - Landing page at https://testwithsuraj.github.io/kunji/ (`site/`, deployed by GitHub Pages)
   with live GitHub stars and latest version, plus Privacy policy, Terms of use and a 404 page.
 

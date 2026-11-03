@@ -47,6 +47,13 @@ You pay each provider directly. Kunji never sees your bill, your keys or your pr
 - **Keys in your OS keychain** (Windows Credential Manager, macOS Keychain, Secret Service),
   never in a plain-text file.
 - **Pipes.** `npm test 2>&1 | kunji ask "why is this failing?"`
+- **Saved prompts.** `kunji @commit` writes a commit message from your staged changes;
+  `@explain`, `@review`, `@fix`, `@summarize`, `@translate` — or make your own.
+- **Chat history.** Every chat is saved on your computer. Continue with `kunji chat -c`,
+  search with `kunji history search`.
+- **Attach files.** `/file app.py` in chat, or `kunji ask -f app.py "what does this do?"`.
+- **Menu or commands.** Run `kunji` for an arrow-key menu that stays open until you exit;
+  every action is also a command for scripts.
 - **Looks professional.** Minimal monochrome design, responsive to any terminal size.
 
 ## Install
@@ -54,27 +61,33 @@ You pay each provider directly. Kunji never sees your bill, your keys or your pr
 Requires Python 3.11+.
 
 ```bash
-pipx install kunji        # recommended
-# or
-uv tool install kunji
-# or
-python -m pip install --user kunji
+pip install kunji
 ```
 
-| System | Easiest way |
+If `pip` isn't found or shows an error, run it through Python instead:
+
+| System | Command |
 | --- | --- |
-| Windows | `pipx install kunji`, or download `kunji-windows-x64.exe` from the [latest release](https://github.com/testwithsuraj/kunji/releases/latest) (no Python needed) |
-| macOS | `pipx install kunji` |
-| Linux | `pipx install kunji`, or download `kunji-linux-x64` from the latest release |
+| Windows | `python -m pip install kunji` (or `py -m pip install kunji`) |
+| macOS | `python3 -m pip install kunji` |
+| Linux | `python3 -m pip install --user kunji` (if it says "externally managed", use `pipx install kunji`) |
+
+No Python on Windows? Download `kunji-windows-x64.exe` from the
+[latest release](https://github.com/testwithsuraj/kunji/releases/latest) and run it from a terminal.
+Linux: `kunji-linux-x64`.
+
+Update later with `pip install -U kunji`. If the `kunji` command isn't found after installing,
+`python -m kunji` always works.
 
 `winget`, Scoop and Homebrew packages are on the [roadmap](ROADMAP.md).
 
 ## Quick start
 
 ```bash
-kunji keys add            # pick a provider, paste your key, choose a default model
-kunji                     # start chatting
+kunji                     # opens the menu: add a provider, then start a chat
 ```
+
+Prefer commands? `kunji keys add`, then `kunji chat`.
 
 Free and local? Install [Ollama](https://ollama.com), then `kunji keys add ollama`.
 
@@ -82,8 +95,12 @@ Free and local? Install [Ollama](https://ollama.com), then `kunji keys add ollam
 
 | Command | What it does |
 | --- | --- |
-| `kunji` / `kunji chat` | Interactive chat (`-m provider:model`, `-s "system prompt"`) |
-| `kunji ask "…"` | One-shot answer. Reads piped input. `--raw` for scripts |
+| `kunji` | Interactive menu (stays open until you choose Exit) |
+| `kunji chat` | Chat (`-m provider:model`, `-s "system prompt"`, `-c` continue last, `--resume <id>`) |
+| `kunji ask "…"` | One-shot answer. Reads piped input. `-f file` to attach, `--raw` for scripts |
+| `kunji @name "…"` | Run a saved prompt, e.g. `kunji @commit`, `git diff \| kunji @review` |
+| `kunji prompts` | List prompts; `add`, `edit`, `show`, `remove` your own |
+| `kunji history` | Saved chats; `search`, `show`, `export`, `delete` |
 | `kunji compare "…" -m a -m b` | Same prompt to several models, side by side |
 | `kunji keys add [provider]` | Add or replace a key (verified, then saved to the keychain) |
 | `kunji keys list` / `test` / `remove` | Manage keys (always masked) |
@@ -102,8 +119,11 @@ Free and local? Install [Ollama](https://ollama.com), then `kunji keys add ollam
 | `/model provider:model` | Switch model (tab completes) |
 | `/models [filter]` | List models of the current provider |
 | `/cost` | Session and today's cost |
+| `/file path` | Attach a text file to your next message (tab completes paths) |
+| `@name text` | Use a saved prompt, e.g. `@explain this error` |
+| `/prompts` · `/history` | List saved prompts · recent chats |
 | `/system …` | Set the system prompt |
-| `/retry` · `/clear` · `/save [file]` | Regenerate · new conversation · export markdown |
+| `/retry` · `/new` · `/save [file]` | Regenerate · new conversation · export markdown |
 | `enter` · `alt+enter` / `ctrl+j` | Send · new line |
 | `ctrl+c` · `ctrl+d` | Stop the reply · quit |
 

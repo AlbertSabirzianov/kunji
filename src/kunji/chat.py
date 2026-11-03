@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import json
 import time
+from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 
 from rich.live import Live
 from rich.text import Text
 
-from kunji import checkin, usage
+from kunji import attachments, checkin, history, prompts, usage
 from kunji.catalog import Catalog, fmt_money, refresh_in_background
 from kunji.config import Config, cache_dir, data_dir, ensure_dir
 from kunji.engine import TurnResult, fallback_chain, stream_turn
@@ -76,12 +77,23 @@ def configured_refs(cfg: Config) -> list[str]:
 
 
 class ChatSession:
-    def __init__(self, cfg: Config, model_ref: str | None = None, system: str | None = None):
+    def __init__(self, cfg: Config, model_ref: str | None = None, system: str | None = None,
+                 resume: history.ChatRecord | None = None, from_menu: bool = False):
         self.cfg = cfg
+        self.from_menu = from_menu
         self.console = get_console()
-        self.spec, self.model = resolve_ref(cfg, model_ref)
-        self.system = system if system is not None else str(cfg.get("chat.system_prompt") or "")
-        self.messages: list[Message] = []
+        self.spec, self.model = resolve_ref(cfg, model_ref or (resume.model if resume else None))
+        if system is None:
+            system = resume.system if resume else str(cfg.get("chat.system_prompt") or "")
+        self.system = system
+        self.record = resume
+        self.resumed = resume is not None
+        self.messages: list[Message] = [
+            Message(m["role"], m["content"]) for m in (resume.messages if resume else [])
+            if m.get("role") in ("user", "assistant") and m.get("content")
+        ]
+        self.pending: list[attachments.Attachment] = []
+        self.save_history = bool(cfg.get("chat.history", True))
         self.session_cost = 0.0
         self.unpriced = 0
         self.turns = 0
@@ -118,8 +130,21 @@ class ChatSession:
             rows.insert(4, ("Budget", f"{fmt_money(self.cfg, None, display_amount=status.spent)}"
                             f" / {fmt_money(self.cfg, None, display_amount=status.limit)}", 3))
         self.console.print(Strip(rows, title="kunji chat"))
+        if self.resumed and self.record:
+            n = self.record.turns
+            hint(f"  Resumed chat {self.record.id}: {self.record.title}  "
+                 f"({n} earlier message{'s' if n != 1 else ''})")
+            last = next((m for m in reversed(self.messages) if m.role == "assistant"), None)
+            if last:
+                import re
+
+                plain = re.sub(r"```[\s\S]*?```", " [code] ", last.content)
+                plain = re.sub(r"[*_`#>]+", "", plain)
+                preview = " ".join(plain.split())
+                hint("  Last answer: " + (preview[:140] + "…" if len(preview) > 140 else preview))
         self.console.print(Capped(keys_line([
-            ("enter", "send"), ("alt+enter", "newline"), ("/", "commands"), ("ctrl+d", "quit"),
+            ("enter", "send"), ("alt+enter", "newline"), ("/", "commands"),
+            ("ctrl+d", "back to menu" if self.from_menu else "quit"),
         ])))
         self.console.print()
 
@@ -127,7 +152,8 @@ class ChatSession:
     def run(self) -> None:
         self.header()
         history = ensure_dir(data_dir()) / "history.txt"
-        session = chat_prompt(str(history), lambda: configured_refs(self.cfg), self.toolbar)
+        session = chat_prompt(str(history), lambda: configured_refs(self.cfg), self.toolbar,
+                              prompt_names=lambda: list(prompts.all_prompts()))
         while True:
             try:
                 text = session.prompt(PROMPT_MESSAGE)
@@ -142,15 +168,21 @@ class ChatSession:
                 if self.command(text) == "exit":
                     break
                 continue
-            self.send(text)
+            if text.startswith("@") and len(text) > 1 and not text.startswith("@@"):
+                self.run_prompt(text)
+                continue
+            self.send(text.removeprefix("@") if text.startswith("@@") else text)
         self.goodbye()
 
     def goodbye(self) -> None:
         spent = fmt_money(self.cfg, self.session_cost)
         self.console.print(Text(f"  {self.turns} replies · {spent} this session", style="k.dim"))
+        if self.record and self.save_history and self.turns:
+            hint(f"  Saved as chat {self.record.id}. Continue later: kunji chat --resume "
+                 f"{self.record.id}")
         latest = checkin.cached_update_notice()
         if latest:
-            hint(f"  kunji {latest} is available — upgrade: pipx upgrade kunji")
+            hint(f"  kunji {latest} is available — upgrade: pip install -U kunji")
 
     # Sending -------------------------------------------------------------------
     def budget_allows(self, spec: ProviderSpec) -> bool:
@@ -167,19 +199,39 @@ class ChatSession:
             warn(f"80% of today's budget used for {scope}: {spent} / {limit}")
         return True
 
-    def send(self, text: str, already_added: bool = False) -> None:
+    def run_prompt(self, line: str) -> None:
+        name, _, rest = line[1:].partition(" ")
+        try:
+            prompt = prompts.get(name)
+            content = prompts.render(prompt, rest)
+        except prompts.PromptError as exc:
+            error(str(exc), exc.hint)
+            return
+        hint(f"  Using @{prompt.name}: {prompt.description}")
+        self.send(content, title=line)
+
+    def send(self, text: str, already_added: bool = False, title: str | None = None) -> None:
         if not self.budget_allows(self.spec):
             return
+        attached = list(self.pending)
         if not already_added:
-            self.messages.append(Message("user", text))
+            self.messages.append(Message("user", attachments.with_files(text, attached)))
         result = self._answer_with_fallback()
         if result is None:
             self.messages.pop()
             hint("  Your message was not sent. Press ↑ to edit and try again.")
             return
+        if attached:
+            self.pending.clear()
+        if self.record is None and self.save_history:
+            self.record = history.new_record(self.ref, self.system)
+            names = ", ".join(a.path.name for a in attached)
+            self.record.title = history.make_title(
+                title or (text if text.strip() else f"Files: {names}"))
         if result.text:
             self.messages.append(Message("assistant", result.text))
             self.console.print(Capped(answer(result.text)))
+            self.save()
         self.console.print(meta_line(result, self.cfg))
         self.console.print()
         self.turns += 1
@@ -210,6 +262,19 @@ class ChatSession:
                 return None
         return None
 
+    def save(self) -> None:
+        if not self.save_history or not self.messages:
+            return
+        if self.record is None:
+            self.record = history.new_record(self.ref, self.system)
+        self.record.model = self.ref
+        self.record.system = self.system
+        self.record.messages = [asdict(m) for m in self.messages]
+        try:
+            history.save(self.record)
+        except OSError as exc:
+            warn(f"Could not save this chat: {exc}")
+
     # Slash commands ------------------------------------------------------------
     def command(self, line: str) -> str | None:
         name, _, arg = line.partition(" ")
@@ -223,6 +288,10 @@ class ChatSession:
             "/retry": self.cmd_retry,
             "/clear": self.cmd_clear,
             "/save": self.cmd_save,
+            "/new": self.cmd_clear,
+            "/file": self.cmd_file,
+            "/history": self.cmd_history,
+            "/prompts": self.cmd_prompts,
         }.get(name)
         if name in ("/exit", "/quit", "/q"):
             return "exit"
@@ -318,7 +387,62 @@ class ChatSession:
 
     def cmd_clear(self, _: str) -> None:
         self.messages.clear()
-        success("Started a fresh conversation")
+        self.pending.clear()
+        self.record = None
+        self.resumed = False
+        success("Started a new conversation")
+
+    def cmd_file(self, arg: str) -> None:
+        if not arg:
+            if not self.pending:
+                hint("  Usage: /file path/to/file.py   (tab completes paths; repeat for more)")
+                return
+            for a in self.pending:
+                hint(f"  📎 {a.display}  {a.size / 1000:.1f} KB")
+            hint("  These go with your next message. Remove them: /file clear")
+            return
+        if arg == "clear":
+            self.pending.clear()
+            success("Attachments removed")
+            return
+        import shlex
+
+        try:
+            paths = shlex.split(arg, posix=False)
+        except ValueError:
+            paths = [arg]
+        try:
+            items = [attachments.load(p) for p in paths]
+            attachments.check_total(self.pending + items)
+        except (attachments.AttachmentError, OSError) as exc:
+            error(str(exc))
+            return
+        self.pending += items
+        for a in items:
+            success(f"Attached {a.display}", f"{a.size / 1000:.1f} KB, sent with your next message")
+
+    def cmd_history(self, arg: str) -> None:
+        records = history.search(arg) if arg else None
+        rows_src = [h.record for h in records] if records is not None else history.list_all()
+        rows = [[r.id, r.title, r.model.split(":", 1)[-1], str(r.turns),
+                 time.strftime("%d %b %H:%M", time.localtime(r.updated))] for r in rows_src[:10]]
+        self.console.print(ResponsiveTable([
+            Column("ID", min_width=6), Column("Title", min_width=12, ratio=1),
+            Column("Model", priority=2, min_width=8), Column("Msgs", priority=3, min_width=4,
+                                                             justify="right"),
+            Column("Updated", priority=1, min_width=12),
+        ], rows, title="Search results" if arg else "Recent chats", compact=True,
+            empty="No saved chats yet." if not arg else "Nothing matched."))
+        hint("  Continue one: exit, then kunji chat --resume <id>")
+
+    def cmd_prompts(self, _: str) -> None:
+        rows = [[f"@{p.name}", p.description, "built-in" if p.builtin else "yours"]
+                for p in prompts.all_prompts().values()]
+        self.console.print(ResponsiveTable([
+            Column("Prompt", min_width=8), Column("What it does", min_width=12, ratio=1),
+            Column("", priority=2, min_width=8),
+        ], rows, title="Saved prompts", compact=True))
+        hint("  Use one: @explain <text>   Create your own: kunji prompts add <name>")
 
     def cmd_save(self, arg: str) -> None:
         if not self.messages:
