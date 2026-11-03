@@ -6,7 +6,9 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
-## [0.1.1] - 2026-11-03
+## [0.1.2] - 2026-11-04
+
+First release with these features (0.1.1 was built but never published).
 
 ### Added
 - **A menu, so you don't have to remember commands.** Run `kunji` and pick what you want

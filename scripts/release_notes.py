@@ -25,7 +25,7 @@ INSTALL = """## Install or upgrade
 | | Command |
 | --- | --- |
 | New install | `pip install kunji` |
-| Already installed (0.1.1 or newer) | `kunji upgrade` |
+| Already on 0.1.2 or newer | `kunji upgrade` |
 | Upgrading from 0.1.0 | `pip install --upgrade kunji` |
 
 If `pip` isn't found, use `python -m pip install --upgrade kunji` on Windows or
