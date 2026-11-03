@@ -6,6 +6,9 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Landing page at https://testwithsuraj.github.io/kunji/ (`site/`, deployed by GitHub Pages).
+
 ## [0.1.0] - 2026-11-02
 
 ### Added

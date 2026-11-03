@@ -4,7 +4,7 @@
 
 **Bring your own key. Every AI model in one clean, professional terminal.**
 
-*Kunji (कुंजी) means "key" in Hindi.*
+*Kunji (कुंजी) means "key" in Hindi.* · [Website](https://testwithsuraj.github.io/kunji/)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/testwithsuraj/kunji/ci.yml?branch=main&style=flat-square&label=CI&labelColor=1f2328)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-3ddc84?style=flat-square&labelColor=1f2328)](LICENSE)
