@@ -23,6 +23,10 @@ All notable changes are listed here. The format follows
 - Update notice via PyPI and signed (Ed25519) cloud check-in client (off until a server URL
   is configured).
 
+### Build
+- Release no longer waits for the macOS binary; if GitHub has no Mac machine free, PyPI and
+  the Windows/Linux downloads still publish.
+
 ### Design
 - Compact one-row summary tables (`Strip`) for the chat header, `/cost`, `keys add`,
   `usage` totals and `version` — 5 lines instead of ~11, more room for the conversation.
