@@ -44,6 +44,10 @@ def notice(cfg: Config) -> Text | None:
     )
 
 
+def on_windows() -> bool:
+    return os.name == "nt"
+
+
 def pip_command() -> list[str]:
     return [sys.executable, "-m", "pip", "install", "--upgrade", "kunji"]
 
@@ -55,7 +59,7 @@ def start_upgrade(console) -> int:
                                     "Download the new version: ", (EXE_URL, "k.accent")))
         return 0
     cmd = pip_command()
-    if os.name == "nt":
+    if on_windows():
         # Windows locks the running kunji.exe launcher, so pip can't replace it while kunji is
         # open. Run pip in a new window that starts after this process exits.
         script = (

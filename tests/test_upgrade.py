@@ -43,7 +43,7 @@ def test_upgrade_check_only(monkeypatch):
 def test_upgrade_runs_pip_with_same_python(monkeypatch):
     calls = {}
     monkeypatch.setattr(checkin, "check_updates", lambda cfg, force=False: "99.0.0")
-    monkeypatch.setattr(upgrade.os, "name", "posix")
+    monkeypatch.setattr(upgrade, "on_windows", lambda: False)
     monkeypatch.setattr(subprocess, "call", lambda cmd: calls.setdefault("cmd", cmd) and 0)
     result = runner.invoke(app, ["upgrade"])
     assert calls["cmd"][:3] == [sys.executable, "-m", "pip"]
@@ -58,7 +58,7 @@ def test_windows_upgrade_script_is_valid_python(monkeypatch):
         def __init__(self, args, **kwargs):
             launched["args"] = args
 
-    monkeypatch.setattr(upgrade.os, "name", "nt")
+    monkeypatch.setattr(upgrade, "on_windows", lambda: True)
     monkeypatch.setattr(subprocess, "Popen", FakePopen)
     from io import StringIO
 
