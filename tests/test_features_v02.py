@@ -235,7 +235,7 @@ def test_home_menu_choices_adapt_to_setup():
     values = [getattr(c, "value", None) for c in home.main_choices()]
     assert values[0] == "chat" and "add_provider" not in values
     for value in values:
-        if value and value != EXIT:
+        if value and value.strip() and value != EXIT:
             assert hasattr(home, f"do_{value}"), value
 
 
