@@ -4,7 +4,7 @@
 
 **Bring your own key. Every AI model in one clean, professional terminal.**
 
-*Kunji (कुंजी) means "key" in Hindi.* · [Website](https://testwithsuraj.github.io/kunji/)
+*Kunji (कुंजी) means "key" in Hindi.* · [Website](https://testwithsuraj.github.io/kunji/) · [Documentation](https://testwithsuraj.github.io/kunji/docs/)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/testwithsuraj/kunji/ci.yml?branch=main&style=flat-square&label=CI&labelColor=1f2328)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-3ddc84?style=flat-square&labelColor=1f2328)](LICENSE)
@@ -171,7 +171,7 @@ kunji budget set all 200                      # ₹200/day across every provider
 kunji config set fallback '["groq:llama-3.3-70b-versatile", "ollama:qwen2.5"]'
 ```
 
-All options: [docs/CONFIG.md](docs/CONFIG.md). Every command with examples: [docs/COMMANDS.md](docs/COMMANDS.md).
+All options: [docs/CONFIG.md](docs/CONFIG.md). Every command with examples: [docs/COMMANDS.md](docs/COMMANDS.md). Full documentation: **[testwithsuraj.github.io/kunji/docs](https://testwithsuraj.github.io/kunji/docs/)**.
 
 ## Free and Pro
 

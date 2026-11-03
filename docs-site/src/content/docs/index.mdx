@@ -1,0 +1,56 @@
+---
+title: "kunji documentation"
+description: "Learn to use kunji, the free open-source terminal app for chatting with OpenAI, Anthropic, Gemini, Groq, Ollama and more using your own API keys."
+template: splash
+editUrl: false
+lastUpdated: false
+hero:
+  title: kunji docs
+  tagline: Your keys. Every AI model. One terminal. Everything you need to install kunji, chat with any model, and keep your costs under control.
+  actions:
+    - text: Install kunji
+      link: /kunji/docs/getting-started/installation/
+      icon: right-arrow
+      variant: primary
+    - text: Quick start
+      link: /kunji/docs/getting-started/quickstart/
+      variant: secondary
+    - text: Command reference
+      link: /kunji/docs/reference/cli/
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+```bash
+pip install kunji
+kunji
+```
+
+<CardGrid>
+  <Card title="Chat with any model" icon="comment">
+    OpenAI, Anthropic, Gemini, Groq, OpenRouter, DeepSeek, Mistral, xAI, Together AI and
+    Ollama, plus any OpenAI-compatible server. Switch mid-conversation with `/model`.
+  </Card>
+  <Card title="Know what it costs" icon="information">
+    Every answer shows its tokens and price. Set daily budgets that warn at 80% and stop at
+    100%.
+  </Card>
+  <Card title="Your keys stay yours" icon="approve-check">
+    Keys live in your operating system's keychain. Prompts go straight to the provider; there
+    is no kunji server in between.
+  </Card>
+  <Card title="Built for daily work" icon="rocket">
+    Saved prompts like `kunji @commit`, chat history, file attachments, pipes and a menu that
+    needs no typing.
+  </Card>
+</CardGrid>
+
+## Popular guides
+
+<CardGrid>
+  <LinkCard title="Saved prompts" description="Write commit messages, reviews and explanations in one word." href="/kunji/docs/guides/saved-prompts/" />
+  <LinkCard title="Compare models" description="One prompt, several models: see which is fastest and cheapest." href="/kunji/docs/guides/compare-models/" />
+  <LinkCard title="Free local models with Ollama" description="Chat with models on your own computer, no key and no bill." href="/kunji/docs/guides/local-models-ollama/" />
+  <LinkCard title="Costs and budgets" description="Track spending per model and set daily limits." href="/kunji/docs/guides/costs-and-budgets/" />
+</CardGrid>

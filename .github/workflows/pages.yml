@@ -1,12 +1,22 @@
-# Publishes site/ to GitHub Pages: https://testwithsuraj.github.io/kunji/
-# Runs when anything in site/ changes on main, or manually (Actions → Pages → Run workflow).
+# Publishes the website to GitHub Pages:
+#   https://testwithsuraj.github.io/kunji/        landing page   (site/)
+#   https://testwithsuraj.github.io/kunji/docs/   documentation  (docs-site/, Starlight)
+#
+# The command reference, provider pages and changelog are generated from kunji's code by
+# scripts/gen_docs.py, so the docs redeploy whenever the code or CHANGELOG changes.
 # One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
 name: Pages
 
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/pages.yml"]
+    paths:
+      - "site/**"
+      - "docs-site/**"
+      - "src/kunji/**"
+      - "scripts/gen_docs.py"
+      - "CHANGELOG.md"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -19,18 +29,46 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # "Last updated" dates on docs pages come from git history
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Generate reference pages from kunji's code
+        run: |
+          python -m pip install -e .
+          python scripts/gen_docs.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+      - name: Build docs (fails on broken links)
+        working-directory: docs-site
+        run: |
+          npm ci
+          npm run build
+      - name: Combine landing page and docs
+        run: |
+          mkdir -p _site
+          cp -r site/. _site/
+          cp -r docs-site/dist _site/docs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
       - id: deployment
         uses: actions/deploy-pages@v4

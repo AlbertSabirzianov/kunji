@@ -1,0 +1,71 @@
+---
+title: "Quick start"
+description: "Add your first AI provider key and start chatting with kunji in about two minutes. Includes free options with Groq, Gemini and Ollama."
+sidebar:
+  order: 2
+---
+
+import { Steps } from "@astrojs/starlight/components";
+
+This takes about two minutes. You'll need an API key from one AI provider. If you don't have
+one, these have free options:
+
+| Provider | Free option | Get a key |
+| --- | --- | --- |
+| Groq | Free tier, very fast | [console.groq.com/keys](https://console.groq.com/keys) |
+| Google Gemini | Free tier | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| Ollama | Free, runs on your computer, no key | [Ollama guide](/kunji/docs/guides/local-models-ollama/) |
+
+## Your first chat
+
+<Steps>
+1. **Open kunji.**
+
+   ```bash
+   kunji
+   ```
+
+   The first time, kunji helps you add a provider.
+
+2. **Pick a provider** with the arrow keys and press Enter.
+
+3. **Paste your API key.** It's hidden as you paste. kunji checks it with the provider, then
+   saves it in your operating system's keychain, never in a text file.
+
+4. **Choose a default model.** Start typing to search the list, then press Enter.
+
+5. **Start a chat.** Choose **Start a new chat** in the menu, type a question and press
+   Enter. The answer appears as it's written, with its cost underneath:
+
+   ```
+   › explain recursion in one line
+     A function that solves a problem by calling itself on a smaller piece of it.
+     llama-3.3-70b-versatile · 18 in · 21 out · <$0.0001 · 0.4s
+   ```
+
+6. **Leave the chat** with Ctrl+D or `/exit`. You're back in the menu. Choose **Exit** to
+   close kunji.
+</Steps>
+
+## Prefer typing commands?
+
+The same steps without the menu:
+
+```bash
+kunji keys add groq     # add a key
+kunji chat              # start chatting
+```
+
+## Things to try next
+
+- Type `/` in a chat to see every command.
+- Switch model mid-chat: `/model groq:llama-3.3-70b-versatile` (Tab completes names).
+- Write a commit message: `kunji @commit` inside a git project.
+- Continue tomorrow where you left off: `kunji chat -c`.
+- See what you've spent: `kunji usage`.
+
+## Learn more
+
+- [The menu](/kunji/docs/getting-started/menu/)
+- [Chatting](/kunji/docs/guides/chatting/)
+- [Command reference](/kunji/docs/reference/cli/)

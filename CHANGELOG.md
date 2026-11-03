@@ -6,6 +6,10 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Documentation site at https://testwithsuraj.github.io/kunji/docs/ with guides, provider
+  setup pages, a full command reference generated from the code, troubleshooting and FAQ.
+
 ## [0.1.2] - 2026-11-04
 
 First release with these features (0.1.1 was built but never published).

@@ -1,0 +1,120 @@
+/* kunji docs theme — same palette and type as the landing page. */
+
+:root {
+  --sl-font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sl-font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --kunji-display: "Martian Mono", ui-monospace, monospace;
+
+  /* Dark (default) */
+  --sl-color-accent-low: #0f3b24;
+  --sl-color-accent: #3ddc84;
+  --sl-color-accent-high: #b8f5d2;
+  --sl-color-white: #f4f6f4;
+  --sl-color-gray-1: #e1e6e2;
+  --sl-color-gray-2: #c6cec8;
+  --sl-color-gray-3: #8a968f;
+  --sl-color-gray-4: #4c5a52;
+  --sl-color-gray-5: #2a352f;
+  --sl-color-gray-6: #18221d;
+  --sl-color-black: #101814;
+  --sl-color-text-accent: #3ddc84;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #d3ebdd;
+  --sl-color-accent: #167a47;
+  --sl-color-accent-high: #0e5532;
+  --sl-color-white: #14201a;
+  --sl-color-gray-1: #24302a;
+  --sl-color-gray-2: #3a4740;
+  --sl-color-gray-3: #4c5a52;
+  --sl-color-gray-4: #8a968f;
+  --sl-color-gray-5: #c6cec8;
+  --sl-color-gray-6: #e1e6e2;
+  --sl-color-gray-7: #ecefec;
+  --sl-color-black: #f4f6f4;
+  --sl-color-text-accent: #167a47;
+}
+
+/* Headings in Martian Mono, like the landing page */
+.site-title,
+h1#_top,
+.sl-markdown-content :is(h1, h2, h3),
+.hero h1 {
+  font-family: var(--kunji-display);
+  letter-spacing: -0.02em;
+}
+h1#_top,
+.hero h1 {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.sl-markdown-content :is(h2, h3) {
+  font-weight: 500;
+}
+.sl-markdown-content h2 {
+  font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.55rem);
+  margin-top: 2.2em;
+}
+.sl-markdown-content h3 {
+  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+}
+h1#_top {
+  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.6rem);
+}
+.site-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* Inline code: quiet chip */
+.sl-markdown-content :not(pre) > code {
+  background: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 4px;
+  padding: 0.05em 0.35em;
+}
+
+/* Tables: hairlines, no zebra */
+.sl-markdown-content table {
+  border-collapse: collapse;
+}
+.sl-markdown-content :is(th, td) {
+  border: 0;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+}
+.sl-markdown-content th {
+  color: var(--sl-color-gray-3);
+  font-weight: 600;
+  background: transparent;
+}
+.sl-markdown-content tr:nth-child(2n) {
+  background: transparent;
+}
+
+/* Terminal-looking code blocks */
+.expressive-code .frame.is-terminal .header {
+  font-family: var(--sl-font-mono);
+}
+
+/* Splash hero: left-aligned, same tone as the landing page */
+.hero {
+  padding-block: clamp(2rem, 6vw, 4rem);
+}
+.hero .tagline {
+  color: var(--sl-color-gray-2);
+  max-width: 42ch;
+}
+
+/* Cards: one accent colour instead of Starlight's rainbow */
+.card {
+  --sl-card-border: var(--sl-color-accent);
+  --sl-card-bg: var(--sl-color-accent-low);
+  border-radius: 0.5rem;
+}
+.card .icon {
+  color: var(--sl-color-accent);
+}
+:root[data-theme="light"] .card .icon {
+  color: var(--sl-color-accent-high);
+}

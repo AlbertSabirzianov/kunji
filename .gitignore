@@ -25,3 +25,14 @@ Thumbs.db
 *.key
 secrets/
 kunji-chat-*.md
+
+# Docs site (generated pages are rebuilt by scripts/gen_docs.py on every deploy)
+docs-site/node_modules/
+docs-site/dist/
+docs-site/.astro/
+docs-site/src/content/docs/reference/cli/
+docs-site/src/content/docs/reference/chat-commands.md
+docs-site/src/content/docs/reference/environment-variables.md
+docs-site/src/content/docs/releases/changelog.md
+docs-site/src/content/docs/providers/*.md
+!docs-site/src/content/docs/providers/index.md

@@ -1,0 +1,109 @@
+---
+title: "Install kunji"
+description: "How to install kunji on Windows, macOS and Linux with pip, or download the standalone Windows exe. Includes fixes for common install errors."
+sidebar:
+  order: 1
+---
+
+import { Tabs, TabItem, Steps } from "@astrojs/starlight/components";
+
+kunji needs **Python 3.11 or newer**. On Windows you can also use a standalone `.exe` that
+doesn't need Python at all.
+
+## Install with pip
+
+<Tabs syncKey="os">
+  <TabItem label="Windows">
+    Open **Command Prompt** or **Windows Terminal** and run:
+
+    ```bash
+    python -m pip install kunji
+    ```
+
+    If `python` isn't found, try `py -m pip install kunji`. If neither works, install Python
+    from [python.org](https://www.python.org/downloads/) and tick **"Add python.exe to PATH"**
+    on the first screen of the installer.
+  </TabItem>
+  <TabItem label="macOS">
+    Open **Terminal** and run:
+
+    ```bash
+    python3 -m pip install kunji
+    ```
+  </TabItem>
+  <TabItem label="Linux">
+    ```bash
+    python3 -m pip install --user kunji
+    ```
+
+    If pip says the environment is **externally managed** (Debian, Ubuntu and others), use
+    pipx instead:
+
+    ```bash
+    sudo apt install pipx   # or your distro's package manager
+    pipx install kunji
+    ```
+  </TabItem>
+</Tabs>
+
+Check it worked:
+
+```bash
+kunji --version
+```
+
+:::tip[“kunji” is not recognized?]
+pip installed kunji, but its folder isn't on your PATH. Run kunji through Python instead,
+which always works:
+
+```bash
+python -m kunji
+```
+
+See [Troubleshooting](/kunji/docs/help/troubleshooting/) to fix your PATH permanently.
+:::
+
+## Windows without Python
+
+<Steps>
+1. Download **kunji-windows-x64.exe** from the
+   [latest release](https://github.com/testwithsuraj/kunji/releases/latest).
+2. Rename it to `kunji.exe` and put it in a folder you like, for example `C:\Tools`.
+3. Open a terminal in that folder and run `kunji.exe`.
+</Steps>
+
+To run it from anywhere, add that folder to your PATH (Windows settings → "Edit the system
+environment variables" → Environment Variables → Path → New).
+
+## Linux without Python
+
+Download **kunji-linux-x64** from the
+[latest release](https://github.com/testwithsuraj/kunji/releases/latest), then:
+
+```bash
+chmod +x kunji-linux-x64
+./kunji-linux-x64 --version
+```
+
+## Check your setup
+
+```bash
+kunji doctor
+```
+
+`doctor` checks your Python version, that kunji can save settings, that your OS keychain
+works, and which providers you've added.
+
+## Upgrade or uninstall
+
+```bash
+kunji upgrade                    # newest version
+python -m pip uninstall kunji    # remove kunji
+```
+
+Before uninstalling, you can delete your saved keys with `kunji keys remove <provider>`.
+More in [Upgrade kunji](/kunji/docs/guides/upgrading/).
+
+## Next
+
+[Have your first chat →](/kunji/docs/getting-started/quickstart/)
