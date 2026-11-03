@@ -3,7 +3,7 @@
 | Channel | How | Users install with |
 | --- | --- | --- |
 | PyPI | Automatic: `.github/workflows/release.yml` on a `v*` tag | `pip install kunji` |
-| GitHub Releases | Automatic: Windows + Linux binaries + `SHA256SUMS.txt` (macOS: set repo variable `BUILD_MACOS=true`) | download |
+| GitHub Releases | Automatic: Windows + Linux binaries + `SHA256SUMS.txt` | download |
 | winget | `wingetcreate` with the release `.exe` (see `winget/`) | `winget install testwithsuraj.kunji` |
 | Scoop | Copy `scoop/kunji.json` into a `scoop-bucket` repo | `scoop bucket add kunji https://github.com/testwithsuraj/scoop-bucket` then `scoop install kunji` |
 | Homebrew | Copy `homebrew/kunji.rb` into a `homebrew-tap` repo | `brew install testwithsuraj/tap/kunji` |
@@ -26,8 +26,17 @@ pyinstaller packaging/kunji.spec --noconfirm --clean
 The workflow then publishes to PyPI, creates the `v0.2.0` tag and the GitHub Release with
 the downloads. Pushing to `main` without changing the version never releases anything.
 
-### Turning on the macOS download later
+### Adding macOS back later
 
-GitHub → Settings → Secrets and variables → Actions → **Variables** → New repository
-variable: `BUILD_MACOS` = `true`. Nothing else to change; if a Mac build ever fails, the
-release still goes out without it.
+macOS is currently not built or tested (Mac users install with `pip install kunji`).
+To bring it back:
+
+1. `.github/workflows/release.yml` → in the `binaries` matrix add:
+   ```yaml
+   - os: macos-latest
+     name: kunji-macos-arm64
+   ```
+2. `.github/workflows/ci.yml` → add `macos-latest` to `os: [ubuntu-latest, windows-latest]`.
+3. Optional: publish the Homebrew formula in `packaging/homebrew/`.
+
+GitHub's Mac machines are often busy, so Mac jobs can wait in a queue for a long time.
