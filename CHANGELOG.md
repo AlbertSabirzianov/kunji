@@ -7,7 +7,8 @@ All notable changes are listed here. The format follows
 ## [Unreleased]
 
 ### Added
-- Landing page at https://testwithsuraj.github.io/kunji/ (`site/`, deployed by GitHub Pages).
+- Landing page at https://testwithsuraj.github.io/kunji/ (`site/`, deployed by GitHub Pages)
+  with live GitHub stars and latest version, plus Privacy policy, Terms of use and a 404 page.
 
 ## [0.1.0] - 2026-11-02
 
