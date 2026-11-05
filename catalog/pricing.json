@@ -1,5 +1,10 @@
 {
   "version": 1,
   "about": "Curated price overrides fetched by kunji at runtime (24h cache). Keys are 'provider:model', values are [input, output] in USD per 1M tokens. Only add prices you have checked on the provider's official pricing page, and note the source in the pull request.",
-  "models": {}
+  "models": {
+    "gemini:gemini-2.5-flash": [0.30, 2.50],
+    "gemini:gemini-2.5-flash-lite": [0.10, 0.40],
+    "groq:openai/gpt-oss-120b": [0.15, 0.60],
+    "groq:openai/gpt-oss-20b": [0.075, 0.30]
+  }
 }
