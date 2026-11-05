@@ -182,7 +182,8 @@ class ChatSession:
 
     def goodbye(self) -> None:
         spent = fmt_money(self.cfg, self.session_cost)
-        self.console.print(Text(f"  {self.turns} replies · {spent} this session", style="k.dim"))
+        replies = f"{self.turns} repl{'y' if self.turns == 1 else 'ies'}"
+        self.console.print(Text(f"  {replies} · {spent} this session", style="k.dim"))
         if self.record and self.save_history and self.turns:
             hint(f"  Saved as chat {self.record.id}. Continue later: kunji chat --resume "
                  f"{self.record.id}")
