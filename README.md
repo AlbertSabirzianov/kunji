@@ -1,6 +1,6 @@
 <div align="center">
 
-# kunji
+# kunji (कुंजी)
 
 **Every AI model in one terminal, with your own keys. See what every answer costs.**
 
