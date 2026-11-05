@@ -25,7 +25,7 @@ $env:KUNJI_HOME = "$env:TEMP\kunji-dev"
 ## Picking an issue
 
 1. Find an issue labelled [`good first issue`](https://github.com/testwithsuraj/kunji/labels/good%20first%20issue)
-   (or `difficulty: medium` / `difficulty: hard` when you know the codebase).
+   (or `medium` / `hard` once you know the codebase).
 2. Comment **`/assign`** on it, ideally with a line about how you plan to approach it.
    A maintainer reviews the request and assigns the issue to you. **Please wait until you're
    assigned before you start**, so two people don't work on the same thing.
