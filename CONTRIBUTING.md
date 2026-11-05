@@ -22,6 +22,16 @@ export KUNJI_HOME=/tmp/kunji-dev
 $env:KUNJI_HOME = "$env:TEMP\kunji-dev"
 ```
 
+## Picking an issue
+
+1. Find an issue labelled [`good first issue`](https://github.com/testwithsuraj/kunji/labels/good%20first%20issue)
+   (or `difficulty: medium` / `difficulty: hard` when you know the codebase).
+2. Comment **`/assign`** on it. A bot assigns it to you right away if it's free.
+3. Can't finish it? Comment **`/unassign`** so someone else can pick it up.
+
+You can hold up to 3 open issues at a time. When you open your pull request, write
+`Fixes #<issue number>` in the description and show the output before and after your change.
+
 ## Before opening a pull request
 
 ```bash
