@@ -115,6 +115,7 @@ Free and local? Install [Ollama](https://ollama.com), then `kunji keys add ollam
 
 | Input | Action |
 | --- | --- |
+| `/help` | Show commands and shortcuts |
 | `/model provider:model` | Switch model (tab completes) |
 | `/models [filter]` | List models of the current provider |
 | `/cost` | Session and today's cost |
@@ -122,7 +123,8 @@ Free and local? Install [Ollama](https://ollama.com), then `kunji keys add ollam
 | `@name text` | Use a saved prompt, e.g. `@explain this error` |
 | `/prompts` · `/history` | List saved prompts · recent chats |
 | `/system …` | Set the system prompt |
-| `/retry` · `/new` · `/save [file]` | Regenerate · new conversation · export markdown |
+| `/retry` · `/new` / `/clear` · `/save [file]` | Regenerate · new conversation · export markdown |
+| `/exit` · `/quit` · `/q` | Leave the chat |
 | `enter` · `alt+enter` / `ctrl+j` | Send · new line |
 | `ctrl+c` · `ctrl+d` | Stop the reply · quit |
 

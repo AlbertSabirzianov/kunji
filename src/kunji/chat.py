@@ -283,29 +283,36 @@ class ChatSession:
             warn(f"Could not save this chat: {exc}")
 
     # Slash commands ------------------------------------------------------------
+    COMMAND_HANDLERS: dict[str, str] = {
+        "/help": "cmd_help",
+        "/model": "cmd_model",
+        "/models": "cmd_models",
+        "/system": "cmd_system",
+        "/cost": "cmd_cost",
+        "/retry": "cmd_retry",
+        "/clear": "cmd_clear",
+        "/save": "cmd_save",
+        "/new": "cmd_clear",
+        "/file": "cmd_file",
+        "/history": "cmd_history",
+        "/prompts": "cmd_prompts",
+    }
+    EXIT_COMMANDS: tuple[str, ...] = ("/exit", "/quit", "/q")
+
+    @classmethod
+    def registered_commands(cls) -> list[str]:
+        return list(cls.COMMAND_HANDLERS) + list(cls.EXIT_COMMANDS)
+
     def command(self, line: str) -> str | None:
         name, _, arg = line.partition(" ")
         arg = arg.strip()
-        handler = {
-            "/help": self.cmd_help,
-            "/model": self.cmd_model,
-            "/models": self.cmd_models,
-            "/system": self.cmd_system,
-            "/cost": self.cmd_cost,
-            "/retry": self.cmd_retry,
-            "/clear": self.cmd_clear,
-            "/save": self.cmd_save,
-            "/new": self.cmd_clear,
-            "/file": self.cmd_file,
-            "/history": self.cmd_history,
-            "/prompts": self.cmd_prompts,
-        }.get(name)
-        if name in ("/exit", "/quit", "/q"):
+        if name in self.EXIT_COMMANDS:
             return "exit"
-        if handler is None:
+        handler_name = self.COMMAND_HANDLERS.get(name)
+        if handler_name is None:
             error(f"Unknown command {name}", "Type /help to see all commands")
             return None
-        handler(arg)
+        getattr(self, handler_name)(arg)
         return None
 
     def cmd_help(self, _: str) -> None:
