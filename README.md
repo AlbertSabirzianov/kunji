@@ -15,7 +15,9 @@ pip install kunji
 [![Providers](https://img.shields.io/badge/providers-10%2B-3ddc84?style=flat-square&labelColor=1f2328)](#providers)
 [![Platforms](https://img.shields.io/badge/windows%20%7C%20macos%20%7C%20linux-3ddc84?style=flat-square&labelColor=1f2328&label=runs%20on)](#install)
 
+<!-- Demo GIF hidden for now. Remove this comment wrapper to show it again.
 <img src="https://raw.githubusercontent.com/testwithsuraj/kunji/main/assets/demo.gif" alt="kunji demo: the menu, a chat with Claude, switching to Groq mid-conversation with /model, and /cost" width="860">
+-->
 
 [Website](https://testwithsuraj.github.io/kunji/) · [Documentation](https://testwithsuraj.github.io/kunji/docs/) · [Install](#install) · [Commands](#commands) · *Kunji (कुंजी) means "key" in Hindi.*
 
@@ -46,6 +48,7 @@ You pay each provider directly. Kunji never sees your bill, your keys or your pr
   every action is also a command for scripts.
 - **Looks professional.** Minimal monochrome design, responsive to any terminal size.
 
+<!-- Demo clips hidden for now. Remove this comment wrapper to show them again.
 <table>
 <tr>
 <td><img src="https://raw.githubusercontent.com/testwithsuraj/kunji/main/assets/compare.gif" alt="kunji compare: one prompt, three models, fastest and cheapest marked"><br><sub><b>Compare</b>: one prompt, several models</sub></td>
@@ -54,6 +57,7 @@ You pay each provider directly. Kunji never sees your bill, your keys or your pr
 
 <sub>Demos are recordings of the real CLI; answers come from a local mock server
 (<code>scripts/demo/</code>), so no keys or money were used.</sub>
+-->
 
 ## Install
 
@@ -185,6 +189,31 @@ keys with per-person budgets, a smart router). See [ROADMAP.md](ROADMAP.md).
 
 Bug reports, ideas and pull requests are welcome — start with
 [CONTRIBUTING.md](CONTRIBUTING.md). Architecture overview: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Contributors
+
+Thanks to everyone who has helped build kunji ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/testwithsuraj"><img src="https://github.com/testwithsuraj.png?size=100" width="100px;" alt="testwithsuraj"/><br /><sub><b>testwithsuraj</b></sub></a><br /><a href="https://github.com/testwithsuraj/kunji/commits?author=testwithsuraj" title="Code">💻</a> <a href="#maintenance-testwithsuraj" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/imanr236"><img src="https://avatars.githubusercontent.com/u/66421964?v=4?s=100" width="100px;" alt="Iman Rashidi"/><br /><sub><b>Iman Rashidi</b></sub></a><br /><a href="#data-imanr236" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/cascade80"><img src="https://avatars.githubusercontent.com/u/191756690?v=4?s=100" width="100px;" alt="Ayush"/><br /><sub><b>Ayush</b></sub></a><br /><a href="https://github.com/testwithsuraj/kunji/commits?author=cascade80" title="Code">💻</a> <a href="https://github.com/testwithsuraj/kunji/commits?author=cascade80" title="Tests">⚠️</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
 ## License
 

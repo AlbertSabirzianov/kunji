@@ -1,0 +1,36 @@
+{
+  "projectName": "kunji",
+  "projectOwner": "testwithsuraj",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "none",
+  "contributorsPerLine": 7,
+  "linkToUsage": false,
+  "contributors": [
+    {
+      "login": "testwithsuraj",
+      "name": "testwithsuraj",
+      "avatar_url": "https://github.com/testwithsuraj.png",
+      "profile": "https://github.com/testwithsuraj",
+      "contributions": ["code", "maintenance"]
+    },
+    {
+      "login": "imanr236",
+      "name": "Iman Rashidi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66421964?v=4",
+      "profile": "https://github.com/imanr236",
+      "contributions": ["data"]
+    },
+    {
+      "login": "cascade80",
+      "name": "Ayush",
+      "avatar_url": "https://avatars.githubusercontent.com/u/191756690?v=4",
+      "profile": "https://github.com/cascade80",
+      "contributions": ["code", "test"]
+    }
+  ]
+}
