@@ -2,34 +2,24 @@
 
 # kunji
 
-**Bring your own key. Every AI model in one clean, professional terminal.**
+**Every AI model in one terminal, with your own keys. See what every answer costs.**
 
-*Kunji (कुंजी) means "key" in Hindi.* · [Website](https://testwithsuraj.github.io/kunji/) · [Documentation](https://testwithsuraj.github.io/kunji/docs/)
+```bash
+pip install kunji
+```
 
+[![PyPI](https://img.shields.io/pypi/v/kunji?style=flat-square&labelColor=1f2328&color=3ddc84)](https://pypi.org/project/kunji/)
 [![CI](https://img.shields.io/github/actions/workflow/status/testwithsuraj/kunji/ci.yml?branch=main&style=flat-square&label=CI&labelColor=1f2328)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-3ddc84?style=flat-square&labelColor=1f2328)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%2B-3ddc84?style=flat-square&labelColor=1f2328&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![Providers](https://img.shields.io/badge/providers-10%2B-3ddc84?style=flat-square&labelColor=1f2328)](#providers)
 [![Platforms](https://img.shields.io/badge/windows%20%7C%20macos%20%7C%20linux-3ddc84?style=flat-square&labelColor=1f2328&label=runs%20on)](#install)
 
+<img src="https://raw.githubusercontent.com/testwithsuraj/kunji/main/assets/demo.gif" alt="kunji demo: the menu, a chat with Claude, switching to Groq mid-conversation with /model, and /cost" width="860">
+
+[Website](https://testwithsuraj.github.io/kunji/) · [Documentation](https://testwithsuraj.github.io/kunji/docs/) · [Install](#install) · [Commands](#commands) · *Kunji (कुंजी) means "key" in Hindi.*
+
 </div>
-
-```
-┌─  kunji chat  ─────────────────────────────────────────────────┐
-│  Provider     Model            Key         Budget        State │
-│────────────────────────────────────────────────────────────────│
-│  Anthropic    claude-sonnet    keychain    $0.38 / $2    READY │
-└────────────────────────────────────────────────────────────────┘
-enter send  ·  alt+enter newline  ·  / commands  ·  ctrl+d quit
-
-› explain recursion in one line
-  A function that solves a problem by calling itself on a smaller
-  piece of it, until it reaches a case simple enough to answer.
-  claude-sonnet · 18 in · 31 out · $0.0005 · 1.2s
-
-› /model groq:llama-3.3-70b-versatile
-✓ Switched to groq:llama-3.3-70b-versatile  conversation kept
-```
 
 Kunji is a terminal app for chatting with any AI model using **your own API keys**.
 You pay each provider directly. Kunji never sees your bill, your keys or your prompts.
@@ -55,6 +45,15 @@ You pay each provider directly. Kunji never sees your bill, your keys or your pr
 - **Menu or commands.** Run `kunji` for an arrow-key menu that stays open until you exit;
   every action is also a command for scripts.
 - **Looks professional.** Minimal monochrome design, responsive to any terminal size.
+
+<table>
+<tr>
+<td><img src="https://raw.githubusercontent.com/testwithsuraj/kunji/main/assets/compare.gif" alt="kunji compare: one prompt, three models, fastest and cheapest marked"><br><sub><b>Compare</b>: one prompt, several models</sub></td>
+</tr>
+</table>
+
+<sub>Demos are recordings of the real CLI; answers come from a local mock server
+(<code>scripts/demo/</code>), so no keys or money were used.</sub>
 
 ## Install
 

@@ -11,6 +11,12 @@ All notable changes are listed here. The format follows
   setup pages, a full command reference generated from the code, troubleshooting and FAQ.
 - New website: interactive terminal demos (chat, switch model, compare, @commit, budget),
   a Features page, light/dark theme (shared with the docs), Hindi pages and a mobile menu.
+- Demo GIF and videos in the README, recorded from the real CLI (`scripts/demo/`).
+- How-to guides in the docs: Claude in the terminal, a free AI CLI for Windows, the Groq API
+  from the command line, ChatGPT API vs Plus cost, and AI commit messages.
+
+### Fixed
+- The end of a chat said "1 replies"; it now says "1 reply".
 
 ## [0.1.2] - 2026-11-04
 

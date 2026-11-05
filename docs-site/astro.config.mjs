@@ -72,6 +72,16 @@ export default defineConfig({
           ],
         },
         {
+          label: "How-to",
+          items: [
+            { label: "Use Claude in the terminal", slug: "how-to/claude-in-the-terminal" },
+            { label: "Free AI CLI for Windows", slug: "how-to/free-ai-cli-windows" },
+            { label: "Groq API from the command line", slug: "how-to/groq-api-command-line" },
+            { label: "ChatGPT API vs Plus cost", slug: "how-to/chatgpt-api-vs-plus-cost" },
+            { label: "AI git commit messages", slug: "how-to/ai-git-commit-messages" },
+          ],
+        },
+        {
           label: "Providers",
           collapsed: true,
           items: [{ autogenerate: { directory: "providers" } }],
