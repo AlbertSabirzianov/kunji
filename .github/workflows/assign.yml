@@ -1,0 +1,151 @@
+# Issue assignment by comment.
+#
+# Anyone:       /assign              assign yourself to this issue
+#               /unassign            remove yourself
+# Maintainers:  /assign @user        assign someone else (they must have commented on the issue)
+#               /unassign @user      remove someone
+#               /assign  (in a quote-reply)  assign the author of the quoted comment
+#
+# Maintainers are the repo owner, organisation members and collaborators. A contributor can
+# hold at most MAX_OPEN open issues at a time. Pull request comments are ignored.
+#
+# Security: this only reads the comment text from the event payload. It never checks out
+# or runs code from the repository or from pull requests.
+
+name: Assign issues
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+
+concurrency:
+  group: assign-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  assign:
+    if: >-
+      github.event.issue.pull_request == null &&
+      github.event.comment.user.type != 'Bot' &&
+      contains(github.event.comment.body, '/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const MAX_OPEN = 3;
+            const MAINTAINER_ROLES = ["OWNER", "MEMBER", "COLLABORATOR"];
+
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            const comment = context.payload.comment;
+            const actor = comment.user.login;
+            const isMaintainer = MAINTAINER_ROLES.includes(comment.author_association);
+            const issue_number = issue.number;
+
+            // Commands: one per line, outside quoted text. "/assign", "/assign @user", ...
+            const lines = comment.body.split(/\r?\n/);
+            const quoted = lines.filter((l) => l.startsWith(">"))
+              .map((l) => l.replace(/^>\s?/, "").trim()).filter(Boolean);
+            const commands = [];
+            for (const line of lines) {
+              if (line.startsWith(">")) continue;
+              const m = line.trim().match(/^\/(assign|unassign)(?:\s+@?([A-Za-z0-9](?:[A-Za-z0-9-]{0,38})))?\s*$/i);
+              if (m) commands.push({ action: m[1].toLowerCase(), user: m[2] || null });
+            }
+            if (!commands.length) return;
+
+            const reply = (body) => github.rest.issues.createComment({ owner, repo, issue_number, body });
+            const react = (content) => github.rest.reactions.createForIssueComment({
+              owner, repo, comment_id: comment.id, content });
+
+            if (issue.state !== "open") {
+              await reply(`@${actor} this issue is closed, so it can't be assigned.`);
+              return;
+            }
+
+            // A maintainer quote-replying to someone with a bare /assign means "assign that person".
+            async function authorOfQuotedComment() {
+              if (!quoted.length) return null;
+              const all = await github.paginate(github.rest.issues.listComments,
+                { owner, repo, issue_number, per_page: 100 });
+              const candidates = [{ user: issue.user, body: issue.body || "" }, ...all]
+                .filter((c) => c.user && c.user.login !== actor && c.user.type !== "Bot");
+              const match = candidates.reverse().find((c) =>
+                quoted.every((q) => (c.body || "").includes(q)));
+              return match ? match.user.login : null;
+            }
+
+            for (const cmd of commands) {
+              let target = cmd.user;
+              if (!target && isMaintainer && cmd.action === "assign" && quoted.length) {
+                target = await authorOfQuotedComment();
+                if (!target) {
+                  await reply(`@${actor} I couldn't tell whose comment you quoted. ` +
+                    `Please use \`/assign @username\` instead.`);
+                  continue;
+                }
+              }
+              target = target || actor;
+              const forSomeoneElse = target.toLowerCase() !== actor.toLowerCase();
+
+              if (forSomeoneElse && !isMaintainer) {
+                await reply(`@${actor} only maintainers can ${cmd.action} other people. ` +
+                  `To take this issue yourself, comment \`/assign\`.`);
+                continue;
+              }
+
+              const { data: current } = await github.rest.issues.get({ owner, repo, issue_number });
+              const assignees = current.assignees.map((a) => a.login.toLowerCase());
+
+              if (cmd.action === "unassign") {
+                if (!assignees.includes(target.toLowerCase())) {
+                  await reply(`@${actor} @${target} isn't assigned to this issue.`);
+                  continue;
+                }
+                await github.rest.issues.removeAssignees({ owner, repo, issue_number, assignees: [target] });
+                await reply(forSomeoneElse
+                  ? `@${target} has been unassigned from this issue by @${actor}. It's open for someone else to pick up.`
+                  : `@${target} you've been unassigned. Thanks for letting us know! This issue is open for someone else now.`);
+                continue;
+              }
+
+              // assign
+              if (assignees.includes(target.toLowerCase())) {
+                await react("+1");
+                continue;
+              }
+              if (assignees.length && !isMaintainer) {
+                await reply(`@${actor} this issue is already assigned to ` +
+                  current.assignees.map((a) => `@${a.login}`).join(", ") +
+                  `. Have a look at the other [good first issues](https://github.com/${owner}/${repo}/labels/good%20first%20issue).`);
+                continue;
+              }
+              if (!isMaintainer) {
+                const { data: open } = await github.rest.issues.listForRepo({
+                  owner, repo, state: "open", assignee: target, per_page: 100 });
+                const openIssues = open.filter((i) => !i.pull_request);
+                if (openIssues.length >= MAX_OPEN) {
+                  await reply(`@${actor} you already have ${openIssues.length} open issues assigned ` +
+                    `(the limit is ${MAX_OPEN}). Please finish or \`/unassign\` one of them first.`);
+                  continue;
+                }
+              }
+
+              const { data: updated } = await github.rest.issues.addAssignees({
+                owner, repo, issue_number, assignees: [target] });
+              const ok = updated.assignees.some((a) => a.login.toLowerCase() === target.toLowerCase());
+              if (!ok) {
+                await reply(`@${actor} GitHub couldn't assign @${target}. ` +
+                  `They need to comment on this issue first (or be a collaborator).`);
+                continue;
+              }
+              await reply(
+                `@${target} this issue is now assigned to you. Thanks for helping with kunji!\n\n` +
+                `- Setup and checks: [CONTRIBUTING.md](https://github.com/${owner}/${repo}/blob/main/CONTRIBUTING.md)\n` +
+                `- When you open the PR, add \`Fixes #${issue_number}\` and show the output before and after your change.\n` +
+                `- Can't continue? Comment \`/unassign\` so someone else can pick it up.`);
+            }
