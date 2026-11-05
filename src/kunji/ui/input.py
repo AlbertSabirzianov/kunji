@@ -26,8 +26,11 @@ SLASH_COMMANDS: dict[str, str] = {
     "/history": "Recent saved chats (/history <text> to search)",
     "/retry": "Regenerate the last answer",
     "/new": "Start a new conversation",
+    "/clear": "Start a new conversation (alias for /new)",
     "/save": "Export the conversation as a markdown file",
     "/exit": "Leave the chat (back to the menu if you came from it)",
+    "/quit": "Leave the chat (alias for /exit)",
+    "/q": "Leave the chat (alias for /exit)",
 }
 
 PROMPT_STYLE = Style.from_dict(
