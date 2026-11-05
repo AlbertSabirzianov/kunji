@@ -1,13 +1,13 @@
 # Issue assignment by comment.
 #
-# Anyone:       /assign              assign yourself to this issue
+# Contributors: /assign              ask to work on this issue (a maintainer assigns it)
 #               /unassign            remove yourself
-# Maintainers:  /assign @user        assign someone else (they must have commented on the issue)
+# Maintainers:  /assign @user        assign someone (they must have commented on the issue)
+#               /assign              assign yourself, or, in a quote-reply, the quoted author
 #               /unassign @user      remove someone
-#               /assign  (in a quote-reply)  assign the author of the quoted comment
 #
-# Maintainers are the repo owner, organisation members and collaborators. A contributor can
-# hold at most MAX_OPEN open issues at a time. Pull request comments are ignored.
+# Only maintainers (repo owner, organisation members, collaborators) can assign anyone.
+# Pull request comments are ignored.
 #
 # Security: this only reads the comment text from the event payload. It never checks out
 # or runs code from the repository or from pull requests.
@@ -36,7 +36,6 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const MAX_OPEN = 3;
             const MAINTAINER_ROLES = ["OWNER", "MEMBER", "COLLABORATOR"];
 
             const { owner, repo } = context.repo;
@@ -93,8 +92,7 @@ jobs:
               const forSomeoneElse = target.toLowerCase() !== actor.toLowerCase();
 
               if (forSomeoneElse && !isMaintainer) {
-                await reply(`@${actor} only maintainers can ${cmd.action} other people. ` +
-                  `To take this issue yourself, comment \`/assign\`.`);
+                await reply(`@${actor} only maintainers can ${cmd.action} other people.`);
                 continue;
               }
 
@@ -118,21 +116,19 @@ jobs:
                 await react("+1");
                 continue;
               }
-              if (assignees.length && !isMaintainer) {
-                await reply(`@${actor} this issue is already assigned to ` +
-                  current.assignees.map((a) => `@${a.login}`).join(", ") +
-                  `. Have a look at the other [good first issues](https://github.com/${owner}/${repo}/labels/good%20first%20issue).`);
-                continue;
-              }
               if (!isMaintainer) {
-                const { data: open } = await github.rest.issues.listForRepo({
-                  owner, repo, state: "open", assignee: target, per_page: 100 });
-                const openIssues = open.filter((i) => !i.pull_request);
-                if (openIssues.length >= MAX_OPEN) {
-                  await reply(`@${actor} you already have ${openIssues.length} open issues assigned ` +
-                    `(the limit is ${MAX_OPEN}). Please finish or \`/unassign\` one of them first.`);
-                  continue;
+                // Contributors can only ask; a maintainer does the assigning.
+                if (assignees.length) {
+                  await reply(`@${actor} thanks for your interest! This issue is already assigned to ` +
+                    current.assignees.map((a) => `@${a.login}`).join(", ") +
+                    `. Have a look at the other [good first issues](https://github.com/${owner}/${repo}/labels/good%20first%20issue).`);
+                } else {
+                  await react("+1");
+                  await reply(`@${actor} thanks for offering to work on this! ` +
+                    `A maintainer will review your request and assign the issue to you. ` +
+                    `Please wait to be assigned before you start.`);
                 }
+                continue;
               }
 
               const { data: updated } = await github.rest.issues.addAssignees({
