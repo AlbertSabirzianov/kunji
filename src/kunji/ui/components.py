@@ -81,8 +81,13 @@ def _as_text(value: Any) -> Text:
 class Card:
     """Key/value card. Two columns when wide, stacked label/value when narrow."""
 
-    def __init__(self, rows: Sequence[tuple[str, Any]], title: str | None = None,
-                 footer: RenderableType | None = None, cap: int | None = None):
+    def __init__(
+        self,
+        rows: Sequence[tuple[str, Any]],
+        title: str | None = None,
+        footer: RenderableType | None = None,
+        cap: int | None = None,
+    ):
         self.rows = rows
         self.title = title
         self.footer = footer
@@ -122,8 +127,9 @@ class Card:
 class Frame:
     """A thin square border around anything, with an optional chip title."""
 
-    def __init__(self, renderable: RenderableType, title: str | None = None,
-                 cap: int | None = None):
+    def __init__(
+        self, renderable: RenderableType, title: str | None = None, cap: int | None = None
+    ):
         self.renderable = renderable
         self.title = title
         self.cap = cap
@@ -134,8 +140,13 @@ class Frame:
         body: RenderableType = self.renderable
         if self.title:
             body = Group(chip(self.title), Text(""), self.renderable)
-        yield Panel(body, box=box.SQUARE, border_style="k.border",
-                    padding=(0, 1) if narrow else (1, 2), width=width)
+        yield Panel(
+            body,
+            box=box.SQUARE,
+            border_style="k.border",
+            padding=(0, 1) if narrow else (1, 2),
+            width=width,
+        )
 
 
 @dataclass
@@ -151,10 +162,16 @@ class Column:
 class ResponsiveTable:
     """Daytona-style list: header rule, no grid lines, optional highlighted row."""
 
-    def __init__(self, columns: Sequence[Column], rows: Sequence[Sequence[Any]],
-                 selected: int | None = None, title: str | None = None,
-                 empty: str = "Nothing here yet.", cap: int | None = None,
-                 compact: bool = False):
+    def __init__(
+        self,
+        columns: Sequence[Column],
+        rows: Sequence[Sequence[Any]],
+        selected: int | None = None,
+        title: str | None = None,
+        empty: str = "Nothing here yet.",
+        cap: int | None = None,
+        compact: bool = False,
+    ):
         self.columns = list(columns)
         self.rows = rows
         self.selected = selected
@@ -208,25 +225,44 @@ class ResponsiveTable:
         for i in cols:
             c = self.columns[i]
             min_w = min(c.min_width, natural[i]) if c.ratio else natural[i]
-            table.add_column(c.header, justify=c.justify, no_wrap=True, overflow="ellipsis",
-                             min_width=min(min_w, width // 2), ratio=c.ratio, style=c.style)
+            table.add_column(
+                c.header,
+                justify=c.justify,
+                no_wrap=True,
+                overflow="ellipsis",
+                min_width=min(min_w, width // 2),
+                ratio=c.ratio,
+                style=c.style,
+            )
         for r, row in enumerate(self.rows):
             cells = [row[i] if i < len(row) else "" for i in cols]
             if r == self.selected:
-                table.add_row(*[c.plain if isinstance(c, Text) else str(c) for c in cells],
-                              style="k.selected")
+                table.add_row(
+                    *[c.plain if isinstance(c, Text) else str(c) for c in cells], style="k.selected"
+                )
             else:
                 table.add_row(*[_as_text(c) for c in cells])
         if self.compact:
-            yield Panel(table, box=box.SQUARE, border_style="k.border", padding=(0, 0),
-                        width=width, title=chip(self.title) if self.title else None,
-                        title_align="left")
+            yield Panel(
+                table,
+                box=box.SQUARE,
+                border_style="k.border",
+                padding=(0, 0),
+                width=width,
+                title=chip(self.title) if self.title else None,
+                title_align="left",
+            )
             return
         body: RenderableType = table
         if self.title:
             body = Group(chip(self.title), Text(""), table)
-        yield Panel(body, box=box.SQUARE, border_style="k.border",
-                    padding=(0, 0) if narrow else (1, 1), width=width)
+        yield Panel(
+            body,
+            box=box.SQUARE,
+            border_style="k.border",
+            padding=(0, 0) if narrow else (1, 1),
+            width=width,
+        )
 
 
 class Strip:
@@ -239,8 +275,7 @@ class Strip:
               title="kunji chat")
     """
 
-    def __init__(self, items: Sequence[tuple], title: str | None = None,
-                 cap: int | None = None):
+    def __init__(self, items: Sequence[tuple], title: str | None = None, cap: int | None = None):
         self.items = list(items)
         self.title = title
         self.cap = cap
@@ -265,8 +300,8 @@ def fmt_elapsed(seconds: float) -> str:
 class Steps:
     """Live step list: a spinner while a step runs, then ✓ or ✗ with its duration.
 
-        with Steps() as steps:
-            models = steps.run("Verifying key", provider.list_models)
+    with Steps() as steps:
+        models = steps.run("Verifying key", provider.list_models)
     """
 
     def __init__(self, console: Console | None = None):
@@ -283,8 +318,12 @@ class Steps:
             grid = Table.grid(padding=(0, 1))
             grid.add_column(width=1, no_wrap=True)
             grid.add_column()
-            grid.add_row(self.spinner, Text.assemble(
-                self.current, ("  " + fmt_elapsed(time.monotonic() - self.started), "k.dim")))
+            grid.add_row(
+                self.spinner,
+                Text.assemble(
+                    self.current, ("  " + fmt_elapsed(time.monotonic() - self.started), "k.dim")
+                ),
+            )
             yield grid
 
     def __enter__(self) -> Steps:
@@ -306,8 +345,9 @@ class Steps:
         if style:
             mark_style = style
             mark = "!"
-        line = Text.assemble((f"{mark} ", mark_style), label,
-                             ("  " + fmt_elapsed(elapsed), "k.dim"))
+        line = Text.assemble(
+            (f"{mark} ", mark_style), label, ("  " + fmt_elapsed(elapsed), "k.dim")
+        )
         if note:
             line.append(f"  {note}", style="k.dim" if ok else mark_style)
         self.lines.append(line)
@@ -315,8 +355,9 @@ class Steps:
         if self.live:
             self.live.refresh()
 
-    def run(self, label: str, fn: Callable[..., Any], *args: Any, done: str = "",
-            **kwargs: Any) -> Any:
+    def run(
+        self, label: str, fn: Callable[..., Any], *args: Any, done: str = "", **kwargs: Any
+    ) -> Any:
         self.current = label
         self.started = time.monotonic()
         try:
@@ -371,10 +412,13 @@ class StreamView:
             grid = Table.grid(padding=(0, 1))
             grid.add_column(width=1, no_wrap=True)
             grid.add_column()
-            grid.add_row(self.spinner, Text.assemble(
-                (f"{self.label}… {fmt_elapsed(time.monotonic() - self.started)}", "k.dim"),
-                ("   ctrl+c to stop", "k.dim"),
-            ))
+            grid.add_row(
+                self.spinner,
+                Text.assemble(
+                    (f"{self.label}… {fmt_elapsed(time.monotonic() - self.started)}", "k.dim"),
+                    ("   ctrl+c to stop", "k.dim"),
+                ),
+            )
             yield grid
             return
         yield Tail(Capped(answer(self.text)))
@@ -424,8 +468,9 @@ def keys_line(pairs: Sequence[tuple[str, str]]) -> Text:
     return text
 
 
-def form(title: str, fields: Sequence[tuple[str, str]], subtitle: str = "",
-         active: int | None = 0) -> Frame:
+def form(
+    title: str, fields: Sequence[tuple[str, str]], subtitle: str = "", active: int | None = 0
+) -> Frame:
     """Read-only form view (used to review values before saving)."""
     parts: list[RenderableType] = []
     if subtitle:

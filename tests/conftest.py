@@ -31,8 +31,16 @@ class MemoryKeyring(KeyringBackend):
 def isolated(tmp_path, monkeypatch):
     """Every test gets its own config/data/cache dirs and an in-memory keychain."""
     monkeypatch.setenv("KUNJI_HOME", str(tmp_path / "home"))
-    for var in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GOOGLE_API_KEY",
-                "GROQ_API_KEY", "OPENROUTER_API_KEY", "KUNJI_DEV", "KUNJI_DEV_PUBLIC_KEY"):
+    for var in (
+        "OPENAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GEMINI_API_KEY",
+        "GOOGLE_API_KEY",
+        "GROQ_API_KEY",
+        "OPENROUTER_API_KEY",
+        "KUNJI_DEV",
+        "KUNJI_DEV_PUBLIC_KEY",
+    ):
         monkeypatch.delenv(var, raising=False)
     backend = MemoryKeyring()
     previous = keyring.get_keyring()
@@ -44,8 +52,14 @@ def isolated(tmp_path, monkeypatch):
 @pytest.fixture
 def console_at():
     def make(width: int) -> Console:
-        console = Console(theme=THEME, width=width, record=True, force_terminal=True,
-                          color_system="truecolor", height=40)
+        console = Console(
+            theme=THEME,
+            width=width,
+            record=True,
+            force_terminal=True,
+            color_system="truecolor",
+            height=40,
+        )
         set_console(console)
         return console
 

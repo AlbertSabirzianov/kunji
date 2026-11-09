@@ -77,8 +77,14 @@ def configured_refs(cfg: Config) -> list[str]:
 
 
 class ChatSession:
-    def __init__(self, cfg: Config, model_ref: str | None = None, system: str | None = None,
-                 resume: history.ChatRecord | None = None, from_menu: bool = False):
+    def __init__(
+        self,
+        cfg: Config,
+        model_ref: str | None = None,
+        system: str | None = None,
+        resume: history.ChatRecord | None = None,
+        from_menu: bool = False,
+    ):
         self.cfg = cfg
         self.from_menu = from_menu
         self.console = get_console()
@@ -89,7 +95,8 @@ class ChatSession:
         self.record = resume
         self.resumed = resume is not None
         self.messages: list[Message] = [
-            Message(m["role"], m["content"]) for m in (resume.messages if resume else [])
+            Message(m["role"], m["content"])
+            for m in (resume.messages if resume else [])
             if m.get("role") in ("user", "assistant") and m.get("content")
         ]
         self.pending: list[attachments.Attachment] = []
@@ -121,14 +128,26 @@ class ChatSession:
         rows = [
             ("Provider", self.spec.name, 2),
             ("Model", self.model, 0),
-            ("Key", "local" if not self.spec.needs_key else
-             ("keychain" if source == "keychain" else source.replace("env:", "")), 4),
+            (
+                "Key",
+                "local"
+                if not self.spec.needs_key
+                else ("keychain" if source == "keychain" else source.replace("env:", "")),
+                4,
+            ),
             ("Today", fmt_money(self.cfg, usage.spent_today_usd()), 3),
             ("State", status_text("READY"), 1),
         ]
         if status.state != "none":
-            rows.insert(4, ("Budget", f"{fmt_money(self.cfg, None, display_amount=status.spent)}"
-                            f" / {fmt_money(self.cfg, None, display_amount=status.limit)}", 3))
+            rows.insert(
+                4,
+                (
+                    "Budget",
+                    f"{fmt_money(self.cfg, None, display_amount=status.spent)}"
+                    f" / {fmt_money(self.cfg, None, display_amount=status.limit)}",
+                    3,
+                ),
+            )
         self.console.print(Strip(rows, title="kunji chat"))
         if not self.from_menu:
             from kunji.upgrade import notice
@@ -138,8 +157,10 @@ class ChatSession:
                 self.console.print(Capped(line))
         if self.resumed and self.record:
             n = self.record.turns
-            hint(f"  Resumed chat {self.record.id}: {self.record.title}  "
-                 f"({n} earlier message{'s' if n != 1 else ''})")
+            hint(
+                f"  Resumed chat {self.record.id}: {self.record.title}  "
+                f"({n} earlier message{'s' if n != 1 else ''})"
+            )
             last = next((m for m in reversed(self.messages) if m.role == "assistant"), None)
             if last:
                 import re
@@ -148,18 +169,30 @@ class ChatSession:
                 plain = re.sub(r"[*_`#>]+", "", plain)
                 preview = " ".join(plain.split())
                 hint("  Last answer: " + (preview[:140] + "…" if len(preview) > 140 else preview))
-        self.console.print(Capped(keys_line([
-            ("enter", "send"), ("alt+enter", "newline"), ("/", "commands"),
-            ("ctrl+d", "back to menu" if self.from_menu else "quit"),
-        ])))
+        self.console.print(
+            Capped(
+                keys_line(
+                    [
+                        ("enter", "send"),
+                        ("alt+enter", "newline"),
+                        ("/", "commands"),
+                        ("ctrl+d", "back to menu" if self.from_menu else "quit"),
+                    ]
+                )
+            )
+        )
         self.console.print()
 
     # Main loop -----------------------------------------------------------------
     def run(self) -> None:
         self.header()
         history = ensure_dir(data_dir()) / "history.txt"
-        session = chat_prompt(str(history), lambda: configured_refs(self.cfg), self.toolbar,
-                              prompt_names=lambda: list(prompts.all_prompts()))
+        session = chat_prompt(
+            str(history),
+            lambda: configured_refs(self.cfg),
+            self.toolbar,
+            prompt_names=lambda: list(prompts.all_prompts()),
+        )
         while True:
             try:
                 text = session.prompt(PROMPT_MESSAGE)
@@ -185,8 +218,10 @@ class ChatSession:
         replies = f"{self.turns} repl{'y' if self.turns == 1 else 'ies'}"
         self.console.print(Text(f"  {replies} · {spent} this session", style="k.dim"))
         if self.record and self.save_history and self.turns:
-            hint(f"  Saved as chat {self.record.id}. Continue later: kunji chat --resume "
-                 f"{self.record.id}")
+            hint(
+                f"  Saved as chat {self.record.id}. Continue later: kunji chat --resume "
+                f"{self.record.id}"
+            )
         latest = checkin.cached_update_notice()
         if latest:
             hint(f"  kunji {latest} is available — upgrade: kunji upgrade")
@@ -198,8 +233,10 @@ class ChatSession:
         spent = fmt_money(self.cfg, None, display_amount=status.spent)
         scope = "all providers" if status.scope == "all" else spec.name
         if status.state == "block":
-            error(f"Daily budget reached for {scope}: {spent} / {limit}",
-                  f"Raise it with: kunji budget set {status.scope} <amount>")
+            error(
+                f"Daily budget reached for {scope}: {spent} / {limit}",
+                f"Raise it with: kunji budget set {status.scope} <amount>",
+            )
             return False
         if status.state == "warn" and status.scope not in self.warned_budget:
             self.warned_budget.add(status.scope)
@@ -234,7 +271,8 @@ class ChatSession:
             self.record = history.new_record(self.ref, self.system)
             names = ", ".join(a.path.name for a in attached)
             self.record.title = history.make_title(
-                title or (text if text.strip() else f"Files: {names}"))
+                title or (text if text.strip() else f"Files: {names}")
+            )
         if result.text:
             self.messages.append(Message("assistant", result.text))
             self.console.print(Capped(answer(result.text)))
@@ -254,7 +292,11 @@ class ChatSession:
             try:
                 with Live(view, console=self.console, refresh_per_second=12, transient=True):
                     result = stream_turn(
-                        self.cfg, spec, model, self.messages, self.system,
+                        self.cfg,
+                        spec,
+                        model,
+                        self.messages,
+                        self.system,
                         on_text=lambda t, v=view: setattr(v, "text", v.text + t),
                         catalog=self.catalog,
                     )
@@ -319,10 +361,19 @@ class ChatSession:
         rows = [[cmd, desc] for cmd, desc in SLASH_COMMANDS.items()]
         cols = [Column("Command", min_width=8), Column("What it does", min_width=12, ratio=1)]
         self.console.print(ResponsiveTable(cols, rows, title="Commands"))
-        self.console.print(Capped(keys_line([
-            ("enter", "send"), ("alt+enter / ctrl+j", "newline"), ("↑", "history"),
-            ("ctrl+c", "stop reply"), ("ctrl+d", "quit"),
-        ])))
+        self.console.print(
+            Capped(
+                keys_line(
+                    [
+                        ("enter", "send"),
+                        ("alt+enter / ctrl+j", "newline"),
+                        ("↑", "history"),
+                        ("ctrl+c", "stop reply"),
+                        ("ctrl+d", "quit"),
+                    ]
+                )
+            )
+        )
         self.console.print()
 
     def cmd_model(self, arg: str) -> None:
@@ -347,8 +398,11 @@ class ChatSession:
     def cmd_models(self, arg: str) -> None:
         try:
             with Steps() as steps, make_provider(self.spec) as provider:
-                models = steps.run(f"Fetching models from {self.spec.name}",
-                                   provider.list_models, done=lambda m: f"{len(m)} models")
+                models = steps.run(
+                    f"Fetching models from {self.spec.name}",
+                    provider.list_models,
+                    done=lambda m: f"{len(m)} models",
+                )
         except ProviderError as exc:
             error(exc.message, exc.hint)
             return
@@ -356,9 +410,14 @@ class ChatSession:
         shown = [m for m in models if arg.lower() in m.lower()] if arg else models
         rows = [[m, "current" if m == self.model else ""] for m in shown[:40]]
         selected = next((i for i, r in enumerate(rows) if r[0] == self.model), None)
-        self.console.print(ResponsiveTable(
-            [Column("Model", min_width=12, ratio=1), Column("", priority=1, min_width=7)],
-            rows, selected=selected, title=f"{self.spec.name} models"))
+        self.console.print(
+            ResponsiveTable(
+                [Column("Model", min_width=12, ratio=1), Column("", priority=1, min_width=7)],
+                rows,
+                selected=selected,
+                title=f"{self.spec.name} models",
+            )
+        )
         if len(shown) > 40:
             hint(f"  …and {len(shown) - 40} more. Filter: /models <text>")
         hint("  Switch: /model " + self.spec.id + ":<model>")
@@ -374,18 +433,34 @@ class ChatSession:
     def cmd_cost(self, _: str) -> None:
         status = usage.check_budget(self.cfg, self.spec.id)
         rows = [
-            ("Session", fmt_money(self.cfg, self.session_cost) +
-             (f" +{self.unpriced}?" if self.unpriced else ""), 0),
+            (
+                "Session",
+                fmt_money(self.cfg, self.session_cost)
+                + (f" +{self.unpriced}?" if self.unpriced else ""),
+                0,
+            ),
             (f"Today {self.spec.id}", fmt_money(self.cfg, usage.spent_today_usd(self.spec.id)), 2),
             ("Today all", fmt_money(self.cfg, usage.spent_today_usd()), 1),
         ]
         if status.state != "none":
-            rows.append(("Budget", fmt_money(self.cfg, None, display_amount=status.limit)
-                         + f" ({status.scope})", 3))
+            rows.append(
+                (
+                    "Budget",
+                    fmt_money(self.cfg, None, display_amount=status.limit) + f" ({status.scope})",
+                    3,
+                )
+            )
         price = self.catalog.price_for(self.spec.id, self.model, self.spec.openrouter_prefix)
-        rows.append(("Price / 1M", "unknown" if price is None else
-                     f"{fmt_money(self.cfg, price.input)} in · "
-                     f"{fmt_money(self.cfg, price.output)} out", 4))
+        rows.append(
+            (
+                "Price / 1M",
+                "unknown"
+                if price is None
+                else f"{fmt_money(self.cfg, price.input)} in · "
+                f"{fmt_money(self.cfg, price.output)} out",
+                4,
+            )
+        )
         self.console.print(Strip(rows, title="Cost"))
         if price is None:
             hint("  No known price for this model. Set one: see docs/CONFIG.md (pricing)")
@@ -438,24 +513,50 @@ class ChatSession:
     def cmd_history(self, arg: str) -> None:
         records = history.search(arg) if arg else None
         rows_src = [h.record for h in records] if records is not None else history.list_all()
-        rows = [[r.id, r.title, r.model.split(":", 1)[-1], str(r.turns),
-                 time.strftime("%d %b %H:%M", time.localtime(r.updated))] for r in rows_src[:10]]
-        self.console.print(ResponsiveTable([
-            Column("ID", min_width=6), Column("Title", min_width=12, ratio=1),
-            Column("Model", priority=2, min_width=8), Column("Msgs", priority=3, min_width=4,
-                                                             justify="right"),
-            Column("Updated", priority=1, min_width=12),
-        ], rows, title="Search results" if arg else "Recent chats", compact=True,
-            empty="No saved chats yet." if not arg else "Nothing matched."))
+        rows = [
+            [
+                r.id,
+                r.title,
+                r.model.split(":", 1)[-1],
+                str(r.turns),
+                time.strftime("%d %b %H:%M", time.localtime(r.updated)),
+            ]
+            for r in rows_src[:10]
+        ]
+        self.console.print(
+            ResponsiveTable(
+                [
+                    Column("ID", min_width=6),
+                    Column("Title", min_width=12, ratio=1),
+                    Column("Model", priority=2, min_width=8),
+                    Column("Msgs", priority=3, min_width=4, justify="right"),
+                    Column("Updated", priority=1, min_width=12),
+                ],
+                rows,
+                title="Search results" if arg else "Recent chats",
+                compact=True,
+                empty="No saved chats yet." if not arg else "Nothing matched.",
+            )
+        )
         hint("  Continue one: exit, then kunji chat --resume <id>")
 
     def cmd_prompts(self, _: str) -> None:
-        rows = [[f"@{p.name}", p.description, "built-in" if p.builtin else "yours"]
-                for p in prompts.all_prompts().values()]
-        self.console.print(ResponsiveTable([
-            Column("Prompt", min_width=8), Column("What it does", min_width=12, ratio=1),
-            Column("", priority=2, min_width=8),
-        ], rows, title="Saved prompts", compact=True))
+        rows = [
+            [f"@{p.name}", p.description, "built-in" if p.builtin else "yours"]
+            for p in prompts.all_prompts().values()
+        ]
+        self.console.print(
+            ResponsiveTable(
+                [
+                    Column("Prompt", min_width=8),
+                    Column("What it does", min_width=12, ratio=1),
+                    Column("", priority=2, min_width=8),
+                ],
+                rows,
+                title="Saved prompts",
+                compact=True,
+            )
+        )
         hint("  Use one: @explain <text>   Create your own: kunji prompts add <name>")
 
     def cmd_save(self, arg: str) -> None:

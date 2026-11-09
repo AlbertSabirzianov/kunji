@@ -19,10 +19,20 @@ runner = CliRunner()
 
 def test_builtins_and_render():
     names = set(prompts.all_prompts())
-    assert {"commit", "explain", "review", "fix", "summarize", "translate"} <= names
+    assert {"commit", "explain", "review", "fix", "summarize", "translate", "tests"} <= names
     text = prompts.render(prompts.get("@explain"), "def f(): return {1: 2}")
     assert "def f(): return {1: 2}" in text  # braces survive (no str.format)
     assert "{input}" not in text
+
+
+def test_tests_prompt_in_builtins():
+    p = prompts.get("tests")
+    assert p.builtin
+    assert p.description == "Generate unit tests for the supplied code using pytest"
+    text = prompts.render(p, "def add(a, b): return a + b")
+    assert "def add(a, b): return a + b" in text
+    assert "{input}" not in text
+    assert "pytest" in text.lower()
 
 
 def test_render_requires_input():
@@ -68,13 +78,28 @@ def test_git_diff_outside_repo(tmp_path):
 
 def test_at_shortcut_rewrites_argv():
     assert _rewrite_prompt_shortcut(["kunji", "@commit", "-m", "x"]) == [
-        "kunji", "run-prompt", "commit", "-m", "x"]
+        "kunji",
+        "run-prompt",
+        "commit",
+        "-m",
+        "x",
+    ]
     assert _rewrite_prompt_shortcut(["kunji", "chat"]) == ["kunji", "chat"]
 
 
 def test_prompts_cli_add_list_remove():
-    added = runner.invoke(app, ["prompts", "add", "standup", "--text",
-                                "Turn into a standup update:\n{input}", "-d", "Standup"])
+    added = runner.invoke(
+        app,
+        [
+            "prompts",
+            "add",
+            "standup",
+            "--text",
+            "Turn into a standup update:\n{input}",
+            "-d",
+            "Standup",
+        ],
+    )
     assert added.exit_code == 0
     listed = runner.invoke(app, ["prompts"])
     assert "@standup" in listed.output and "@commit" in listed.output
@@ -86,14 +111,18 @@ def test_run_prompt_end_to_end(monkeypatch):
 
     def handler(request):
         seen["body"] = json.loads(request.content)
-        return httpx.Response(200, content=b'data: {"choices":[{"delta":{"content":"ok"}}]}\n\n'
-                                           b"data: [DONE]\n\n")
+        return httpx.Response(
+            200, content=b'data: {"choices":[{"delta":{"content":"ok"}}]}\n\ndata: [DONE]\n\n'
+        )
 
     import kunji.engine as engine
 
     real = engine.make_provider
-    monkeypatch.setattr(engine, "make_provider",
-                        lambda spec, **kw: real(spec, transport=httpx.MockTransport(handler)))
+    monkeypatch.setattr(
+        engine,
+        "make_provider",
+        lambda spec, **kw: real(spec, transport=httpx.MockTransport(handler)),
+    )
     cfg = Config.load()
     cfg.set("default_model", "ollama:llama")
     cfg.save()
@@ -108,8 +137,10 @@ def test_run_prompt_end_to_end(monkeypatch):
 
 def test_history_save_find_search_delete():
     rec = history.new_record("openai:gpt-x")
-    rec.messages = [{"role": "user", "content": "How do I reverse a list in Python?"},
-                    {"role": "assistant", "content": "Use reversed() or slicing [::-1]."}]
+    rec.messages = [
+        {"role": "user", "content": "How do I reverse a list in Python?"},
+        {"role": "assistant", "content": "Use reversed() or slicing [::-1]."},
+    ]
     history.save(rec)
     assert rec.title.startswith("How do I reverse")
     assert history.find(rec.id[:4]).id == rec.id
@@ -137,14 +168,18 @@ def test_chat_session_saves_and_resumes(monkeypatch):
     from kunji.chat import ChatSession
 
     def handler(request):
-        return httpx.Response(200, content=b'data: {"choices":[{"delta":{"content":"hi!"}}]}\n\n'
-                                           b"data: [DONE]\n\n")
+        return httpx.Response(
+            200, content=b'data: {"choices":[{"delta":{"content":"hi!"}}]}\n\ndata: [DONE]\n\n'
+        )
 
     import kunji.engine as engine
 
     real = engine.make_provider
-    monkeypatch.setattr(engine, "make_provider",
-                        lambda spec, **kw: real(spec, transport=httpx.MockTransport(handler)))
+    monkeypatch.setattr(
+        engine,
+        "make_provider",
+        lambda spec, **kw: real(spec, transport=httpx.MockTransport(handler)),
+    )
     cfg = Config.load()
     cfg.set("default_model", "ollama:llama")
     session = ChatSession(cfg)

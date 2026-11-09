@@ -23,6 +23,7 @@ git diff | kunji @review                     # review changes
 | `@fix` | Finds the bug and shows corrected code |
 | `@summarize` | Summarizes text in 3–7 bullet points |
 | `@translate` | Translates text; start with `to Hindi:` (or any language) to choose |
+| `@tests` | Generates pytest unit tests for your code, covering happy paths and edge cases |
 
 ## Giving prompts something to work on
 

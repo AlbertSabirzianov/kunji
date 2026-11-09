@@ -34,8 +34,9 @@ def test_openai_stream_text_and_usage():
         )
         return httpx.Response(200, content=body, headers={"content-type": "text/event-stream"})
 
-    p = make_provider(BUILTIN["openai"], api_key="sk-test-123456789",
-                      transport=httpx.MockTransport(handler))
+    p = make_provider(
+        BUILTIN["openai"], api_key="sk-test-123456789", transport=httpx.MockTransport(handler)
+    )
     events = list(p.stream("gpt-x", [Message("user", "hi")], system="be brief"))
     assert "".join(e.text for e in events if e.text) == "Hello"
     usage = [e.usage for e in events if e.usage][-1]
@@ -53,11 +54,13 @@ def test_retries_without_stream_options_when_unsupported():
         calls.append(body)
         if "stream_options" in body:
             return httpx.Response(400, json={"error": {"message": "Unknown field stream_options"}})
-        return httpx.Response(200, content=sse({"choices": [{"delta": {"content": "ok"}}]},
-                                                "[DONE]"))
+        return httpx.Response(
+            200, content=sse({"choices": [{"delta": {"content": "ok"}}]}, "[DONE]")
+        )
 
-    p = make_provider(BUILTIN["groq"], api_key="gsk_abcdefghijkl",
-                      transport=httpx.MockTransport(handler))
+    p = make_provider(
+        BUILTIN["groq"], api_key="gsk_abcdefghijkl", transport=httpx.MockTransport(handler)
+    )
     text = "".join(e.text for e in p.stream("m", [Message("user", "x")]) if e.text)
     assert text == "ok"
     assert len(calls) == 2 and "stream_options" not in calls[1]
@@ -65,17 +68,19 @@ def test_retries_without_stream_options_when_unsupported():
 
 
 def test_anthropic_stream():
-    events_body = "\n".join([
-        "event: message_start",
-        'data: {"type":"message_start","message":{"usage":{"input_tokens":11}}}',
-        "",
-        'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Hi"}}',
-        "",
-        'data: {"type":"message_delta","usage":{"output_tokens":3}}',
-        "",
-        'data: {"type":"message_stop"}',
-        "",
-    ]).encode()
+    events_body = "\n".join(
+        [
+            "event: message_start",
+            'data: {"type":"message_start","message":{"usage":{"input_tokens":11}}}',
+            "",
+            'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Hi"}}',
+            "",
+            'data: {"type":"message_delta","usage":{"output_tokens":3}}',
+            "",
+            'data: {"type":"message_stop"}',
+            "",
+        ]
+    ).encode()
 
     def handler(request):
         assert request.headers["x-api-key"] == "sk-ant-abcdefghijkl"
@@ -84,8 +89,9 @@ def test_anthropic_stream():
         assert body["system"] == "sys"
         return httpx.Response(200, content=events_body)
 
-    p = make_provider(BUILTIN["anthropic"], api_key="sk-ant-abcdefghijkl",
-                      transport=httpx.MockTransport(handler))
+    p = make_provider(
+        BUILTIN["anthropic"], api_key="sk-ant-abcdefghijkl", transport=httpx.MockTransport(handler)
+    )
     events = list(p.stream("claude-x", [Message("user", "hey")], system="sys"))
     assert "".join(e.text for e in events if e.text) == "Hi"
     usage = [e.usage for e in events if e.usage][-1]
@@ -107,8 +113,11 @@ def test_auth_error_is_redacted_and_has_hint():
 
 
 def test_rate_limit_is_retryable():
-    p = make_provider(BUILTIN["openai"], api_key="sk-abcdefghijkl",
-                      transport=httpx.MockTransport(lambda r: httpx.Response(429, json={})))
+    p = make_provider(
+        BUILTIN["openai"],
+        api_key="sk-abcdefghijkl",
+        transport=httpx.MockTransport(lambda r: httpx.Response(429, json={})),
+    )
     with pytest.raises(ProviderError) as info:
         list(p.stream("m", [Message("user", "x")]))
     assert info.value.retryable
@@ -118,8 +127,9 @@ def test_gemini_models_strip_prefix():
     def handler(request):
         return httpx.Response(200, json={"data": [{"id": "models/gemini-flash"}, {"id": "b"}]})
 
-    p = make_provider(BUILTIN["gemini"], api_key="AIza-abcdefghijkl",
-                      transport=httpx.MockTransport(handler))
+    p = make_provider(
+        BUILTIN["gemini"], api_key="AIza-abcdefghijkl", transport=httpx.MockTransport(handler)
+    )
     assert p.list_models() == ["b", "gemini-flash"]
 
 

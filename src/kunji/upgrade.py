@@ -55,8 +55,13 @@ def pip_command() -> list[str]:
 def start_upgrade(console) -> int:
     """Upgrade with the same Python that runs kunji. Returns an exit code."""
     if is_standalone():
-        console.print(Text.assemble(("You're using the standalone kunji.exe. ", "k.dim"),
-                                    "Download the new version: ", (EXE_URL, "k.accent")))
+        console.print(
+            Text.assemble(
+                ("You're using the standalone kunji.exe. ", "k.dim"),
+                "Download the new version: ",
+                (EXE_URL, "k.accent"),
+            )
+        )
         return 0
     cmd = pip_command()
     if on_windows():
@@ -70,19 +75,29 @@ def start_upgrade(console) -> int:
             "input('Press Enter to close this window...')"
         )
         flags = getattr(subprocess, "CREATE_NEW_CONSOLE", 0)
-        subprocess.Popen([sys.executable, "-c", script], creationflags=flags,
-                         close_fds=True)
-        console.print(Text.assemble(("✓ ", "k.ok"), "Upgrading in a new window. ",
-                                    ("kunji will close now; open it again when it says Done.",
-                                     "k.dim")))
+        subprocess.Popen([sys.executable, "-c", script], creationflags=flags, close_fds=True)
+        console.print(
+            Text.assemble(
+                ("✓ ", "k.ok"),
+                "Upgrading in a new window. ",
+                ("kunji will close now; open it again when it says Done.", "k.dim"),
+            )
+        )
         return 0
-    console.print(Text(" ".join(["$", "python", "-m", "pip", "install", "--upgrade", "kunji"]),
-                       style="k.dim"))
+    console.print(
+        Text(" ".join(["$", "python", "-m", "pip", "install", "--upgrade", "kunji"]), style="k.dim")
+    )
     code = subprocess.call(cmd)
     if code == 0:
-        console.print(Text.assemble(("✓ ", "k.ok"), "Upgraded. Run kunji again to use the new "
-                                                     "version."))
+        console.print(
+            Text.assemble(("✓ ", "k.ok"), "Upgraded. Run kunji again to use the new version.")
+        )
     else:
-        console.print(Text.assemble(("✗ ", "k.err"), "Upgrade failed. Try it yourself: ",
-                                    ("python -m pip install --upgrade kunji", "k.accent")))
+        console.print(
+            Text.assemble(
+                ("✗ ", "k.err"),
+                "Upgrade failed. Try it yourself: ",
+                ("python -m pip install --upgrade kunji", "k.accent"),
+            )
+        )
     return code
