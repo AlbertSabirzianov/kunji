@@ -40,7 +40,7 @@ You pay each provider directly. Kunji never sees your bill, your keys or your pr
   never in a plain-text file.
 - **Pipes.** `npm test 2>&1 | kunji ask "why is this failing?"`
 - **Saved prompts.** `kunji @commit` writes a commit message from your staged changes;
-  `@explain`, `@review`, `@fix`, `@summarize`, `@translate`, `@tests` — or make your own.
+  `@explain`, `@review`, `@fix`, `@summarize`, `@translate`, `@tests`, `@shell` — or make your own.
 - **Chat history.** Every chat is saved on your computer. Continue with `kunji chat -c`,
   search with `kunji history search`.
 - **Attach files.** `/file app.py` in chat, or `kunji ask -f app.py "what does this do?"`.
