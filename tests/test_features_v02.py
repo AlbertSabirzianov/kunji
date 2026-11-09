@@ -19,10 +19,20 @@ runner = CliRunner()
 
 def test_builtins_and_render():
     names = set(prompts.all_prompts())
-    assert {"commit", "explain", "review", "fix", "summarize", "translate"} <= names
+    assert {"commit", "explain", "review", "fix", "summarize", "translate", "shell"} <= names
     text = prompts.render(prompts.get("@explain"), "def f(): return {1: 2}")
     assert "def f(): return {1: 2}" in text  # braces survive (no str.format)
     assert "{input}" not in text
+
+
+def test_shell_prompt_in_builtins():
+    p = prompts.get("shell")
+    assert p.builtin
+    assert p.description == "Explain a shell command and warn if it is destructive"
+    text = prompts.render(p, "find . -name '*.log' -mtime +7 -delete")
+    assert "find . -name '*.log' -mtime +7 -delete" in text
+    assert "{input}" not in text
+    assert "destructive" in text.lower()
 
 
 def test_render_requires_input():
