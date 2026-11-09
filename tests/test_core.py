@@ -133,12 +133,12 @@ def test_budget_does_not_count_yesterday_ledger_entries():
     today = time.time()
     yesterday = usage.start_of_day() - 1
     path.write_text(
-        "\\n".join([
+        "\n".join([
             json.dumps({"ts": yesterday, "provider": "openai", "model": "gpt-x",
                         "in": 10, "out": 10, "cost": 50.0, "est": False}),
             json.dumps({"ts": today, "provider": "openai", "model": "gpt-x",
                         "in": 10, "out": 10, "cost": 0.25, "est": False}),
-        ]) + "\\n",
+        ]) + "\n",
         encoding="utf-8",
     )
 
