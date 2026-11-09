@@ -293,6 +293,10 @@ def models(
     limit: int = typer.Option(50, "--limit", "-n", help="Max rows to show."),
 ) -> None:
     """List models a provider offers (fetched live with your key)."""
+    if limit <= 0:
+        error("The limit must be greater than 0.")
+        raise typer.Exit(2)
+
     from kunji.chat import save_models_cache
     from kunji.providers.registry import parse_ref
 
