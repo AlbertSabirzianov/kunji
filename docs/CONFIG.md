@@ -47,12 +47,13 @@ output = 0.60
 ```
 
 ### How Prices are Found
-Kunji looks up prices in this exact order (the first match wins):
-1. **Your overrides**: Manually set in this config file using the `[pricing."provider:model"]` format (like the example below).
-2. **Kunji's catalog**: A built-in list of curated prices.
-3. **OpenRouter**: Fetched automatically as a public fallback.
+Kunji needs to know how much a model costs to track your budgets and display live costs. Because model prices change frequently, Kunji uses a three-tier fallback system to find the price. **The first match wins:**
 
-All prices are in USD per 1 million tokens.
+1. **Your overrides:** You can manually set a price in this config file using the `[pricing."provider:model"]` format (see the example below). This is checked first and overrides everything else.
+2. **Kunji's catalog:** If you haven't set an override, Kunji checks its built-in, curated list of prices. This list is maintained by the Kunji team for popular models.
+3. **OpenRouter:** If the model isn't in the curated list, Kunji will fetch the public pricing data from OpenRouter's model list. This data is cached locally for 24 hours to avoid constant network requests.
+
+*Note: All prices in the config and catalog are represented in **USD per 1 million tokens**, regardless of the display currency you choose.*
 
 ## Examples
 
