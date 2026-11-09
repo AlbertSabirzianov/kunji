@@ -57,6 +57,10 @@ kunji config set updates.check false
 kunji config unset chat.system_prompt
 ```
 
+## Custom OpenAI-compatible servers
+
+See [Custom providers](CUSTOM_PROVIDERS.md) for a short guide on adding LM Studio, vLLM, or any OpenAI-compatible server (URL, provider id, model reference, and API key).
+
 ## Environment variables
 
 | Variable | Purpose |
