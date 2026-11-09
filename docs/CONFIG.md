@@ -46,6 +46,14 @@ input = 0.15
 output = 0.60
 ```
 
+### How Prices are Found
+Kunji looks up prices in this exact order (the first match wins):
+1. **Your overrides**: Manually set in this config file using the `[pricing."provider:model"]` format (like the example below).
+2. **Kunji's catalog**: A built-in list of curated prices.
+3. **OpenRouter**: Fetched automatically as a public fallback.
+
+All prices are in USD per 1 million tokens.
+
 ## Examples
 
 ```bash
