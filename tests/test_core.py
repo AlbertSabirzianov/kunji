@@ -88,3 +88,73 @@ def test_budget_states():
     assert usage.check_budget(cfg, "groq").state == "none"
     rows = usage.summary(1)
     assert rows[0].requests == 2 and round(rows[0].cost_usd, 2) == 1.05
+
+def test_budget_exact_thresholds():
+    cfg = Config.load()
+    cfg.set("budget.daily", {"openai": 1.0})
+
+    usage.record("openai", "gpt-x", 10, 10, 0.8)
+    status = usage.check_budget(cfg, "openai")
+    assert status.state == "warn"
+    assert status.spent == 0.8
+
+    usage.record("openai", "gpt-x", 10, 10, 0.2)
+    status = usage.check_budget(cfg, "openai")
+    assert status.state == "block"
+    assert status.spent == 1.0
+
+
+def test_budget_without_a_configured_limit_returns_none():
+    cfg = Config.load()
+
+    assert usage.check_budget(cfg, "openai").state == "none"
+
+
+def test_budget_uses_the_most_restrictive_provider_or_all_scope():
+    cfg = Config.load()
+    cfg.set("budget.daily", {"openai": 1.0, "all": 0.5})
+    usage.record("openai", "gpt-x", 10, 10, 0.6)
+
+    # The combined limit is exceeded even though the provider limit only warns.
+    status = usage.check_budget(cfg, "openai")
+    assert (status.state, status.scope) == ("block", "all")
+
+    cfg.set("budget.daily", {"openai": 0.5, "all": 2.0})
+    # A more restrictive provider limit takes precedence over the all-provider limit.
+    status = usage.check_budget(cfg, "openai")
+    assert (status.state, status.scope) == ("block", "openai")
+
+
+def test_budget_does_not_count_yesterday_ledger_entries():
+    cfg = Config.load()
+    cfg.set("budget.daily", {"openai": 1.0})
+    path = usage.ledger_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    today = time.time()
+    yesterday = usage.start_of_day() - 1
+    path.write_text(
+        "\\n".join([
+            json.dumps({"ts": yesterday, "provider": "openai", "model": "gpt-x",
+                        "in": 10, "out": 10, "cost": 50.0, "est": False}),
+            json.dumps({"ts": today, "provider": "openai", "model": "gpt-x",
+                        "in": 10, "out": 10, "cost": 0.25, "est": False}),
+        ]) + "\\n",
+        encoding="utf-8",
+    )
+
+    status = usage.check_budget(cfg, "openai")
+    assert status.state == "ok"
+    assert status.spent == 0.25
+
+
+def test_budget_uses_display_currency_and_usd_rate():
+    cfg = Config.load()
+    cfg.set("display.currency", "INR")
+    cfg.set("display.usd_rate", 84)
+    cfg.set("budget.daily", {"openai": 1000})
+    usage.record("openai", "gpt-x", 10, 10, 10.0)
+
+    status = usage.check_budget(cfg, "openai")
+    assert status.state == "warn"
+    assert status.spent == 840.0
+    assert status.limit == 1000.0
