@@ -8,8 +8,8 @@ Thanks for helping! Small, focused pull requests are the easiest to review.
 git clone https://github.com/testwithsuraj/kunji
 cd kunji
 python -m venv .venv
-# Windows: .venv\Scripts\activate    macOS/Linux: source .venv/bin/activate
-python -m pip install -e ".[dev]"
+# Windows: .venv\\Scripts\\activate    macOS/Linux: source .venv/bin/activate
+python -m pip install -e "[dev]"
 kunji --version
 ```
 
@@ -19,17 +19,16 @@ Use a throwaway home so you don't touch your real config:
 # macOS/Linux
 export KUNJI_HOME=/tmp/kunji-dev
 # Windows (PowerShell)
-$env:KUNJI_HOME = "$env:TEMP\kunji-dev"
+$env:KUNJI_HOME = "$env:TEMP\\kunji-dev"
 ```
 
 ## Picking an issue
 
 1. Find an issue labelled [`good first issue`](https://github.com/testwithsuraj/kunji/labels/good%20first%20issue)
    (or `medium` / `hard` once you know the codebase).
-2. Comment **`/assign`** on it, ideally with a line about how you plan to approach it.
-   A maintainer reviews the request and assigns the issue to you. **Please wait until you're
-   assigned before you start**, so two people don't work on the same thing.
-3. Can't finish it? Comment **`/unassign`** so someone else can pick it up.
+2. Comment **`/assign`** on an open issue to assign it to yourself immediately. If it's already
+   assigned, choose another issue or ask a maintainer. Once assigned, you can start working.
+3. Can't finish it? Comment **`/unassign`** to release it so someone else can pick it up.
 
 When you open your pull request, write
 `Fixes #<issue number>` in the description and show the output before and after your change.
@@ -52,7 +51,7 @@ CI runs the same checks on Windows, macOS and Linux.
 - **Responsive UI.** New screens use the components in `src/kunji/ui/components.py`
   (`Strip`, `Card`, `ResponsiveTable`, `Frame`, `Steps`). Prefer `Strip` (one-row table) for summaries — it keeps screens short. Check them at 40, 80 and 140 columns.
 - **Colours** come from `ui/theme.py` (explicit hex values). Don't use named colours like
-  `"white"` — terminals remap them.
+  "white" — terminals remap them.
 - **Tests** for every new behaviour. Network calls are mocked with `httpx.MockTransport`.
 - Keep dependencies minimal. New dependencies need a short justification in the PR.
 
