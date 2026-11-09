@@ -96,3 +96,14 @@ def test_fallback_chain_skips_missing_keys():
     cfg.set("fallback", ["groq:llama", "ollama:qwen"])
     chain = fallback_chain(cfg, BUILTIN["openai"], "gpt")
     assert [f"{s.id}:{m}" for s, m in chain] == ["openai:gpt", "ollama:qwen"]
+
+
+def test_models_rejects_non_positive_limit():
+    for limit in ("0", "-1"):
+        result = runner.invoke(
+            app,
+            ["models", "openai", "--limit", limit],
+        )
+
+        assert result.exit_code == 2
+        assert "greater than 0" in result.output
