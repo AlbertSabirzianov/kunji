@@ -1,12 +1,12 @@
 # Issue assignment by comment.
 #
-# Contributors: /assign              ask to work on this issue (a maintainer assigns it)
+# Contributors: /assign              assign yourself if the issue is open and unassigned
 #               /unassign            remove yourself
 # Maintainers:  /assign @user        assign someone (they must have commented on the issue)
 #               /assign              assign yourself, or, in a quote-reply, the quoted author
 #               /unassign @user      remove someone
 #
-# Only maintainers (repo owner, organisation members, collaborators) can assign anyone.
+# Contributors can self-assign only when nobody is assigned. Maintainers can assign anyone.
 # Pull request comments are ignored.
 #
 # Security: this only reads the comment text from the event payload. It never checks out
@@ -58,13 +58,6 @@ jobs:
             if (!commands.length) return;
 
             const reply = (body) => github.rest.issues.createComment({ owner, repo, issue_number, body });
-            const react = (content) => github.rest.reactions.createForIssueComment({
-              owner, repo, comment_id: comment.id, content });
-
-            if (issue.state !== "open") {
-              await reply(`@${actor} this issue is closed, so it can't be assigned.`);
-              return;
-            }
 
             // A maintainer quote-replying to someone with a bare /assign means "assign that person".
             async function authorOfQuotedComment() {
@@ -97,6 +90,10 @@ jobs:
               }
 
               const { data: current } = await github.rest.issues.get({ owner, repo, issue_number });
+              if (current.state !== "open") {
+                await reply(`@${actor} this issue is closed, so it can't be ${cmd.action === "assign" ? "assigned" : "unassigned"}.`);
+                continue;
+              }
               const assignees = current.assignees.map((a) => a.login.toLowerCase());
 
               if (cmd.action === "unassign") {
@@ -113,21 +110,18 @@ jobs:
 
               // assign
               if (assignees.includes(target.toLowerCase())) {
-                await react("+1");
+                await reply(forSomeoneElse
+                  ? `@${target} is already assigned to this issue.`
+                  : `@${target} you're already assigned to this issue. If you can't continue, comment \`/unassign\` to release it.`);
                 continue;
               }
-              if (!isMaintainer) {
-                // Contributors can only ask; a maintainer does the assigning.
-                if (assignees.length) {
-                  await reply(`@${actor} thanks for your interest! This issue is already assigned to ` +
-                    current.assignees.map((a) => `@${a.login}`).join(", ") +
-                    `. Have a look at the other [good first issues](https://github.com/${owner}/${repo}/labels/good%20first%20issue).`);
-                } else {
-                  await react("+1");
-                  await reply(`@${actor} thanks for offering to work on this! ` +
-                    `A maintainer will review your request and assign the issue to you. ` +
-                    `Please wait to be assigned before you start.`);
-                }
+
+              // Contributors may self-assign only when nobody is assigned.
+              if (!isMaintainer && assignees.length) {
+                await reply(`@${actor} thanks for your interest! This issue is already assigned to ` +
+                  current.assignees.map((a) => `@${a.login}`).join(", ") +
+                  `. Please ask a maintainer if you think another contributor should be added, or choose another ` +
+                  `[good first issue](https://github.com/${owner}/${repo}/labels/good%20first%20issue).`);
                 continue;
               }
 
@@ -139,9 +133,11 @@ jobs:
                   `They need to comment on this issue first (or be a collaborator).`);
                 continue;
               }
+
               await reply(
                 `@${target} this issue is now assigned to you. Thanks for helping with kunji!\n\n` +
                 `- Setup and checks: [CONTRIBUTING.md](https://github.com/${owner}/${repo}/blob/main/CONTRIBUTING.md)\n` +
                 `- When you open the PR, add \`Fixes #${issue_number}\` and show the output before and after your change.\n` +
-                `- Can't continue? Comment \`/unassign\` so someone else can pick it up.`);
+                `- Can't continue? Comment \`/unassign\` to release the issue for someone else.\n` +
+                `- If kunji is useful to you, please consider [starring the repository](https://github.com/${owner}/${repo}).`);
             }
