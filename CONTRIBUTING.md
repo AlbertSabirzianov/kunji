@@ -53,6 +53,8 @@ CI runs the same checks on Windows, macOS and Linux.
 - **Colours** come from `ui/theme.py` (explicit hex values). Don't use named colours like
   "white" — terminals remap them.
 - **Tests** for every new behaviour. Network calls are mocked with `httpx.MockTransport`.
+- **Running tests requires no API keys** — all provider network calls are mocked. Just run
+  `pytest` from the project root.
 - Keep dependencies minimal. New dependencies need a short justification in the PR.
 
 ## Adding a provider
