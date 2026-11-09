@@ -188,8 +188,9 @@ def load_entitlement() -> Entitlement:
     return _entitlement_from(verify_blob(blob, install_id()))
 
 
-def checkin(cfg: Config, license_key: str | None = None,
-            transport: httpx.BaseTransport | None = None) -> Entitlement:
+def checkin(
+    cfg: Config, license_key: str | None = None, transport: httpx.BaseTransport | None = None
+) -> Entitlement:
     url = str(cfg.get("cloud.url") or "").rstrip("/")
     if not url or not cfg.get("cloud.checkin", True) or not _allowed_url(url):
         return load_entitlement()

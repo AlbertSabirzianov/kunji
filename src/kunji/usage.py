@@ -19,8 +19,14 @@ def ledger_path() -> Path:
     return data_dir() / "usage.jsonl"
 
 
-def record(provider: str, model: str, input_tokens: int, output_tokens: int,
-           cost_usd: float | None, estimated: bool = False) -> None:
+def record(
+    provider: str,
+    model: str,
+    input_tokens: int,
+    output_tokens: int,
+    cost_usd: float | None,
+    estimated: bool = False,
+) -> None:
     entry = {
         "ts": time.time(),
         "provider": provider,

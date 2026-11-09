@@ -51,16 +51,19 @@ app = typer.Typer(
 keys_app = typer.Typer(help="Add, list, test and remove provider API keys.", no_args_is_help=True)
 budget_app = typer.Typer(help="Daily spending limits.", no_args_is_help=True)
 config_app = typer.Typer(help="View and change settings.", no_args_is_help=True)
-providers_app = typer.Typer(help="Supported providers and custom servers.",
-                            invoke_without_command=True)
+providers_app = typer.Typer(
+    help="Supported providers and custom servers.", invoke_without_command=True
+)
 app.add_typer(keys_app, name="keys")
 app.add_typer(budget_app, name="budget")
 app.add_typer(config_app, name="config")
 app.add_typer(providers_app, name="providers")
-prompts_app = typer.Typer(help="Saved prompts you run with kunji @name.",
-                          invoke_without_command=True)
-history_app = typer.Typer(help="Saved chats: list, search, show, export, delete.",
-                          invoke_without_command=True)
+prompts_app = typer.Typer(
+    help="Saved prompts you run with kunji @name.", invoke_without_command=True
+)
+history_app = typer.Typer(
+    help="Saved chats: list, search, show, export, delete.", invoke_without_command=True
+)
 app.add_typer(prompts_app, name="prompts")
 app.add_typer(history_app, name="history")
 
@@ -112,8 +115,13 @@ def root(
     ctx: typer.Context,
     model: str = typer.Option(None, "--model", "-m", help="provider:model to chat with."),
     version: bool = typer.Option(
-        False, "--version", "-V", callback=version_callback, is_eager=True,
-        help="Show the version and exit."),
+        False,
+        "--version",
+        "-V",
+        callback=version_callback,
+        is_eager=True,
+        help="Show the version and exit.",
+    ),
 ) -> None:
     """Run [bold]kunji[/] with no command to open the interactive menu."""
     if ctx.invoked_subcommand is None:
@@ -128,16 +136,31 @@ def root(
 
 
 def welcome(cfg: Config) -> None:
-    console.print(Capped(Text.assemble(chip("kunji"), ("  bring your own key · every model, "
-                                                         "one terminal", "k.dim"))))
+    console.print(
+        Capped(
+            Text.assemble(
+                chip("kunji"), ("  bring your own key · every model, one terminal", "k.dim")
+            )
+        )
+    )
     console.print()
-    console.print(Card([
-        ("1", Text.assemble("Add a provider   ", ("kunji keys add", "k.accent"))),
-        ("2", Text.assemble("Start chatting   ", ("kunji chat", "k.accent"))),
-        ("3", Text.assemble("Compare models   ", ("kunji compare \"your prompt\"", "k.accent"))),
-    ], title="Get started", footer=Text("Your keys stay in your OS keychain. "
-                                        "You are billed directly by each provider.",
-                                        style="k.dim")))
+    console.print(
+        Card(
+            [
+                ("1", Text.assemble("Add a provider   ", ("kunji keys add", "k.accent"))),
+                ("2", Text.assemble("Start chatting   ", ("kunji chat", "k.accent"))),
+                (
+                    "3",
+                    Text.assemble("Compare models   ", ('kunji compare "your prompt"', "k.accent")),
+                ),
+            ],
+            title="Get started",
+            footer=Text(
+                "Your keys stay in your OS keychain. You are billed directly by each provider.",
+                style="k.dim",
+            ),
+        )
+    )
 
 
 @app.command()
@@ -187,16 +210,21 @@ def combine(question: str, piped: str, files: list[str] | None) -> str:
     return content
 
 
-def one_shot(cfg: Config, content: str, model: str | None, system: str | None,
-             raw: bool) -> None:
+def one_shot(cfg: Config, content: str, model: str | None, system: str | None, raw: bool) -> None:
     from kunji.engine import stream_turn
 
     spec, model_id = resolve_ref(cfg, model)
     sys_prompt = system if system is not None else str(cfg.get("chat.system_prompt") or "")
     messages = [Message("user", content)]
     if raw or not sys.stdout.isatty():
-        stream_turn(cfg, spec, model_id, messages, sys_prompt,
-                    on_text=lambda t: (sys.stdout.write(t), sys.stdout.flush()))
+        stream_turn(
+            cfg,
+            spec,
+            model_id,
+            messages,
+            sys_prompt,
+            on_text=lambda t: (sys.stdout.write(t), sys.stdout.flush()),
+        )
         sys.stdout.write("\n")
         return
     from rich.live import Live
@@ -205,8 +233,14 @@ def one_shot(cfg: Config, content: str, model: str | None, system: str | None,
 
     view = StreamView()
     with Live(view, console=console, refresh_per_second=12, transient=True):
-        result = stream_turn(cfg, spec, model_id, messages, sys_prompt,
-                             on_text=lambda t: setattr(view, "text", view.text + t))
+        result = stream_turn(
+            cfg,
+            spec,
+            model_id,
+            messages,
+            sys_prompt,
+            on_text=lambda t: setattr(view, "text", view.text + t),
+        )
     console.print(Capped(answer(result.text)))
     console.print(meta_line(result, cfg))
 
@@ -255,8 +289,9 @@ def run_prompt(
 @app.command()
 def compare(
     prompt: list[str] = typer.Argument(..., help="Prompt to send to every model."),
-    model: list[str] = typer.Option(None, "--model", "-m",
-                                    help="Repeat for each model. Default: your configured ones."),
+    model: list[str] = typer.Option(
+        None, "--model", "-m", help="Repeat for each model. Default: your configured ones."
+    ),
 ) -> None:
     """Same prompt, several models, side by side — with speed and cost."""
     from kunji.compare import default_refs, run_compare
@@ -305,8 +340,11 @@ def models(
     with Steps() as steps:
         provider_obj = make_provider(spec)
         try:
-            found = steps.run(f"Fetching models from {spec.name}", provider_obj.list_models,
-                              done=lambda m: f"{len(m)} models")
+            found = steps.run(
+                f"Fetching models from {spec.name}",
+                provider_obj.list_models,
+                done=lambda m: f"{len(m)} models",
+            )
         finally:
             provider_obj.close()
     save_models_cache(spec.id, found)
@@ -317,19 +355,29 @@ def models(
     rows = []
     for m in shown[:limit]:
         price = catalog.price_for(spec.id, m, spec.openrouter_prefix)
-        rows.append([
-            m,
-            "—" if price is None else fmt_money(cfg, price.input),
-            "—" if price is None else fmt_money(cfg, price.output),
-            "default" if m == current else "",
-        ])
+        rows.append(
+            [
+                m,
+                "—" if price is None else fmt_money(cfg, price.input),
+                "—" if price is None else fmt_money(cfg, price.output),
+                "default" if m == current else "",
+            ]
+        )
     selected = next((i for i, r in enumerate(rows) if r[3]), None)
-    console.print(ResponsiveTable([
-        Column("Model", min_width=14, ratio=1),
-        Column("In / 1M", priority=2, min_width=8, justify="right"),
-        Column("Out / 1M", priority=2, min_width=8, justify="right"),
-        Column("", priority=1, min_width=7),
-    ], rows, selected=selected, title=f"{spec.name} models", empty="No models matched."))
+    console.print(
+        ResponsiveTable(
+            [
+                Column("Model", min_width=14, ratio=1),
+                Column("In / 1M", priority=2, min_width=8, justify="right"),
+                Column("Out / 1M", priority=2, min_width=8, justify="right"),
+                Column("", priority=1, min_width=7),
+            ],
+            rows,
+            selected=selected,
+            title=f"{spec.name} models",
+            empty="No models matched.",
+        )
+    )
     if len(shown) > limit:
         hint(f"  …{len(shown) - limit} more. Use --search or --limit.")
     hint(f"  Set default: kunji use {spec.id}:<model>")
@@ -360,8 +408,9 @@ def _choose_provider(cfg: Config) -> str:
 def keys_add(
     provider: str = typer.Argument(None, help="Provider id, e.g. openai, anthropic, gemini."),
     model: str = typer.Option(None, "--model", "-m", help="Default model for this provider."),
-    key_stdin: bool = typer.Option(False, "--key-stdin",
-                                   help="Read the key from stdin (for scripts)."),
+    key_stdin: bool = typer.Option(
+        False, "--key-stdin", help="Read the key from stdin (for scripts)."
+    ),
     no_verify: bool = typer.Option(False, "--no-verify", help="Skip the online key check."),
 ) -> None:
     """Add or replace a provider's API key (stored in your OS keychain)."""
@@ -377,8 +426,9 @@ def keys_add(
         if key_stdin:
             key = sys.stdin.readline().strip()
         else:
-            require_interactive("Entering a key",
-                                f"Use: echo $KEY | kunji keys add {pid} --key-stdin")
+            require_interactive(
+                "Entering a key", f"Use: echo $KEY | kunji keys add {pid} --key-stdin"
+            )
             if spec.key_url:
                 hint(f"  Get a key: {spec.key_url}")
             key = secret(f"{spec.name} API key")
@@ -391,8 +441,11 @@ def keys_add(
         if not no_verify:
             provider_obj = make_provider(spec, api_key=key)
             try:
-                found = steps.run(f"Verifying with {spec.name}", provider_obj.list_models,
-                                  done=lambda m: f"{len(m)} models available")
+                found = steps.run(
+                    f"Verifying with {spec.name}",
+                    provider_obj.list_models,
+                    done=lambda m: f"{len(m)} models available",
+                )
             except ProviderError as exc:
                 if exc.status in (401, 403):
                     steps.current = None
@@ -424,20 +477,28 @@ def keys_add(
     cfg.save()
 
     console.print()
-    console.print(Strip([
-        ("Provider", spec.name, 1),
-        ("Key", mask(key) if spec.needs_key else "not needed", 3),
-        ("Stored in", keystore.backend_name() if spec.needs_key else "—", 4),
-        ("Default model", chosen or "—", 0),
-        ("State", status_text("ACTIVE" if found else "UNVERIFIED"), 2),
-    ], title="Provider added"))
-    hint("  Start chatting: kunji chat" + ("" if cfg.get("default_model", "").startswith(spec.id)
-                                         else f" -m {spec.id}:{chosen}"))
+    console.print(
+        Strip(
+            [
+                ("Provider", spec.name, 1),
+                ("Key", mask(key) if spec.needs_key else "not needed", 3),
+                ("Stored in", keystore.backend_name() if spec.needs_key else "—", 4),
+                ("Default model", chosen or "—", 0),
+                ("State", status_text("ACTIVE" if found else "UNVERIFIED"), 2),
+            ],
+            title="Provider added",
+        )
+    )
+    hint(
+        "  Start chatting: kunji chat"
+        + ("" if cfg.get("default_model", "").startswith(spec.id) else f" -m {spec.id}:{chosen}")
+    )
 
 
 @keys_app.command("list")
-def keys_list(show_all: bool = typer.Option(False, "--all", "-a", help="Include providers "
-                                                                       "without keys.")) -> None:
+def keys_list(
+    show_all: bool = typer.Option(False, "--all", "-a", help="Include providers without keys."),
+) -> None:
     """Show which providers have keys (keys are masked)."""
     cfg = load_config()
     rows = []
@@ -457,17 +518,31 @@ def keys_list(show_all: bool = typer.Option(False, "--all", "-a", help="Include 
             state, where = "MISSING", "—"
         if pid == default_pid:
             selected = len(rows)
-        rows.append([pid, mask(key) if spec.needs_key else "—", where,
-                     entry.get("default_model", "—"), ago(entry.get("added")),
-                     status_text(state)])
-    console.print(ResponsiveTable([
-        Column("Provider", min_width=9),
-        Column("Key", priority=3, min_width=12),
-        Column("Source", priority=4, min_width=8),
-        Column("Default model", priority=1, min_width=12, ratio=1),
-        Column("Added", priority=5, min_width=9),
-        Column("Status", priority=0, min_width=7),
-    ], rows, selected=selected, empty="No providers yet. Add one: kunji keys add"))
+        rows.append(
+            [
+                pid,
+                mask(key) if spec.needs_key else "—",
+                where,
+                entry.get("default_model", "—"),
+                ago(entry.get("added")),
+                status_text(state),
+            ]
+        )
+    console.print(
+        ResponsiveTable(
+            [
+                Column("Provider", min_width=9),
+                Column("Key", priority=3, min_width=12),
+                Column("Source", priority=4, min_width=8),
+                Column("Default model", priority=1, min_width=12, ratio=1),
+                Column("Added", priority=5, min_width=9),
+                Column("Status", priority=0, min_width=7),
+            ],
+            rows,
+            selected=selected,
+            empty="No providers yet. Add one: kunji keys add",
+        )
+    )
     if selected is not None:
         hint("  Highlighted = your default provider")
 
@@ -501,9 +576,15 @@ def keys_remove(
 def keys_test(provider: str = typer.Argument(None, help="Only test this provider.")) -> None:
     """Check every configured key against its provider."""
     cfg = load_config()
-    targets = [provider] if provider else [
-        pid for pid, spec in all_specs(cfg).items() if cfg.provider_entry(pid) or key_for(spec)[0]
-    ]
+    targets = (
+        [provider]
+        if provider
+        else [
+            pid
+            for pid, spec in all_specs(cfg).items()
+            if cfg.provider_entry(pid) or key_for(spec)[0]
+        ]
+    )
     if not targets:
         hint("No providers to test. Add one: kunji keys add")
         return
@@ -538,21 +619,31 @@ def providers_list(ctx: typer.Context) -> None:
     cfg = load_config()
     rows = []
     for pid, spec in all_specs(cfg).items():
-        kind = "local" if not spec.needs_key else (
-            "Anthropic API" if spec.kind == "anthropic" else "OpenAI-compatible")
+        kind = (
+            "local"
+            if not spec.needs_key
+            else ("Anthropic API" if spec.kind == "anthropic" else "OpenAI-compatible")
+        )
         if spec.custom:
             kind = "custom"
         key, _ = key_for(spec)
         state = "LOCAL" if not spec.needs_key else ("KEY SET" if key else "—")
-        rows.append([pid, spec.name, kind, spec.env_vars[0] if spec.env_vars else "—",
-                     status_text(state)])
-    console.print(ResponsiveTable([
-        Column("ID", min_width=8),
-        Column("Name", priority=1, min_width=10),
-        Column("Type", priority=3, min_width=10),
-        Column("Env variable", priority=4, min_width=12),
-        Column("Status", min_width=7),
-    ], rows, title="Providers"))
+        rows.append(
+            [pid, spec.name, kind, spec.env_vars[0] if spec.env_vars else "—", status_text(state)]
+        )
+    console.print(
+        ResponsiveTable(
+            [
+                Column("ID", min_width=8),
+                Column("Name", priority=1, min_width=10),
+                Column("Type", priority=3, min_width=10),
+                Column("Env variable", priority=4, min_width=12),
+                Column("Status", min_width=7),
+            ],
+            rows,
+            title="Providers",
+        )
+    )
     hint("  Add a custom OpenAI-compatible server: kunji providers add <id> --base-url <url>")
 
 
@@ -572,14 +663,16 @@ def providers_add(
         error("The base URL must start with https:// (or http:// for local servers).")
         raise typer.Exit(2)
     if base_url.startswith("http://") and not any(
-        h in base_url for h in ("localhost", "127.0.0.1", "0.0.0.0", "192.168.", "10.")  # noqa: S104
+        h in base_url
+        for h in ("localhost", "127.0.0.1", "0.0.0.0", "192.168.", "10.")  # noqa: S104
     ):
         warn("This server uses plain http — your key would be sent unencrypted.")
-    cfg.set(f"custom_providers.{provider_id}",
-            {"name": name or provider_id, "base_url": base_url, "needs_key": not no_key})
+    cfg.set(
+        f"custom_providers.{provider_id}",
+        {"name": name or provider_id, "base_url": base_url, "needs_key": not no_key},
+    )
     cfg.save()
-    success(f"Added {name or provider_id}",
-            "next: kunji keys add " + provider_id)
+    success(f"Added {name or provider_id}", "next: kunji keys add " + provider_id)
 
 
 @providers_app.command("remove")
@@ -605,14 +698,26 @@ def prompts_list(ctx: typer.Context) -> None:
         return
     from kunji import prompts
 
-    rows = [[f"@{p.name}", p.description, "built-in" if p.builtin else "yours"]
-            for p in prompts.all_prompts().values()]
-    console.print(ResponsiveTable([
-        Column("Prompt", min_width=8), Column("What it does", min_width=12, ratio=1),
-        Column("Source", priority=2, min_width=8),
-    ], rows, title="Saved prompts", compact=True))
-    hint('  Run: kunji @explain "text"   Pipe: git diff | kunji @review   '
-         "New: kunji prompts add <name>")
+    rows = [
+        [f"@{p.name}", p.description, "built-in" if p.builtin else "yours"]
+        for p in prompts.all_prompts().values()
+    ]
+    console.print(
+        ResponsiveTable(
+            [
+                Column("Prompt", min_width=8),
+                Column("What it does", min_width=12, ratio=1),
+                Column("Source", priority=2, min_width=8),
+            ],
+            rows,
+            title="Saved prompts",
+            compact=True,
+        )
+    )
+    hint(
+        '  Run: kunji @explain "text"   Pipe: git diff | kunji @review   '
+        "New: kunji prompts add <name>"
+    )
 
 
 @prompts_app.command("show")
@@ -626,7 +731,7 @@ def prompts_show(name: str = typer.Argument(..., help="Prompt name")) -> None:
 
 
 def _edit_text(initial: str) -> str | None:
-    require_interactive("Editing a prompt", "Use: kunji prompts add <name> --text \"...\"")
+    require_interactive("Editing a prompt", 'Use: kunji prompts add <name> --text "..."')
     return typer.edit(initial, extension=".md")
 
 
@@ -645,9 +750,11 @@ def prompts_add(
         raise typer.Exit(1)
     template = text
     if template is None:
-        starter = ("---\ndescription: What this prompt does\n---\n\n"
-                   "Write your instructions here. {input} is replaced by the text you give.\n\n"
-                   "{input}\n")
+        starter = (
+            "---\ndescription: What this prompt does\n---\n\n"
+            "Write your instructions here. {input} is replaced by the text you give.\n\n"
+            "{input}\n"
+        )
         edited = _edit_text(starter)
         if not edited:
             error("Nothing saved.")
@@ -683,8 +790,9 @@ def prompts_remove(name: str = typer.Argument(..., help="Prompt name")) -> None:
     if prompts.remove(name):
         success(f"Removed @{name}")
     elif name in prompts.BUILTIN:
-        hint(f"@{name} is built in and can't be removed. "
-             f"Edit it instead: kunji prompts edit {name}")
+        hint(
+            f"@{name} is built in and can't be removed. Edit it instead: kunji prompts edit {name}"
+        )
     else:
         error(f"No prompt named @{name}.")
         raise typer.Exit(1)
@@ -704,15 +812,30 @@ def prompts_path() -> None:
 def _history_table(records, title: str, empty: str, snippets: dict | None = None) -> None:
     rows = []
     for r in records:
-        rows.append([r.id, (snippets or {}).get(r.id, r.title), r.model.split(":", 1)[-1],
-                     str(r.turns), time.strftime("%d %b %H:%M", time.localtime(r.updated))])
-    console.print(ResponsiveTable([
-        Column("ID", min_width=6),
-        Column("Title" if not snippets else "Match", min_width=12, ratio=1),
-        Column("Model", priority=2, min_width=8),
-        Column("Msgs", priority=3, min_width=4, justify="right"),
-        Column("Updated", priority=1, min_width=12),
-    ], rows, title=title, compact=True, empty=empty))
+        rows.append(
+            [
+                r.id,
+                (snippets or {}).get(r.id, r.title),
+                r.model.split(":", 1)[-1],
+                str(r.turns),
+                time.strftime("%d %b %H:%M", time.localtime(r.updated)),
+            ]
+        )
+    console.print(
+        ResponsiveTable(
+            [
+                Column("ID", min_width=6),
+                Column("Title" if not snippets else "Match", min_width=12, ratio=1),
+                Column("Model", priority=2, min_width=8),
+                Column("Msgs", priority=3, min_width=4, justify="right"),
+                Column("Updated", priority=1, min_width=12),
+            ],
+            rows,
+            title=title,
+            compact=True,
+            empty=empty,
+        )
+    )
 
 
 @history_app.callback()
@@ -743,19 +866,32 @@ def history_search(text: list[str] = typer.Argument(..., help="Words to look for
 
     query = " ".join(text)
     hits = history.search(query)
-    _history_table([h.record for h in hits], f"Chats matching “{query}”", "Nothing matched.",
-                   snippets={h.record.id: h.snippet for h in hits})
+    _history_table(
+        [h.record for h in hits],
+        f"Chats matching “{query}”",
+        "Nothing matched.",
+        snippets={h.record.id: h.snippet for h in hits},
+    )
 
 
 @history_app.command("show")
-def history_show(chat_id: str = typer.Argument(..., help="Chat id (first characters are enough).")
-                 ) -> None:
+def history_show(
+    chat_id: str = typer.Argument(..., help="Chat id (first characters are enough)."),
+) -> None:
     """Print a saved chat."""
     from kunji import history
 
     record = history.find(chat_id)
-    console.print(Strip([("Chat", record.id, 0), ("Model", record.model, 1),
-                         ("Messages", str(len(record.messages)), 2)], title=record.title))
+    console.print(
+        Strip(
+            [
+                ("Chat", record.id, 0),
+                ("Model", record.model, 1),
+                ("Messages", str(len(record.messages)), 2),
+            ],
+            title=record.title,
+        )
+    )
     for m in record.messages:
         if m.get("role") == "user":
             console.print(Capped(Text.assemble(("› ", "k.accent"), str(m.get("content", "")))))
@@ -815,27 +951,48 @@ def usage_cmd(
     """Tokens and cost per model (tracked locally, never uploaded)."""
     cfg = load_config()
     rows_data = ledger.summary(days)
-    rows = [[r.provider, r.model, f"{r.requests:,}", f"{r.input_tokens:,}",
-             f"{r.output_tokens:,}",
-             fmt_money(cfg, r.cost_usd) + (" +?" if r.unknown_cost else "")] for r in rows_data]
-    console.print(ResponsiveTable([
-        Column("Provider", priority=1, min_width=8),
-        Column("Model", min_width=12, ratio=1),
-        Column("Requests", priority=3, min_width=8, justify="right"),
-        Column("In tok", priority=4, min_width=8, justify="right"),
-        Column("Out tok", priority=4, min_width=8, justify="right"),
-        Column("Cost", min_width=8, justify="right"),
-    ], rows, title=f"Usage · last {days} day{'s' if days != 1 else ''}",
-        empty="No usage yet."))
+    rows = [
+        [
+            r.provider,
+            r.model,
+            f"{r.requests:,}",
+            f"{r.input_tokens:,}",
+            f"{r.output_tokens:,}",
+            fmt_money(cfg, r.cost_usd) + (" +?" if r.unknown_cost else ""),
+        ]
+        for r in rows_data
+    ]
+    console.print(
+        ResponsiveTable(
+            [
+                Column("Provider", priority=1, min_width=8),
+                Column("Model", min_width=12, ratio=1),
+                Column("Requests", priority=3, min_width=8, justify="right"),
+                Column("In tok", priority=4, min_width=8, justify="right"),
+                Column("Out tok", priority=4, min_width=8, justify="right"),
+                Column("Cost", min_width=8, justify="right"),
+            ],
+            rows,
+            title=f"Usage · last {days} day{'s' if days != 1 else ''}",
+            empty="No usage yet.",
+        )
+    )
     total = sum(r.cost_usd for r in rows_data)
-    console.print(Strip([
-        ("Total", fmt_money(cfg, total), 0),
-        ("Today", fmt_money(cfg, ledger.spent_today_usd()), 1),
-        ("Requests", f"{sum(r.requests for r in rows_data):,}", 2),
-    ], title="Totals"))
+    console.print(
+        Strip(
+            [
+                ("Total", fmt_money(cfg, total), 0),
+                ("Today", fmt_money(cfg, ledger.spent_today_usd()), 1),
+                ("Requests", f"{sum(r.requests for r in rows_data):,}", 2),
+            ],
+            title="Totals",
+        )
+    )
     if any(r.unknown_cost for r in rows_data):
-        hint("  +? = some requests had no known price. Set one: "
-             "kunji config set pricing.\"provider:model\" ... (see docs/CONFIG.md)")
+        hint(
+            "  +? = some requests had no known price. Set one: "
+            'kunji config set pricing."provider:model" ... (see docs/CONFIG.md)'
+        )
 
 
 @budget_app.command("set")
@@ -865,16 +1022,34 @@ def budget_show() -> None:
     for scope, limit in (cfg.get("budget.daily") or {}).items():
         spent = to_display(cfg, ledger.spent_today_usd(None if scope == "all" else scope))
         limit = float(limit)
-        state = "BLOCKED" if spent >= limit else "NEAR LIMIT" if spent >= limit * ledger.WARN_AT \
+        state = (
+            "BLOCKED"
+            if spent >= limit
+            else "NEAR LIMIT"
+            if spent >= limit * ledger.WARN_AT
             else "OK"
-        rows.append([scope, fmt_money(cfg, None, display_amount=spent),
-                     fmt_money(cfg, None, display_amount=limit), status_text(state)])
-    console.print(ResponsiveTable([
-        Column("Scope", min_width=8),
-        Column("Spent today", priority=1, min_width=10, justify="right"),
-        Column("Limit", min_width=8, justify="right"),
-        Column("Status", min_width=7),
-    ], rows, title="Budgets", empty="No budgets set. Example: kunji budget set openai 2"))
+        )
+        rows.append(
+            [
+                scope,
+                fmt_money(cfg, None, display_amount=spent),
+                fmt_money(cfg, None, display_amount=limit),
+                status_text(state),
+            ]
+        )
+    console.print(
+        ResponsiveTable(
+            [
+                Column("Scope", min_width=8),
+                Column("Spent today", priority=1, min_width=10, justify="right"),
+                Column("Limit", min_width=8, justify="right"),
+                Column("Status", min_width=7),
+            ],
+            rows,
+            title="Budgets",
+            empty="No budgets set. Example: kunji budget set openai 2",
+        )
+    )
 
 
 @budget_app.command("clear")
@@ -896,11 +1071,16 @@ def config_path_cmd() -> None:
     """Where kunji keeps its files."""
     from kunji.config import cache_dir
 
-    console.print(Card([
-        ("Config", str(config_path())),
-        ("Data", str(data_dir())),
-        ("Cache", str(cache_dir())),
-    ], title="Paths"))
+    console.print(
+        Card(
+            [
+                ("Config", str(config_path())),
+                ("Data", str(data_dir())),
+                ("Cache", str(cache_dir())),
+            ],
+            title="Paths",
+        )
+    )
 
 
 @config_app.command("show")
@@ -909,8 +1089,18 @@ def config_show() -> None:
     import tomli_w
 
     cfg = load_config()
-    console.print(Frame(Syntax(tomli_w.dumps(cfg.data), "toml", theme="ansi_dark",
-                               background_color="default", word_wrap=True), title="config.toml"))
+    console.print(
+        Frame(
+            Syntax(
+                tomli_w.dumps(cfg.data),
+                "toml",
+                theme="ansi_dark",
+                background_color="default",
+                word_wrap=True,
+            ),
+            title="config.toml",
+        )
+    )
 
 
 @config_app.command("get")
@@ -965,10 +1155,12 @@ def doctor() -> None:
             steps.warn("Config is not writable", str(exc))
             problems += 1
         if keystore.backend_available():
+
             def probe() -> None:
                 keystore.set_key("kunji-doctor", "probe-value-123456")
                 assert keystore.get_key("kunji-doctor")[0] == "probe-value-123456"
                 keystore.delete_key("kunji-doctor")
+
             try:
                 steps.run(f"Keychain: {keystore.backend_name()}", probe)
             except Exception:  # noqa: BLE001
@@ -976,8 +1168,11 @@ def doctor() -> None:
         else:
             steps.warn("No OS keychain found", "use environment variables for keys")
             problems += 1
-        configured = [pid for pid, spec in all_specs(cfg).items()
-                      if cfg.provider_entry(pid) or key_for(spec)[0]]
+        configured = [
+            pid
+            for pid, spec in all_specs(cfg).items()
+            if cfg.provider_entry(pid) or key_for(spec)[0]
+        ]
         if configured:
             steps.ok("Providers", ", ".join(configured))
         else:
@@ -1000,8 +1195,13 @@ def upgrade(
 
     cfg = load_config()
     with Steps() as steps:
-        latest = steps.run("Checking for a new version", checkin.check_updates, cfg, True,
-                           done=lambda v: f"{v} available" if v else "")
+        latest = steps.run(
+            "Checking for a new version",
+            checkin.check_updates,
+            cfg,
+            True,
+            done=lambda v: f"{v} available" if v else "",
+        )
     if not latest:
         success(f"You're on the latest version ({__version__})")
         return
@@ -1016,12 +1216,17 @@ def version() -> None:
     """Show version and update status."""
     cfg = load_config()
     latest = checkin.check_updates(cfg)
-    console.print(Strip([
-        ("Version", __version__, 0),
-        ("Latest", latest or "up to date", 1),
-        ("Python", platform.python_version(), 2),
-        ("System", f"{platform.system()} {platform.release()}", 3),
-    ], title="kunji"))
+    console.print(
+        Strip(
+            [
+                ("Version", __version__, 0),
+                ("Latest", latest or "up to date", 1),
+                ("Python", platform.python_version(), 2),
+                ("System", f"{platform.system()} {platform.release()}", 3),
+            ],
+            title="kunji",
+        )
+    )
 
 
 # Entry point --------------------------------------------------------------------
