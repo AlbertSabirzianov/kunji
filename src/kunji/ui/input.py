@@ -65,8 +65,11 @@ PICKER_STYLE = questionary.Style(
 
 
 class SlashCompleter(Completer):
-    def __init__(self, model_refs: Callable[[], Iterable[str]],
-                 prompt_names: Callable[[], Iterable[str]] | None = None):
+    def __init__(
+        self,
+        model_refs: Callable[[], Iterable[str]],
+        prompt_names: Callable[[], Iterable[str]] | None = None,
+    ):
         self.model_refs = model_refs
         self.prompt_names = prompt_names or (lambda: [])
         self.paths = PathCompleter(expanduser=True)
@@ -92,7 +95,7 @@ class SlashCompleter(Completer):
                     yield Completion(cmd, start_position=-len(text), display_meta=desc)
             return
         if text.startswith("/model "):
-            arg = text[len("/model "):]
+            arg = text[len("/model ") :]
             for ref in self.model_refs():
                 if arg.lower() in ref.lower():
                     yield Completion(ref, start_position=-len(arg))
@@ -121,9 +124,12 @@ def _bindings() -> KeyBindings:
     return kb
 
 
-def chat_prompt(history_file: str | None, model_refs: Callable[[], Iterable[str]],
-                toolbar: Callable[[], str],
-                prompt_names: Callable[[], Iterable[str]] | None = None) -> PromptSession:
+def chat_prompt(
+    history_file: str | None,
+    model_refs: Callable[[], Iterable[str]],
+    toolbar: Callable[[], str],
+    prompt_names: Callable[[], Iterable[str]] | None = None,
+) -> PromptSession:
     try:
         history = FileHistory(history_file) if history_file else InMemoryHistory()
     except OSError:
@@ -136,9 +142,7 @@ def chat_prompt(history_file: str | None, model_refs: Callable[[], Iterable[str]
         multiline=True,
         style=PROMPT_STYLE,
         bottom_toolbar=lambda: [("class:bottom-toolbar.text", toolbar())],
-        prompt_continuation=lambda width, line_number, is_soft_wrap: [
-            ("class:continuation", "  ")
-        ],
+        prompt_continuation=lambda width, line_number, is_soft_wrap: [("class:continuation", "  ")],
         reserve_space_for_menu=6,
     )
 
@@ -152,8 +156,13 @@ def interactive() -> bool:
 
 def pick(message: str, choices: list, default=None):
     return questionary.select(
-        message, choices=choices, default=default, style=PICKER_STYLE, qmark="◆",
-        pointer="❯", instruction="(↑/↓, enter)",
+        message,
+        choices=choices,
+        default=default,
+        style=PICKER_STYLE,
+        qmark="◆",
+        pointer="❯",
+        instruction="(↑/↓, enter)",
     ).ask()
 
 
@@ -161,8 +170,13 @@ def pick_or_type(message: str, choices: list[str], default: str = "") -> str | N
     if not choices:
         return questionary.text(message, default=default, style=PICKER_STYLE, qmark="◆").ask()
     return questionary.autocomplete(
-        message, choices=choices, default=default, style=PICKER_STYLE, qmark="◆",
-        match_middle=True, validate=lambda v: bool(v.strip()) or "Type a model name",
+        message,
+        choices=choices,
+        default=default,
+        style=PICKER_STYLE,
+        qmark="◆",
+        match_middle=True,
+        validate=lambda v: bool(v.strip()) or "Type a model name",
     ).ask()
 
 

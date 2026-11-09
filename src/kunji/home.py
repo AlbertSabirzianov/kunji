@@ -38,14 +38,31 @@ def _ask(question):
 
 
 def select(message: str, choices: list, default=None):
-    return _ask(questionary.select(message, choices=choices, default=default, style=PICKER_STYLE,
-                                   qmark="◆", pointer="❯", instruction="(↑/↓ enter · ctrl+c back)",
-                                   use_shortcuts=False))
+    return _ask(
+        questionary.select(
+            message,
+            choices=choices,
+            default=default,
+            style=PICKER_STYLE,
+            qmark="◆",
+            pointer="❯",
+            instruction="(↑/↓ enter · ctrl+c back)",
+            use_shortcuts=False,
+        )
+    )
 
 
 def text(message: str, default: str = "", validate=None, multiline: bool = False):
-    return _ask(questionary.text(message, default=default, style=PICKER_STYLE, qmark="◆",
-                                 validate=validate, multiline=multiline))
+    return _ask(
+        questionary.text(
+            message,
+            default=default,
+            style=PICKER_STYLE,
+            qmark="◆",
+            validate=validate,
+            multiline=multiline,
+        )
+    )
 
 
 def choice(title: str, value: str, note: str = "") -> questionary.Choice:
@@ -91,15 +108,20 @@ class Home:
     def header(self) -> None:
         default = str(self.cfg.get("default_model") or "")
         pid, model = parse_ref(default) if default else ("", "")
-        self.console.print(Text.assemble(chip("kunji"), ("  your keys · every model · one terminal",
-                                                         "k.dim")))
-        self.console.print(Strip([
-            ("Default model", model or "not set", 0),
-            ("Provider", pid or "—", 2),
-            ("Providers", str(len(self.configured())), 3),
-            ("Today", fmt_money(self.cfg, ledger.spent_today_usd()), 1),
-            ("State", status_text("READY" if default else "SETUP"), 4),
-        ]))
+        self.console.print(
+            Text.assemble(chip("kunji"), ("  your keys · every model · one terminal", "k.dim"))
+        )
+        self.console.print(
+            Strip(
+                [
+                    ("Default model", model or "not set", 0),
+                    ("Provider", pid or "—", 2),
+                    ("Providers", str(len(self.configured())), 3),
+                    ("Today", fmt_money(self.cfg, ledger.spent_today_usd()), 1),
+                    ("State", status_text("READY" if default else "SETUP"), 4),
+                ]
+            )
+        )
         line = upgrade.notice(self.cfg)
         if line:
             self.console.print(Capped(line))
@@ -108,8 +130,10 @@ class Home:
     def run(self) -> None:
         self.header()
         if not self.configured():
-            hint("  Welcome! Add your first provider to get started. "
-                 "Free options: Groq, Gemini, or Ollama (local).")
+            hint(
+                "  Welcome! Add your first provider to get started. "
+                "Free options: Groq, Gemini, or Ollama (local)."
+            )
             self.console.print()
             self.run_safely(self._keys_add)
         while True:
@@ -169,12 +193,20 @@ class Home:
             return
         import time
 
-        items = [choice(r.title[:44], r.id,
-                        f"{r.model.split(':', 1)[-1][:18]:<20}"
-                        f"{time.strftime('%d %b %H:%M', time.localtime(r.updated))}")
-                 for r in records[:30]]
-        items += [questionary.Separator(" "), choice("Search chats…", "__search__"),
-                  choice("Back", BACK)]
+        items = [
+            choice(
+                r.title[:44],
+                r.id,
+                f"{r.model.split(':', 1)[-1][:18]:<20}"
+                f"{time.strftime('%d %b %H:%M', time.localtime(r.updated))}",
+            )
+            for r in records[:30]
+        ]
+        items += [
+            questionary.Separator(" "),
+            choice("Search chats…", "__search__"),
+            choice("Back", BACK),
+        ]
         picked = select("Which chat?", items)
         if picked in (None, BACK):
             return
@@ -186,10 +218,16 @@ class Home:
                 self.run_safely(history_search, query.split())
             return
         record = history.find(picked)
-        action = select(record.title[:60], [
-            choice("Continue this chat", "open"), choice("Show it", "show"),
-            choice("Export as markdown", "export"), choice("Delete", "delete"),
-            choice("Back", BACK)])
+        action = select(
+            record.title[:60],
+            [
+                choice("Continue this chat", "open"),
+                choice("Show it", "show"),
+                choice("Export as markdown", "export"),
+                choice("Delete", "delete"),
+                choice("Back", BACK),
+            ],
+        )
         from kunji import cli
 
         if action == "open":
@@ -198,28 +236,42 @@ class Home:
             self.run_safely(cli.history_show, record.id)
         elif action == "export":
             self.run_safely(cli.history_export, record.id, None)
-        elif action == "delete" and select("Delete this chat?", [
-                choice("No", "no"), choice("Yes, delete it", "yes")]) == "yes":
+        elif (
+            action == "delete"
+            and select("Delete this chat?", [choice("No", "no"), choice("Yes, delete it", "yes")])
+            == "yes"
+        ):
             self.run_safely(cli.history_delete, record.id, False, True)
 
     def do_prompt(self) -> None:
-        items = [choice(f"@{p.name}", p.name, p.description)
-                 for p in prompts.all_prompts().values()]
-        items += [questionary.Separator(" "), choice("Create a new prompt…", "__new__"),
-                  choice("Back", BACK)]
+        items = [
+            choice(f"@{p.name}", p.name, p.description) for p in prompts.all_prompts().values()
+        ]
+        items += [
+            questionary.Separator(" "),
+            choice("Create a new prompt…", "__new__"),
+            choice("Back", BACK),
+        ]
         picked = select("Which prompt?", items)
         if picked in (None, BACK):
             return
         from kunji import cli
 
         if picked == "__new__":
-            name = text("Name (lowercase, e.g. standup)",
-                        validate=lambda v: bool(prompts.NAME_RE.match(v.strip().lower()))
-                        or "Use lowercase letters, numbers and dashes")
+            name = text(
+                "Name (lowercase, e.g. standup)",
+                validate=lambda v: (
+                    bool(prompts.NAME_RE.match(v.strip().lower()))
+                    or "Use lowercase letters, numbers and dashes"
+                ),
+            )
             if not name:
                 return
-            body = text("Instructions — use {input} where your text goes "
-                        "(alt+enter or esc then enter to finish)", multiline=True)
+            body = text(
+                "Instructions — use {input} where your text goes "
+                "(alt+enter or esc then enter to finish)",
+                multiline=True,
+            )
             if body:
                 desc = text("One-line description", default="My prompt") or ""
                 self.run_safely(cli.prompts_add, name.strip().lower(), body, desc)
@@ -227,17 +279,20 @@ class Home:
         prompt = prompts.get(picked)
         user_text = ""
         if not prompt.needs_git:
-            user_text = text(f"Text for @{prompt.name} (alt+enter or esc then enter to finish)",
-                             multiline=True)
+            user_text = text(
+                f"Text for @{prompt.name} (alt+enter or esc then enter to finish)", multiline=True
+            )
             if user_text is None:
                 return
-        path = _ask(questionary.path("Attach a file? (leave empty to skip)", style=PICKER_STYLE,
-                                     qmark="◆"))
+        path = _ask(
+            questionary.path("Attach a file? (leave empty to skip)", style=PICKER_STYLE, qmark="◆")
+        )
         if path is None:
             return
         files = [path.strip()] if path.strip() else None
-        self.run_safely(cli.run_prompt, prompt.name, [user_text] if user_text else None,
-                        None, files, False)
+        self.run_safely(
+            cli.run_prompt, prompt.name, [user_text] if user_text else None, None, files, False
+        )
 
     def do_compare(self) -> None:
         from kunji.chat import configured_refs
@@ -250,11 +305,15 @@ class Home:
         refs = configured_refs(self.cfg)[:40]
         if len(refs) < 2:
             hint("  Add another provider (or fetch models) to compare more than one model.")
-        picked = _ask(questionary.checkbox(
-            "Models to compare (space to tick, enter to start)",
-            choices=[questionary.Choice(r, value=r, checked=r in defaults) for r in refs],
-            style=PICKER_STYLE, qmark="◆",
-            validate=lambda v: bool(v) or "Tick at least one model"))
+        picked = _ask(
+            questionary.checkbox(
+                "Models to compare (space to tick, enter to start)",
+                choices=[questionary.Choice(r, value=r, checked=r in defaults) for r in refs],
+                style=PICKER_STYLE,
+                qmark="◆",
+                validate=lambda v: bool(v) or "Tick at least one model",
+            )
+        )
         if picked:
             from kunji.cli import compare
 
@@ -266,9 +325,14 @@ class Home:
             hint("  Add a provider first.")
             return self.run_safely(self._keys_add)
         specs = all_specs(self.cfg)
-        pid = select("Provider", [choice(specs[p].name, p, self.cfg.provider_entry(p)
-                                         .get("default_model", "")) for p in pids]
-                     + [choice("Back", BACK)])
+        pid = select(
+            "Provider",
+            [
+                choice(specs[p].name, p, self.cfg.provider_entry(p).get("default_model", ""))
+                for p in pids
+            ]
+            + [choice("Back", BACK)],
+        )
         if pid in (None, BACK):
             return
         from kunji.chat import save_models_cache
@@ -279,8 +343,11 @@ class Home:
         found: list[str] = []
         try:
             with Steps() as steps, make_provider(specs[pid]) as provider:
-                found = steps.run(f"Fetching models from {specs[pid].name}",
-                                  provider.list_models, done=lambda m: f"{len(m)} models")
+                found = steps.run(
+                    f"Fetching models from {specs[pid].name}",
+                    provider.list_models,
+                    done=lambda m: f"{len(m)} models",
+                )
             save_models_cache(pid, found)
         except ProviderError as exc:
             error(exc.message, exc.hint)
@@ -305,11 +372,17 @@ class Home:
     def do_providers(self) -> None:
         from kunji import cli
 
-        action = select("Providers and keys", [
-            choice("Add or replace a key", "add"), choice("List providers", "list"),
-            choice("Test my keys", "test"), choice("Remove a provider", "remove"),
-            choice("Add a custom server", "custom", "LM Studio, vLLM, proxy"),
-            choice("Back", BACK)])
+        action = select(
+            "Providers and keys",
+            [
+                choice("Add or replace a key", "add"),
+                choice("List providers", "list"),
+                choice("Test my keys", "test"),
+                choice("Remove a provider", "remove"),
+                choice("Add a custom server", "custom", "LM Studio, vLLM, proxy"),
+                choice("Back", BACK),
+            ],
+        )
         if action == "add":
             self.run_safely(self._keys_add)
         elif action == "list":
@@ -321,27 +394,43 @@ class Home:
             if not pids:
                 hint("  Nothing to remove.")
                 return
-            pid = select("Remove which provider?", [choice(p, p) for p in pids]
-                         + [choice("Back", BACK)])
-            if pid not in (None, BACK) and select(f"Remove {pid} and its key?", [
-                    choice("No", "no"), choice("Yes, remove", "yes")]) == "yes":
+            pid = select(
+                "Remove which provider?", [choice(p, p) for p in pids] + [choice("Back", BACK)]
+            )
+            if (
+                pid not in (None, BACK)
+                and select(
+                    f"Remove {pid} and its key?", [choice("No", "no"), choice("Yes, remove", "yes")]
+                )
+                == "yes"
+            ):
                 self.run_safely(cli.keys_remove, pid, True)
         elif action == "custom":
             pid = text("Short id (e.g. lmstudio)")
             url = pid and text("Base URL", default="http://localhost:1234/v1")
             if pid and url:
-                needs_key = select("Does it need an API key?", [
-                    choice("No", "no"), choice("Yes", "yes")]) == "yes"
-                self.run_safely(cli.providers_add, pid.strip().lower(), url.strip(), None,
-                                not needs_key)
+                needs_key = (
+                    select("Does it need an API key?", [choice("No", "no"), choice("Yes", "yes")])
+                    == "yes"
+                )
+                self.run_safely(
+                    cli.providers_add, pid.strip().lower(), url.strip(), None, not needs_key
+                )
 
     def do_usage(self) -> None:
         from kunji import cli
 
-        action = select("Usage and budgets", [
-            choice("Usage this week", "week"), choice("Usage this month", "month"),
-            choice("Show budgets", "budgets"), choice("Set a daily budget", "set"),
-            choice("Remove a budget", "clear"), choice("Back", BACK)])
+        action = select(
+            "Usage and budgets",
+            [
+                choice("Usage this week", "week"),
+                choice("Usage this month", "month"),
+                choice("Show budgets", "budgets"),
+                choice("Set a daily budget", "set"),
+                choice("Remove a budget", "clear"),
+                choice("Back", BACK),
+            ],
+        )
         if action == "week":
             self.run_safely(cli.usage_cmd, 7)
         elif action == "month":
@@ -350,9 +439,11 @@ class Home:
             self.run_safely(cli.budget_show)
         elif action in ("set", "clear"):
             scopes = ["all"] + self.configured()
-            scope = select("For which provider?", [
-                choice("All providers combined" if s == "all" else s, s) for s in scopes]
-                + [choice("Back", BACK)])
+            scope = select(
+                "For which provider?",
+                [choice("All providers combined" if s == "all" else s, s) for s in scopes]
+                + [choice("Back", BACK)],
+            )
             if scope in (None, BACK):
                 return
             if action == "clear":
@@ -373,36 +464,59 @@ class Home:
         from kunji import cli
 
         on = lambda key: "on" if self.cfg.get(key, True) else "off"  # noqa: E731
-        action = select("Settings", [
-            choice("Currency", "currency", f"{self.cfg.get('display.currency')} "
-                                           f"(rate {self.cfg.get('display.usd_rate')})"),
-            choice("Save chat history", "history", on("chat.history")),
-            choice("Default system prompt", "system",
-                   (str(self.cfg.get("chat.system_prompt")) or "none")[:30]),
-            choice("Update check", "updates", on("updates.check")),
-            choice("Price list download", "catalog", on("network.catalog")),
-            choice("Show all settings", "show"), choice("Where files are stored", "path"),
-            choice("Back", BACK)])
+        action = select(
+            "Settings",
+            [
+                choice(
+                    "Currency",
+                    "currency",
+                    f"{self.cfg.get('display.currency')} (rate {self.cfg.get('display.usd_rate')})",
+                ),
+                choice("Save chat history", "history", on("chat.history")),
+                choice(
+                    "Default system prompt",
+                    "system",
+                    (str(self.cfg.get("chat.system_prompt")) or "none")[:30],
+                ),
+                choice("Update check", "updates", on("updates.check")),
+                choice("Price list download", "catalog", on("network.catalog")),
+                choice("Show all settings", "show"),
+                choice("Where files are stored", "path"),
+                choice("Back", BACK),
+            ],
+        )
         if action == "currency":
-            cur = select("Currency", [choice(c, c) for c in ("USD", "INR", "EUR", "GBP")]
-                         + [choice("Other…", "other")])
+            cur = select(
+                "Currency",
+                [choice(c, c) for c in ("USD", "INR", "EUR", "GBP")] + [choice("Other…", "other")],
+            )
             if cur == "other":
                 cur = text("Currency code, e.g. AED")
             if not cur:
                 return
-            rate = "1" if cur == "USD" else text(f"How many {cur} per 1 USD?",
-                                                 default=str(self.cfg.get("display.usd_rate")))
+            rate = (
+                "1"
+                if cur == "USD"
+                else text(
+                    f"How many {cur} per 1 USD?", default=str(self.cfg.get("display.usd_rate"))
+                )
+            )
             if rate:
                 self.run_safely(cli.config_set, "display.currency", cur.upper())
                 self.run_safely(cli.config_set, "display.usd_rate", rate)
         elif action in ("history", "updates", "catalog"):
-            key = {"history": "chat.history", "updates": "updates.check",
-                   "catalog": "network.catalog"}[action]
+            key = {
+                "history": "chat.history",
+                "updates": "updates.check",
+                "catalog": "network.catalog",
+            }[action]
             value = "false" if self.cfg.get(key, True) else "true"
             self.run_safely(cli.config_set, key, value)
         elif action == "system":
-            value = text("System prompt for new chats (empty to clear)",
-                         default=str(self.cfg.get("chat.system_prompt") or ""))
+            value = text(
+                "System prompt for new chats (empty to clear)",
+                default=str(self.cfg.get("chat.system_prompt") or ""),
+            )
             if value is not None:
                 self.cfg.set("chat.system_prompt", value)
                 self.cfg.save()

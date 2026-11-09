@@ -54,8 +54,10 @@ def _write_cache(name, prices):
 
 
 def test_price_lookup_order():
-    _write_cache("openrouter_prices.json", {"openai/gpt-x": [1.0, 2.0],
-                                            "anthropic/claude-z-4.5": [3.0, 15.0]})
+    _write_cache(
+        "openrouter_prices.json",
+        {"openai/gpt-x": [1.0, 2.0], "anthropic/claude-z-4.5": [3.0, 15.0]},
+    )
     _write_cache("kunji_prices.json", {"groq:llama": [0.5, 0.5]})
     cfg = Config.load()
     cat = Catalog(cfg)
@@ -88,6 +90,7 @@ def test_budget_states():
     assert usage.check_budget(cfg, "groq").state == "none"
     rows = usage.summary(1)
     assert rows[0].requests == 2 and round(rows[0].cost_usd, 2) == 1.05
+
 
 def test_budget_exact_thresholds():
     cfg = Config.load()
@@ -133,12 +136,33 @@ def test_budget_does_not_count_yesterday_ledger_entries():
     today = time.time()
     yesterday = usage.start_of_day() - 1
     path.write_text(
-        "\n".join([
-            json.dumps({"ts": yesterday, "provider": "openai", "model": "gpt-x",
-                        "in": 10, "out": 10, "cost": 50.0, "est": False}),
-            json.dumps({"ts": today, "provider": "openai", "model": "gpt-x",
-                        "in": 10, "out": 10, "cost": 0.25, "est": False}),
-        ]) + "\n",
+        "\n".join(
+            [
+                json.dumps(
+                    {
+                        "ts": yesterday,
+                        "provider": "openai",
+                        "model": "gpt-x",
+                        "in": 10,
+                        "out": 10,
+                        "cost": 50.0,
+                        "est": False,
+                    }
+                ),
+                json.dumps(
+                    {
+                        "ts": today,
+                        "provider": "openai",
+                        "model": "gpt-x",
+                        "in": 10,
+                        "out": 10,
+                        "cost": 0.25,
+                        "est": False,
+                    }
+                ),
+            ]
+        )
+        + "\n",
         encoding="utf-8",
     )
 

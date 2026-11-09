@@ -92,6 +92,19 @@ BUILTIN: dict[str, Prompt] = {
             builtin=True,
         ),
         Prompt(
+            "tests",
+            "Generate unit tests for the supplied code using pytest",
+            "Write comprehensive pytest unit tests for the code below. Follow these rules:\n"
+            "- Use pytest (the project's existing test framework)\n"
+            "- Cover happy paths, edge cases, and error conditions\n"
+            "- Use descriptive test function names starting with `test_`\n"
+            "- Keep tests isolated and independent\n"
+            "- If fixtures or mocks are needed, include them inline\n"
+            "- Reply with only the test code, no explanations.\n\n"
+            "{input}",
+            builtin=True,
+        ),
+        Prompt(
             "shell",
             "Explain a shell command and warn if it is destructive",
             "Explain this shell command. Break it down part by part, say what it does, and warn "
@@ -115,7 +128,7 @@ def _parse_file(name: str, text: str) -> Prompt:
         end = text.find("\n---", 3)
         if end != -1:
             header = text[3:end]
-            body = text[end + 4:].lstrip("\n")
+            body = text[end + 4 :].lstrip("\n")
             for line in header.splitlines():
                 key, _, value = line.partition(":")
                 if key.strip().lower() == "description":
@@ -183,12 +196,18 @@ def template_file(prompt: Prompt) -> str:
 def git_diff(cwd: Path | None = None) -> str:
     def run(*args: str) -> str:
         result = subprocess.run(
-            ["git", *args], cwd=cwd, capture_output=True, text=True, timeout=15,
-            encoding="utf-8", errors="replace",
+            ["git", *args],
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            timeout=15,
+            encoding="utf-8",
+            errors="replace",
         )
         if result.returncode != 0:
-            raise PromptError("This folder is not a git repository.",
-                              hint="Run it inside your project folder.")
+            raise PromptError(
+                "This folder is not a git repository.", hint="Run it inside your project folder."
+            )
         return result.stdout
 
     try:
@@ -200,8 +219,9 @@ def git_diff(cwd: Path | None = None) -> str:
     except subprocess.TimeoutExpired as exc:
         raise PromptError("git took too long to respond.") from exc
     if not diff.strip():
-        raise PromptError("There are no changes to describe.",
-                          hint="Edit some files (and `git add` them) first.")
+        raise PromptError(
+            "There are no changes to describe.", hint="Edit some files (and `git add` them) first."
+        )
     if len(diff) > MAX_DIFF_CHARS:
         diff = diff[:MAX_DIFF_CHARS] + "\n… (diff truncated)"
     return f"```diff\n{diff.rstrip()}\n```"
@@ -218,6 +238,8 @@ def render(prompt: Prompt, user_input: str = "", cwd: Path | None = None) -> str
     if prompt.needs_git:
         text = text.replace("{git_diff}", git_diff(cwd))
     if not user_input and "{input}" in prompt.template and not prompt.needs_git:
-        raise PromptError(f"@{prompt.name} needs something to work on.",
-                          hint=f'Example: kunji @{prompt.name} "your text"   or pipe text in')
+        raise PromptError(
+            f"@{prompt.name} needs something to work on.",
+            hint=f'Example: kunji @{prompt.name} "your text"   or pipe text in',
+        )
     return re.sub(r"\n{3,}", "\n\n", text).strip()

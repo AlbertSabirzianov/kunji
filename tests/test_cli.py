@@ -29,8 +29,11 @@ def test_providers_list():
 
 
 def test_keys_add_from_stdin_without_verify_then_list_and_remove():
-    result = runner.invoke(app, ["keys", "add", "groq", "--key-stdin", "--no-verify",
-                                 "--model", "llama-x"], input="gsk_abcdefghijklmnop\n")
+    result = runner.invoke(
+        app,
+        ["keys", "add", "groq", "--key-stdin", "--no-verify", "--model", "llama-x"],
+        input="gsk_abcdefghijklmnop\n",
+    )
     assert result.exit_code == 0, result.output
     assert keystore.get_key("groq")[0] == "gsk_abcdefghijklmnop"
     cfg = Config.load()
@@ -59,8 +62,9 @@ def test_budget_commands():
 
 
 def test_custom_provider_validation():
-    ok = runner.invoke(app, ["providers", "add", "lmstudio", "--base-url",
-                             "http://localhost:1234/v1", "--no-key"])
+    ok = runner.invoke(
+        app, ["providers", "add", "lmstudio", "--base-url", "http://localhost:1234/v1", "--no-key"]
+    )
     assert ok.exit_code == 0
     assert "lmstudio" in runner.invoke(app, ["providers"]).output
     bad = runner.invoke(app, ["providers", "add", "openai", "--base-url", "https://x"])
@@ -69,12 +73,18 @@ def test_custom_provider_validation():
 
 def test_stream_turn_records_usage_and_estimates():
     def handler(request):
-        return httpx.Response(200, content=b'data: {"choices":[{"delta":{"content":"hey"}}]}\n\n'
-                                           b"data: [DONE]\n\n")
+        return httpx.Response(
+            200, content=b'data: {"choices":[{"delta":{"content":"hey"}}]}\n\ndata: [DONE]\n\n'
+        )
 
     cfg = Config.load()
-    result = stream_turn(cfg, BUILTIN["ollama"], "llama", [Message("user", "hi")],
-                         transport=httpx.MockTransport(handler))
+    result = stream_turn(
+        cfg,
+        BUILTIN["ollama"],
+        "llama",
+        [Message("user", "hi")],
+        transport=httpx.MockTransport(handler),
+    )
     assert result.text == "hey" and result.usage.estimated
     from kunji import usage
 
@@ -86,3 +96,14 @@ def test_fallback_chain_skips_missing_keys():
     cfg.set("fallback", ["groq:llama", "ollama:qwen"])
     chain = fallback_chain(cfg, BUILTIN["openai"], "gpt")
     assert [f"{s.id}:{m}" for s, m in chain] == ["openai:gpt", "ollama:qwen"]
+
+
+def test_models_rejects_non_positive_limit():
+    for limit in ("0", "-1"):
+        result = runner.invoke(
+            app,
+            ["models", "openai", "--limit", limit],
+        )
+
+        assert result.exit_code == 2
+        assert "greater than 0" in result.output

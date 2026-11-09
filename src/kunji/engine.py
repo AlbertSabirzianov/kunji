@@ -63,11 +63,13 @@ def stream_turn(
     if usage is None or usage.total == 0:
         prompt_chars = system + "".join(m.content for m in messages)
         usage = Usage(estimate_tokens(prompt_chars), estimate_tokens(text), estimated=True)
-    cost = catalog.cost(spec.id, model, spec.openrouter_prefix, usage.input_tokens,
-                        usage.output_tokens)
+    cost = catalog.cost(
+        spec.id, model, spec.openrouter_prefix, usage.input_tokens, usage.output_tokens
+    )
     if record and (text or usage.input_tokens):
-        ledger.record(spec.id, model, usage.input_tokens, usage.output_tokens, cost,
-                      usage.estimated)
+        ledger.record(
+            spec.id, model, usage.input_tokens, usage.output_tokens, cost, usage.estimated
+        )
     return TurnResult(spec, model, text, usage, cost, time.monotonic() - started, interrupted)
 
 

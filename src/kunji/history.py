@@ -56,8 +56,10 @@ def save(record: ChatRecord) -> None:
     if not record.title:
         first = next((m["content"] for m in record.messages if m.get("role") == "user"), "")
         record.title = make_title(first) or "Untitled chat"
-    atomic_write(chats_dir() / f"{record.id}.json",
-                 json.dumps(asdict(record), ensure_ascii=False).encode("utf-8"))
+    atomic_write(
+        chats_dir() / f"{record.id}.json",
+        json.dumps(asdict(record), ensure_ascii=False).encode("utf-8"),
+    )
 
 
 def _read(path: Path) -> ChatRecord | None:
@@ -89,8 +91,9 @@ def find(prefix: str) -> ChatRecord:
     if not matches:
         raise HistoryError(f"No saved chat with id {prefix}.", hint="See ids with: kunji history")
     if len(matches) > 1:
-        raise HistoryError(f"More than one chat starts with {prefix}.",
-                           hint="Type more characters.")
+        raise HistoryError(
+            f"More than one chat starts with {prefix}.", hint="Type more characters."
+        )
     return matches[0]
 
 
@@ -115,8 +118,11 @@ def search(text: str, limit: int = 30) -> list[Hit]:
                 pos = content.lower().find(needle)
                 if pos != -1:
                     start = max(0, pos - 30)
-                    snippet = ("…" if start else "") + " ".join(
-                        content[start:pos + len(needle) + 40].split()) + "…"
+                    snippet = (
+                        ("…" if start else "")
+                        + " ".join(content[start : pos + len(needle) + 40].split())
+                        + "…"
+                    )
                     break
         if snippet:
             hits.append(Hit(record, snippet))

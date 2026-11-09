@@ -92,7 +92,7 @@ Chats are stored only on your computer. Stop saving with
 | `kunji keys test` | Check every key still works |
 | `kunji keys remove groq` | Delete a key and its settings |
 | `kunji providers` | All supported providers |
-| `kunji providers add lmstudio --base-url http://localhost:1234/v1 --no-key` | Add your own OpenAI-compatible server |
+| `kunji providers add lmstudio --base-url http://localhost:1234/v1 --no-key` | Add your own OpenAI-compatible server (see [Custom providers](CUSTOM_PROVIDERS.md)) |
 
 ## Cost and budgets
 

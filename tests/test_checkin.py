@@ -68,10 +68,18 @@ def test_checkin_roundtrip_and_cache(monkeypatch):
     def handler(request):
         body = json.loads(request.content)
         sent.update(body)
-        return httpx.Response(200, json=sign({
-            "install_id": body["install_id"], "plan": "trial", "trial_ends": "2030-01-01",
-            "min_version": "9.0.0", "expires_at": time.time() + 3600,
-        }))
+        return httpx.Response(
+            200,
+            json=sign(
+                {
+                    "install_id": body["install_id"],
+                    "plan": "trial",
+                    "trial_ends": "2030-01-01",
+                    "min_version": "9.0.0",
+                    "expires_at": time.time() + 3600,
+                }
+            ),
+        )
 
     cfg = Config.load()
     cfg.set("cloud.url", "https://cloud.example.com")
