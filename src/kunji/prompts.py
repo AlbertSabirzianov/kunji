@@ -104,15 +104,6 @@ BUILTIN: dict[str, Prompt] = {
             "{input}",
             builtin=True,
         ),
-        Prompt(
-            "shell",
-            "Explain a shell command and warn if it is destructive",
-            "Explain this shell command. Break it down part by part, say what it does, and warn "
-            "clearly if it is destructive (deletes files, overwrites data, uses sudo, runs rm -rf, "
-            "pipes curl into a shell, or any other dangerous pattern). If it is safe, say so. "
-            "Do NOT run the command — only explain it.\n\n{input}",
-            builtin=True,
-        ),
     )
 }
 
