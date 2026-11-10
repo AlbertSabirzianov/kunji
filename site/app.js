@@ -222,3 +222,38 @@
   }
   play(0);
 })();
+// Fetch contributors from GitHub API
+async function loadContributors() {
+  const grid = document.getElementById('contributors-grid');
+  if (!grid) return;
+
+  try {
+    const response = await fetch('https://api.github.com/repos/testwithsuraj/kunji/contributors');
+    const contributors = await response.json();
+    
+    grid.innerHTML = '';
+    
+    contributors.forEach(user => {
+      if (user.type === 'User') {
+        const avatar = document.createElement('a');
+        avatar.href = user.html_url;
+        avatar.target = '_blank';
+        avatar.style.display = 'inline-block';
+        
+        const img = document.createElement('img');
+        img.src = user.avatar_url;
+        img.style.width = '50px';
+        img.style.height = '50px';
+        img.style.borderRadius = '50%';
+        img.style.border = '2px solid #333';
+        
+        avatar.appendChild(img);
+        grid.appendChild(avatar);
+      }
+    });
+  } catch (error) {
+    grid.innerHTML = '<p>Could not load contributors right now.</p>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadContributors);
