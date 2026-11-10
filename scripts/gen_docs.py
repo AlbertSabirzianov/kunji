@@ -121,20 +121,33 @@ def md_escape(text: str) -> str:
     return text.replace("|", "\\|")
 
 
+def arg_name(p) -> str:
+    name = (
+        getattr(p, "human_readable_name", None)
+        or getattr(p, "name", None)
+        or getattr(p, "metavar", None)
+        or "arg"
+    )
+    if callable(name):
+        name = name()
+    return str(name).lower()
+
+
 def param_rows(cmd) -> tuple[list[list[str]], list[list[str]]]:
     args, opts = [], []
     for p in cmd.params:
-        if getattr(p, "hidden", False) or p.name in ("help",):
+        if getattr(p, "hidden", False) or getattr(p, "name", None) in ("help",):
             continue
         help_text = md_escape(clean(getattr(p, "help", "") or ""))
-        if p.param_type_name == "argument":
-            name = p.human_readable_name.lower()
-            args.append([f"`{name}`", "yes" if p.required else "no", help_text or "—"])
+        if getattr(p, "param_type_name", None) == "argument":
+            name = arg_name(p)
+            args.append([f"`{name}`", "yes" if getattr(p, "required", False) else "no", help_text or "—"])
         else:
-            flags = ", ".join(f"`{o}`" for o in [*p.opts, *p.secondary_opts])
+            flags = ", ".join(f"`{o}`" for o in [*getattr(p, "opts", []), *getattr(p, "secondary_opts", [])])
             default = ""
-            if not p.is_flag and p.default not in (None, "", (), []):
-                default = f" (default: `{p.default}`)"
+            default_val = getattr(p, "default", None)
+            if not getattr(p, "is_flag", False) and default_val not in (None, "", (), []):
+                default = f" (default: `{default_val}`)"
             opts.append([flags, (help_text or "—") + default])
     return args, opts
 
@@ -148,10 +161,10 @@ def table(headers: list[str], rows: list[list[str]]) -> str:
 def usage_line(path: str, cmd) -> str:
     parts = [path]
     for p in cmd.params:
-        if p.param_type_name == "argument":
-            name = p.human_readable_name.lower()
-            parts.append(f"<{name}>" if p.required else f"[{name}]")
-    if any(p.param_type_name == "option" and p.name != "help" for p in cmd.params):
+        if getattr(p, "param_type_name", None) == "argument":
+            name = arg_name(p)
+            parts.append(f"<{name}>" if getattr(p, "required", False) else f"[{name}]")
+    if any(getattr(p, "param_type_name", None) == "option" and getattr(p, "name", None) != "help" for p in cmd.params):
         parts.append("[options]")
     return " ".join(parts)
 
