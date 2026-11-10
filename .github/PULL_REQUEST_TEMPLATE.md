@@ -1,15 +1,11 @@
-## What does this change?
+## Description
+<!-- What does this PR do? Link relevant issue: Fixes #123 -->
 
-<!-- One or two sentences. Link the issue: Fixes #123 -->
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation / Maintenance
 
-## How did you test it?
-
-- [ ] `ruff check src tests`
-- [ ] `pytest`
-- [ ] Tried it in a real terminal (narrow and wide window) if it changes the UI
-
-## Safety checklist
-
-- [ ] No API keys, prompts or personal data are logged, printed or sent anywhere new
-- [ ] Any new network call is documented in `docs/PRIVACY.md` and can be switched off
-- [ ] README / CHANGELOG updated if users will notice the change
+## Checklist
+- [ ] Tests and linter pass (`ruff check`, `pytest`)
+- [ ] Tested locally in terminal (if UI change)

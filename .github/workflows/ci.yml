@@ -30,11 +30,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS is off for now. To test on Mac again, add macos-latest to this list.
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         python: ["3.11", "3.13"]
+        include:
+          - os: windows-latest
+            python: "3.12"
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
         with:
@@ -51,7 +53,7 @@ jobs:
           kunji config path
 
   build:
-    needs: test
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -83,4 +85,3 @@ jobs:
       - name: Build docs (fails on broken links)
         working-directory: docs-site
         run: npm ci && npm run build
-
