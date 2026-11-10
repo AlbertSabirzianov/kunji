@@ -59,7 +59,7 @@ def test_price_lookup_order():
         {"openai/gpt-x": [1.0, 2.0], "anthropic/claude-z-4.5": [3.0, 15.0]},
     )
     _write_cache("kunji_prices.json", {"groq:llama": [0.5, 0.5]})
-    cfg = Config.load()
+    cfg = Config(path=cache_dir() / "test_config.toml", data={"network": {"catalog": True}})
     cat = Catalog(cfg)
     assert cat.price_for("openai", "gpt-x", "openai").source == "openrouter"
     assert cat.price_for("anthropic", "claude-z-4-5-20250101", "anthropic").input == 3.0
