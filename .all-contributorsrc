@@ -3,7 +3,9 @@
   "projectOwner": "testwithsuraj",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "files": ["README.md"],
+  "files": [
+    "README.md"
+  ],
   "imageSize": 100,
   "commit": false,
   "commitType": "docs",
@@ -13,24 +15,62 @@
   "contributors": [
     {
       "login": "testwithsuraj",
-      "name": "testwithsuraj",
+      "name": "Suraj",
       "avatar_url": "https://github.com/testwithsuraj.png",
       "profile": "https://github.com/testwithsuraj",
-      "contributions": ["code", "maintenance"]
+      "contributions": [
+        "Owner",
+        "maintenance"
+      ]
     },
     {
       "login": "imanr236",
       "name": "Iman Rashidi",
       "avatar_url": "https://avatars.githubusercontent.com/u/66421964?v=4",
       "profile": "https://github.com/imanr236",
-      "contributions": ["data"]
+      "contributions": [
+        "data",
+        "test"
+      ]
     },
     {
       "login": "cascade80",
       "name": "Ayush",
       "avatar_url": "https://avatars.githubusercontent.com/u/191756690?v=4",
       "profile": "https://github.com/cascade80",
-      "contributions": ["code", "test"]
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "AlbertSabirzianov",
+      "name": "Albert Sabirzianov",
+      "avatar_url": "https://github.com/AlbertSabirzianov.png",
+      "profile": "https://github.com/AlbertSabirzianov",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
+    },
+    {
+      "login": "HarshRajSinghania",
+      "name": "Harsh Raj Singhania",
+      "avatar_url": "https://github.com/HarshRajSinghania.png",
+      "profile": "https://github.com/HarshRajSinghania",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "tushar22199",
+      "name": "Tushar",
+      "avatar_url": "https://github.com/tushar22199.png",
+      "profile": "https://github.com/tushar22199",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
