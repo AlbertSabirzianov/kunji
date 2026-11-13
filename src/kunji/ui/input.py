@@ -25,6 +25,7 @@ SLASH_COMMANDS: dict[str, str] = {
     "/prompts": "List saved prompts; use one with @name <text>",
     "/history": "Recent saved chats (/history <text> to search)",
     "/retry": "Regenerate the last answer",
+    "/copy": "Copy the latest assistant response to the clipboard",
     "/new": "Start a new conversation",
     "/clear": "Start a new conversation (alias for /new)",
     "/save": "Export the conversation as a markdown file",

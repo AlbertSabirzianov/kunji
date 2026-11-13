@@ -33,6 +33,7 @@ dependencies = [
   "questionary>=2.0",
   "tomli-w>=1.0",
   "cryptography>=42",
+  "pyperclip",
 ]
 
 [project.optional-dependencies]

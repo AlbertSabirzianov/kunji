@@ -128,6 +128,7 @@ Free and local? Install [Ollama](https://ollama.com), then `kunji keys add ollam
 | `/prompts` · `/history` | List saved prompts · recent chats |
 | `/system …` | Set the system prompt |
 | `/retry` · `/new` / `/clear` · `/save [file]` | Regenerate · new conversation · export markdown |
+| `/copy` | Copy the latest assistant response to the clipboard |
 | `/exit` · `/quit` · `/q` | Leave the chat |
 | `enter` · `alt+enter` / `ctrl+j` | Send · new line |
 | `ctrl+c` · `ctrl+d` | Stop the reply · quit |
