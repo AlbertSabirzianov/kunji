@@ -2,9 +2,13 @@
 
 import re
 from pathlib import Path
+from unittest.mock import Mock
+
+import pyperclip
 
 from kunji.chat import ChatSession
 from kunji.config import Config
+from kunji.providers import Message
 from kunji.ui.input import SLASH_COMMANDS
 
 
@@ -68,3 +72,55 @@ def test_aliases_behavior():
 
     # Clear / new aliases map to same handler
     assert ChatSession.COMMAND_HANDLERS["/clear"] == ChatSession.COMMAND_HANDLERS["/new"]
+
+
+def test_copy_uses_latest_assistant_response(console_at, monkeypatch):
+    console = console_at(120)
+    cfg = Config.load()
+    cfg.set("default_model", "ollama:llama")
+    session = ChatSession(cfg)
+    session.messages.extend(
+        [
+            Message("assistant", "Older reply"),
+            Message("assistant", "Latest reply"),
+            Message("user", "Follow-up question"),
+        ]
+    )
+    copy = Mock()
+    monkeypatch.setattr("kunji.chat.pyperclip.copy", copy)
+
+    session.command("/copy")
+
+    copy.assert_called_once_with("Latest reply")
+    assert "Copied the latest assistant response" in console.export_text(styles=False)
+
+
+def test_copy_without_assistant_response(console_at, monkeypatch):
+    console = console_at(120)
+    cfg = Config.load()
+    cfg.set("default_model", "ollama:llama")
+    session = ChatSession(cfg)
+    copy = Mock()
+    monkeypatch.setattr("kunji.chat.pyperclip.copy", copy)
+
+    session.command("/copy")
+
+    copy.assert_not_called()
+    assert "No response to copy yet." in console.export_text(styles=False)
+
+
+def test_copy_handles_unavailable_clipboard(console_at, monkeypatch):
+    console = console_at(120)
+    cfg = Config.load()
+    cfg.set("default_model", "ollama:llama")
+    session = ChatSession(cfg)
+    session.messages.append(Message("assistant", "Latest reply"))
+    copy = Mock(side_effect=pyperclip.PyperclipException("Clipboard unavailable"))
+    monkeypatch.setattr("kunji.chat.pyperclip.copy", copy)
+
+    session.command("/copy")
+
+    copy.assert_called_once_with("Latest reply")
+    output = console.export_text(styles=False)
+    assert "Could not copy to the clipboard." in output
+    assert "Copied the latest assistant response" not in output

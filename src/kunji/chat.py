@@ -8,6 +8,7 @@ from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 
+import pyperclip
 from rich.live import Live
 from rich.text import Text
 
@@ -332,6 +333,7 @@ class ChatSession:
         "/system": "cmd_system",
         "/cost": "cmd_cost",
         "/retry": "cmd_retry",
+        "/copy": "cmd_copy",
         "/clear": "cmd_clear",
         "/save": "cmd_save",
         "/new": "cmd_clear",
@@ -473,6 +475,19 @@ class ChatSession:
             self.messages.pop()
         if self.messages and self.messages[-1].role == "user":
             self.send(self.messages[-1].content, already_added=True)
+
+    def cmd_copy(self, _: str) -> None:
+        for message in reversed(self.messages):
+            if message.role == "assistant":
+                try:
+                    pyperclip.copy(message.content)
+                except (pyperclip.PyperclipException, OSError):
+                    warn("Could not copy to the clipboard.")
+                else:
+                    success("Copied the latest assistant response")
+                return
+
+        hint("  No response to copy yet.")
 
     def cmd_clear(self, _: str) -> None:
         self.messages.clear()
