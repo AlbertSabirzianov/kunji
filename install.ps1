@@ -1,9 +1,9 @@
 # kunji installer for Windows (PowerShell).
 #
-#   irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex
+#   irm https://kunji.iamsuraj.me/install.ps1 | iex
 #
 # From cmd.exe:
-#   powershell -ExecutionPolicy ByPass -c "irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex"
+#   powershell -ExecutionPolicy ByPass -c "irm https://kunji.iamsuraj.me/install.ps1 | iex"
 #
 # What it does:
 #   1. Installs uv (https://docs.astral.sh/uv/) if you don't have it. uv is a single file.

@@ -6,10 +6,12 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-15
+
 ### Added
 - **One-line installer, no Python needed.** macOS/Linux:
-  `curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh | sh`,
-  Windows: `irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex`.
+  `curl -fsSL https://kunji.iamsuraj.me/install.sh | sh`,
+  Windows: `irm https://kunji.iamsuraj.me/install.ps1 | iex`.
   It installs kunji with [uv](https://docs.astral.sh/uv/) (and Python, if needed) and puts
   `kunji` on your PATH, so it works in any folder — no more "kunji is not recognized".
 - Documentation site at https://testwithsuraj.github.io/kunji/docs/ with guides, provider
