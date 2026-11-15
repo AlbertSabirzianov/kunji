@@ -2,7 +2,7 @@
 
 | Channel | How | Users install with |
 | --- | --- | --- |
-| Installer | `install.sh` / `install.ps1` at the repo root, attached to every GitHub Release | `curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh \| sh` / `irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 \| iex` |
+| Installer | `install.sh` / `install.ps1` at the repo root; published on the website by `pages.yml` and attached to every GitHub Release | `curl -fsSL https://kunji.iamsuraj.me/install.sh \| sh` / `irm https://kunji.iamsuraj.me/install.ps1 \| iex` |
 | PyPI | Automatic: `.github/workflows/release.yml` on a `v*` tag | `pip install kunji` |
 | GitHub Releases | Automatic: Windows + Linux binaries + `SHA256SUMS.txt` | download |
 | winget | `wingetcreate` with the release `.exe` (see `winget/`) | `winget install testwithsuraj.kunji` |

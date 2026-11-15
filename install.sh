@@ -1,7 +1,7 @@
 #!/bin/sh
 # kunji installer for macOS and Linux.
 #
-#   curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh | sh
+#   curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
 #
 # What it does:
 #   1. Installs uv (https://docs.astral.sh/uv/) if you don't have it. uv is a single file.

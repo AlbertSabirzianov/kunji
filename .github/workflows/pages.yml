@@ -18,6 +18,8 @@ on:
       - "src/kunji/**"
       - "scripts/gen_docs.py"
       - "CHANGELOG.md"
+      - "install.sh"
+      - "install.ps1"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -60,6 +62,8 @@ jobs:
         run: |
           mkdir -p _site
           cp -r site/. _site/
+          # One-line installers: https://kunji.iamsuraj.me/install.sh (and install.ps1)
+          cp install.sh install.ps1 _site/
           cp -r docs-site/dist _site/docs
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5

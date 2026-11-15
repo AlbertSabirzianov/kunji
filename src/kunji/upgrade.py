@@ -19,8 +19,8 @@ from kunji.config import Config
 
 RELEASES_URL = "https://github.com/testwithsuraj/kunji/releases/latest"
 EXE_URL = "https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe"
-INSTALL_SH = "https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh"
-INSTALL_PS1 = "https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1"
+INSTALL_SH = "https://kunji.iamsuraj.me/install.sh"
+INSTALL_PS1 = "https://kunji.iamsuraj.me/install.ps1"
 
 
 def is_standalone() -> bool:

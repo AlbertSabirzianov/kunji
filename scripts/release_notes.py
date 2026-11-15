@@ -24,8 +24,8 @@ INSTALL = f"""## Install or upgrade
 
 | | Command |
 | --- | --- |
-| macOS / Linux | `curl -fsSL {REPO}/releases/latest/download/install.sh \\| sh` |
-| Windows (PowerShell) | `irm {REPO}/releases/latest/download/install.ps1 \\| iex` |
+| macOS / Linux | `curl -fsSL https://kunji.iamsuraj.me/install.sh \\| sh` |
+| Windows (PowerShell) | `irm https://kunji.iamsuraj.me/install.ps1 \\| iex` |
 | Already installed | `kunji upgrade` |
 | With pip | `pip install --upgrade kunji` |
 

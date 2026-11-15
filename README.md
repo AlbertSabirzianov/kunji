@@ -5,10 +5,10 @@
 **Every AI model in one terminal, with your own keys. See what every answer costs.**
 
 ```bash
-curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh | sh
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
 ```
 
-Windows: `irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex`
+Windows: `irm https://kunji.iamsuraj.me/install.ps1 | iex`
 
 [![PyPI](https://img.shields.io/pypi/v/kunji?style=flat-square&labelColor=1f2328&color=2563eb)](https://pypi.org/project/kunji/)
 [![Downloads](https://img.shields.io/pepy/dt/kunji?style=flat-square&label=Downloads&labelColor=1f2328&color=2563eb)](https://pepy.tech/projects/kunji)
@@ -69,17 +69,17 @@ One command. No Python needed, and `kunji` works in any folder afterwards.
 **macOS / Linux**
 
 ```bash
-curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh | sh
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
 ```
 
 **Windows** (PowerShell)
 
 ```powershell
-irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex
+irm https://kunji.iamsuraj.me/install.ps1 | iex
 ```
 
 From Command Prompt instead:
-`powershell -ExecutionPolicy ByPass -c "irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex"`
+`powershell -ExecutionPolicy ByPass -c "irm https://kunji.iamsuraj.me/install.ps1 | iex"`
 
 The installer uses [uv](https://docs.astral.sh/uv/) to install kunji (and Python 3.11+ if you
 don't have it) in its own folder, and adds `kunji` to your PATH. Open a new terminal and run

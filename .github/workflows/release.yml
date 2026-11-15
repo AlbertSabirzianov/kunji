@@ -151,7 +151,7 @@ jobs:
         run: |
           mkdir release
           find artifacts -type f -exec cp {} release/ \;
-          # The one-line installers: .../releases/latest/download/install.sh (and .ps1)
+          # Copies of the installers (the website serves them too: kunji.iamsuraj.me/install.sh)
           cp install.sh install.ps1 release/
           cd release && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
       - name: Write release notes from CHANGELOG.md
