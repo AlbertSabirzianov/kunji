@@ -28,6 +28,24 @@ Your terminal was open before the PATH changed. Close it and open a new one. On 
 Linux you can also run the `export PATH=…` line the installer printed. The command is
 lowercase: `kunji`.
 
+### `Could not find platform independent libraries` or `No module named 'encodings'`
+
+An older kunji, from an earlier `pip install kunji`, runs instead of the one the installer
+set up, and the Python it belongs to is broken. See which copies you have:
+
+```bash
+where kunji
+```
+
+Delete every line that isn't `...\.local\bin\kunji.exe`, for example:
+
+```bash
+del "%LOCALAPPDATA%\Programs\Python\Python314\Scripts\kunji.exe"
+```
+
+Then run the installer again. It now puts its own copy first on your PATH and warns about
+older copies.
+
 ### `irm` or `iex` is not recognized
 
 You're in Command Prompt, not PowerShell. Run:

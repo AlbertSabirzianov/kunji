@@ -6,6 +6,14 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- **Installer: kunji failed to start with "Could not find platform independent libraries"
+  on some Windows PCs.** The installer could build kunji on a Python already on the computer;
+  if that Python was broken, kunji crashed. It now always uses uv's own Python 3.12.
+- Installer: an older `kunji` from `pip install kunji` could run instead of the new one. The
+  installer now puts its copy first on the user PATH, replaces a stray copy in its own folder
+  and lists any other copies with the command to delete them.
+
 ## [0.1.4] - 2026-11-15
 
 ### Changed

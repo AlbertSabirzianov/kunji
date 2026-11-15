@@ -101,8 +101,13 @@
     $package = "kunji"
     if ($env:KUNJI_VERSION) { $package = "kunji==$($env:KUNJI_VERSION)" }
 
-    # --upgrade: running the installer again updates kunji. --python: uv downloads one if needed.
-    $ok = Invoke-Step "[2/3] Installing kunji (the first time takes a minute)" $uv @("tool", "install", "--upgrade", "--python", ">=3.11", $package)
+    # Always on uv's own Python 3.12, never a Python already on this computer: a broken or odd
+    # system Python would make kunji fail to start. --reinstall rebuilds an older install that
+    # used one; --force replaces a stray kunji.exe in uv's folder. (--python-preference
+    # only-managed is the older spelling of --managed-python, so older uv versions accept it.)
+    $installArgs = @("tool", "install", "--upgrade", "--reinstall", "--force",
+        "--python-preference", "only-managed", "--python", "3.12", $package)
+    $ok = Invoke-Step "[2/3] Installing kunji (the first time takes a minute)" $uv $installArgs
     if (-not $ok) {
         Fail "uv couldn't install kunji (the reason is above). If kunji is open, close it first. Then run this again."
         return
@@ -112,11 +117,28 @@
     if ($LASTEXITCODE -ne 0 -or -not $binDir) { $binDir = Join-Path $HOME ".local\bin" }
     $binDir = "$binDir".Trim()
 
+    function Same-Dir($a, $b) {
+        $a = [Environment]::ExpandEnvironmentVariables("$a").Trim().TrimEnd("\")
+        $b = [Environment]::ExpandEnvironmentVariables("$b").Trim().TrimEnd("\")
+        return $a -ieq $b
+    }
+
     if (-not $noModifyPath) {
-        & $uv tool update-shell *> $null
-        # Make `kunji` work in this window too, not only in new ones.
-        $inPath = ($env:Path -split ";") | Where-Object { $_.TrimEnd("\") -ieq $binDir.TrimEnd("\") }
-        if (-not $inPath) { $env:Path = "$binDir;$env:Path" }
+        # Put kunji's folder FIRST in the user PATH. An older kunji.exe (from `pip install kunji`,
+        # in a Python "Scripts" folder that's also on PATH) would otherwise run instead of this one.
+        # Read and write the raw registry value so entries like %USERPROFILE%\... stay as they are.
+        $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey("Environment", $true)
+        $raw = [string]$key.GetValue("Path", "", [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+        $rest = @($raw -split ";" | Where-Object { $_ -and -not (Same-Dir $_ $binDir) })
+        $key.SetValue("Path", (@($binDir) + $rest) -join ";", [Microsoft.Win32.RegistryValueKind]::ExpandString)
+        $key.Close()
+        # Tell Windows the environment changed, so new terminals see it (setting any user
+        # variable through .NET broadcasts the change; this one is removed straight away).
+        $dummy = "kunji-installer-" + [guid]::NewGuid().ToString()
+        [Environment]::SetEnvironmentVariable($dummy, "1", "User")
+        [Environment]::SetEnvironmentVariable($dummy, $null, "User")
+        # Same for this window.
+        $env:Path = (@($binDir) + @($env:Path -split ";" | Where-Object { $_ -and -not (Same-Dir $_ $binDir) })) -join ";"
         Write-Host "[3/3] Adding kunji to your PATH  done"
     } else {
         Write-Host "[3/3] Adding kunji to your PATH  skipped (KUNJI_NO_MODIFY_PATH=1)"
@@ -126,8 +148,38 @@
     $version = (& $exe --version 2>$null)
     if ($LASTEXITCODE -ne 0) { Fail "kunji was installed but doesn't start. Try: & `"$exe`" --version"; return }
 
+    # Other kunji commands on PATH (usually from an earlier `pip install kunji`). Windows reads the
+    # system PATH before the user PATH, so one in a system PATH folder still runs instead of ours.
+    $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    $shadowing = @()
+    $others = @()
+    foreach ($entry in @(($machinePath -split ";") | ForEach-Object { @{ Dir = $_; System = $true } }) +
+                       @(($userPath + ";" + $env:Path) -split ";" | ForEach-Object { @{ Dir = $_; System = $false } })) {
+        $dir = [Environment]::ExpandEnvironmentVariables("$($entry.Dir)").Trim()
+        if (-not $dir -or (Same-Dir $dir $binDir)) { continue }
+        foreach ($name in @("kunji.exe", "kunji.cmd", "kunji.bat")) {
+            $candidate = Join-Path $dir $name
+            if ((Test-Path -LiteralPath $candidate -PathType Leaf) -and ($others -notcontains $candidate) -and ($shadowing -notcontains $candidate)) {
+                if ($entry.System) { $shadowing += $candidate } else { $others += $candidate }
+            }
+        }
+    }
+
     Write-Host ""
     Write-Host "$version is installed." -ForegroundColor Green
+    if ($shadowing.Count -gt 0) {
+        Write-Host ""
+        Write-Host "Warning: an older kunji is on the system PATH and will run instead of this one." -ForegroundColor Yellow
+        Write-Host "Delete it (it's left over from an earlier pip install):" -ForegroundColor Yellow
+        foreach ($f in $shadowing) { Write-Host "  del `"$f`"" }
+    }
+    if ($others.Count -gt 0) {
+        Write-Host ""
+        Write-Host "Note: older kunji copies were found (from an earlier pip install). This install now"
+        Write-Host "comes first on your PATH, but you can delete them:"
+        foreach ($f in $others) { Write-Host "  del `"$f`"" }
+    }
     if ($noModifyPath) {
         Write-Host "Run: & `"$exe`""
     } else {
