@@ -72,4 +72,4 @@ output = 0.79   # US dollars per 1 million output tokens
 ```
 
 Take the numbers from the provider's pricing page. See
-[How costs are calculated](/kunji/docs/concepts/costs/).
+[How costs are calculated](/docs/concepts/costs/).

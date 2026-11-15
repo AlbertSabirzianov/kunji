@@ -37,7 +37,7 @@ Then just run `kunji`: the menu walks you through adding a key and starting a ch
 FOOTER = f"""## Feedback
 
 ⭐ [Star kunji]({REPO}) if it's useful · 🐛 [Report a problem]({REPO}/issues/new/choose) ·
-🌐 [Website](https://testwithsuraj.github.io/kunji/)
+🌐 [Website](https://kunji.iamsuraj.me/)
 
 Check downloads against `SHA256SUMS.txt`."""
 

@@ -36,7 +36,7 @@ you ──► kunji (on your computer) ──► the AI provider you choose
 ```
 
 There is no kunji server in the middle. Your API key and your messages go straight from your
-computer to the provider. Read more in [Privacy and security](/kunji/docs/concepts/privacy-and-security/).
+computer to the provider. Read more in [Privacy and security](/docs/concepts/privacy-and-security/).
 
 ## Free and open source
 
@@ -45,6 +45,6 @@ Everything that runs on your computer is free and open source under the
 
 ## Next steps
 
-1. [Install kunji](/kunji/docs/getting-started/installation/)
-2. [Have your first chat](/kunji/docs/getting-started/quickstart/)
-3. [Learn the menu](/kunji/docs/getting-started/menu/)
+1. [Install kunji](/docs/getting-started/installation/)
+2. [Have your first chat](/docs/getting-started/quickstart/)
+3. [Learn the menu](/docs/getting-started/menu/)

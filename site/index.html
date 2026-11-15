@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>kunji — your keys, every AI model, one terminal</title>
 <meta name="description" content="kunji is a free, open-source terminal app for chatting with any AI model using your own API keys. Live cost meter, daily budgets, compare mode, saved prompts, chat history.">
-<link rel="canonical" href="https://testwithsuraj.github.io/kunji/"><link rel="alternate" hreflang="en" href="https://testwithsuraj.github.io/kunji/"><link rel="alternate" hreflang="hi" href="https://testwithsuraj.github.io/kunji/hi/"><link rel="alternate" hreflang="x-default" href="https://testwithsuraj.github.io/kunji/">
+<link rel="canonical" href="https://kunji.iamsuraj.me/"><link rel="alternate" hreflang="en" href="https://kunji.iamsuraj.me/"><link rel="alternate" hreflang="hi" href="https://kunji.iamsuraj.me/hi/"><link rel="alternate" hreflang="x-default" href="https://kunji.iamsuraj.me/">
 <meta property="og:title" content="kunji — your keys, every AI model, one terminal">
 <meta property="og:description" content="kunji is a free, open-source terminal app for chatting with any AI model using your own API keys. Live cost meter, daily budgets, compare mode, saved prompts, chat history.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
-<meta property="og:url" content="https://testwithsuraj.github.io/kunji/">
-<meta property="og:image" content="https://testwithsuraj.github.io/kunji/og.png">
+<meta property="og:url" content="https://kunji.iamsuraj.me/">
+<meta property="og:image" content="https://kunji.iamsuraj.me/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://testwithsuraj.github.io/kunji/og.png">
+<meta name="twitter:image" content="https://kunji.iamsuraj.me/og.png">
 <meta name="theme-color" content="#ECEFEC" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101814" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -45,11 +45,19 @@
   <div>
     <h1><span>Your keys.</span> <span>Every AI model.</span> <span>One terminal.</span></h1>
     <p class="lede">kunji is a free, open-source chat app for your terminal. Bring your own API key from any provider, switch models mid-conversation, and see what every reply costs.</p>
-    <div class="install">
-      <code>pip install kunji</code>
-      <button class="copy" type="button" data-copy="pip install kunji" data-copied="Copied">Copy</button>
+    <div class="install-os" role="tablist" aria-label="macOS / Linux / Windows">
+      <button type="button" role="tab" data-os="unix" aria-selected="true">macOS / Linux</button>
+      <button type="button" role="tab" data-os="win" aria-selected="false">Windows</button>
     </div>
-    <p class="alt">If <code>pip</code> isn't found, use <code>python -m pip install kunji</code>.<br>No Python on Windows? <a href="https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe">Download kunji.exe</a></p>
+    <div class="install" data-os-panel="unix">
+      <code>curl -fsSL https://kunji.iamsuraj.me/install.sh | sh</code>
+      <button class="copy" type="button" data-copy="curl -fsSL https://kunji.iamsuraj.me/install.sh | sh" data-copied="Copied">Copy</button>
+    </div>
+    <div class="install win" data-os-panel="win" hidden>
+      <code>irm https://kunji.iamsuraj.me/install.ps1 | iex</code>
+      <button class="copy" type="button" data-copy="irm https://kunji.iamsuraj.me/install.ps1 | iex" data-copied="Copied">Copy</button>
+    </div>
+    <p class="alt">No Python needed. Open a new terminal afterwards and type <code>kunji</code>.<br>Prefer pip? <code>pip install kunji</code> · <a href="docs/getting-started/installation/">All install options</a></p>
     <p class="facts"><a href="https://github.com/testwithsuraj/kunji/releases/latest" data-version="Version">Version 0.1.2</a> <span>Free and open source</span> <span>Windows, macOS, Linux</span></p>
   </div>
 
@@ -68,6 +76,15 @@
     <div class="progress" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
   </figure>
 </div>
+</div>
+
+<!-- Product Demo Video Placeholder -->
+<section class="wrap" id="demo-video" style="margin-top: 3rem; text-align: center;">
+  <div style="background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 4rem 1rem; color: #888;">
+    <h2>🎥 Product Demo Video</h2>
+    <p>(Video will be embedded here)</p>
+  </div>
+</section>
 
 <section id="features">
   <div class="wrap">
@@ -116,9 +133,9 @@
 <section id="install">
   <div class="wrap">
     <h2>Start in a minute</h2>
-    <p class="intro">Needs Python 3.11 or newer. Full guide: <a href="docs/getting-started/installation/">installation docs</a>.</p>
+    <p class="intro">Windows, macOS and Linux. No Python needed. Full guide: <a href="docs/getting-started/installation/">installation docs</a>.</p>
     <ol class="steps">
-      <li><h3>Install</h3><p>Works on Windows, macOS and Linux. If <code>pip</code> isn't found, run <code>python -m pip install kunji</code>.</p><pre>pip install kunji</pre></li>
+      <li><h3>Install</h3><p>On Windows, run <code>irm https://kunji.iamsuraj.me/install.ps1 | iex</code> in PowerShell. On macOS and Linux:</p><pre>curl -fsSL https://kunji.iamsuraj.me/install.sh | sh</pre></li>
       <li><h3>Open kunji</h3><p>The menu helps you add a key. kunji checks it works, then keeps it in your OS keychain.</p><pre>kunji</pre></li>
       <li><h3>Chat</h3><p>Pick <strong>Start a new chat</strong>. Type <code>/</code> to see every command.</p><pre>› hello</pre></li>
     </ol>
@@ -134,6 +151,18 @@
     <div class="buttons">
       <a class="btn primary" href="docs/getting-started/quickstart/">Read the quick start</a>
       <a class="btn ghost" href="https://github.com/testwithsuraj/kunji">Star on GitHub</a>
+    </div>
+  </div>
+</section>
+<!-- Contributors Section -->
+<section id="contributors" class="wrap" style="margin-top: 3rem; margin-bottom: 3rem;">
+  <h2>Built by the community</h2>
+  <p class="intro">Kunji is made possible by amazing contributors from all over the world.</p>
+  
+  <div id="contributors-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 2rem;">
+    <!-- Avatars will be loaded here -->
+    <div style="padding: 1rem; border: 1px dashed #444; border-radius: 8px; color: #888;">
+      Loading contributors...
     </div>
   </div>
 </section>

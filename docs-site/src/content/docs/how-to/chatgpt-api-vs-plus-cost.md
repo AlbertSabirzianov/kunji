@@ -66,11 +66,11 @@ Two things push the API cost up:
 
 ## Measure instead of guessing
 
-[kunji](/kunji/docs/introduction/) is a free terminal app that shows the cost of every
+[kunji](/docs/introduction/) is a free terminal app that shows the cost of every
 answer and keeps a local usage log:
 
 ```bash
-pip install kunji
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh   # Windows: irm https://kunji.iamsuraj.me/install.ps1 | iex
 kunji keys add openai
 kunji chat -m openai:gpt-4o-mini
 ```
@@ -88,4 +88,4 @@ kunji budget set openai 1
 ```
 
 Costs can also be shown in rupees or any currency: see
-[Costs and budgets](/kunji/docs/guides/costs-and-budgets/).
+[Costs and budgets](/docs/guides/costs-and-budgets/).

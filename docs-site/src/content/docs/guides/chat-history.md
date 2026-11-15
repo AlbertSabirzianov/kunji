@@ -57,4 +57,4 @@ them.
 ## Where chats are stored
 
 One JSON file per chat in the `chats` folder of kunji's data folder; run `kunji config path`
-to see where. See [Files and folders](/kunji/docs/reference/files/).
+to see where. See [Files and folders](/docs/reference/files/).

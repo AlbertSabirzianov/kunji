@@ -10,16 +10,16 @@ Ollama, which runs on your computer.
 
 | Provider | Id | Free option | Guide |
 | --- | --- | --- | --- |
-| OpenAI | `openai` | No | [Set up](/kunji/docs/providers/openai/) |
-| Anthropic | `anthropic` | No | [Set up](/kunji/docs/providers/anthropic/) |
-| Google Gemini | `gemini` | Free tier | [Set up](/kunji/docs/providers/gemini/) |
-| Groq | `groq` | Free tier | [Set up](/kunji/docs/providers/groq/) |
-| OpenRouter | `openrouter` | Some free models | [Set up](/kunji/docs/providers/openrouter/) |
-| DeepSeek | `deepseek` | No | [Set up](/kunji/docs/providers/deepseek/) |
-| Mistral | `mistral` | Free tier | [Set up](/kunji/docs/providers/mistral/) |
-| xAI | `xai` | No | [Set up](/kunji/docs/providers/xai/) |
-| Together AI | `together` | No | [Set up](/kunji/docs/providers/together/) |
-| Ollama (local) | `ollama` | Always free | [Set up](/kunji/docs/providers/ollama/) |
+| OpenAI | `openai` | No | [Set up](/docs/providers/openai/) |
+| Anthropic | `anthropic` | No | [Set up](/docs/providers/anthropic/) |
+| Google Gemini | `gemini` | Free tier | [Set up](/docs/providers/gemini/) |
+| Groq | `groq` | Free tier | [Set up](/docs/providers/groq/) |
+| OpenRouter | `openrouter` | Some free models | [Set up](/docs/providers/openrouter/) |
+| DeepSeek | `deepseek` | No | [Set up](/docs/providers/deepseek/) |
+| Mistral | `mistral` | Free tier | [Set up](/docs/providers/mistral/) |
+| xAI | `xai` | No | [Set up](/docs/providers/xai/) |
+| Together AI | `together` | No | [Set up](/docs/providers/together/) |
+| Ollama (local) | `ollama` | Always free | [Set up](/docs/providers/ollama/) |
 
 Free tiers change over time; check each provider's site.
 
@@ -36,7 +36,7 @@ never saved.
 ## Anything else
 
 Any server with an OpenAI-compatible API also works; see
-[Custom servers](/kunji/docs/guides/custom-servers/).
+[Custom servers](/docs/guides/custom-servers/).
 
 ## See what you have
 

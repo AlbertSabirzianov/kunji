@@ -12,7 +12,7 @@ body that explains what changed.
 ## Set up once
 
 ```bash
-pip install kunji
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh   # Windows: irm https://kunji.iamsuraj.me/install.ps1 | iex
 kunji keys add groq        # or openai, anthropic, gemini, ollama, …
 ```
 
@@ -59,10 +59,10 @@ kunji @commit -m ollama:qwen2.5
 
 `@commit` is a saved prompt, so you can make your own version, for example to always use
 [Conventional Commits](https://www.conventionalcommits.org/) or to add a ticket number. See
-[Saved prompts → Create your own](/kunji/docs/guides/saved-prompts/).
+[Saved prompts → Create your own](/docs/guides/saved-prompts/).
 
 ## Is my code sent anywhere?
 
 Only the diff is sent, and only to the AI provider you chose, directly from your computer.
 With Ollama nothing leaves your machine. See
-[Privacy and security](/kunji/docs/concepts/privacy-and-security/).
+[Privacy and security](/docs/concepts/privacy-and-security/).

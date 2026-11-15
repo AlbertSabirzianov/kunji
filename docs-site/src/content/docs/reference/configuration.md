@@ -25,10 +25,10 @@ kunji config unset chat.system_prompt      # back to the default
 | Key | Default | What it does |
 | --- | --- | --- |
 | `default_model` | — | Model used when you don't pass `-m`, as `provider:model` |
-| `fallback` | `[]` | Models to try when yours fails ([guide](/kunji/docs/guides/fallback/)) |
+| `fallback` | `[]` | Models to try when yours fails ([guide](/docs/guides/fallback/)) |
 | `chat.system_prompt` | `""` | System prompt for new chats |
 | `chat.max_tokens` | `4096` | Longest answer, in tokens |
-| `chat.history` | `true` | Save chats on this computer ([guide](/kunji/docs/guides/chat-history/)) |
+| `chat.history` | `true` | Save chats on this computer ([guide](/docs/guides/chat-history/)) |
 | `display.currency` | `USD` | Currency for costs: `USD`, `INR`, `EUR`, `GBP`, `JPY` or any code |
 | `display.usd_rate` | `1.0` | How many units of your currency per 1 US dollar |
 | `display.max_width` | `100` | Widest that kunji draws content, in columns |

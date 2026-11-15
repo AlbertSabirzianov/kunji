@@ -11,15 +11,19 @@ by picking a provider with a free tier or a model that runs on your own PC.
 
 ## Install
 
-**With Python** (3.11 or newer):
+Open **PowerShell** and run:
 
-```bash
-python -m pip install kunji
+```powershell
+irm https://kunji.iamsuraj.me/install.ps1 | iex
 ```
 
-If `python` isn't found, try `py -m pip install kunji`.
+You don't need Python: the installer sets everything up and adds `kunji` to your PATH. Open a
+new terminal and type `kunji`. From Command Prompt, use
+`powershell -ExecutionPolicy ByPass -c "irm https://kunji.iamsuraj.me/install.ps1 | iex"`.
 
-**Without Python:** download `kunji-windows-x64.exe` from the
+**Already have Python 3.11+?** `py -m pip install kunji` works too.
+
+**Single file:** download `kunji-windows-x64.exe` from the
 [latest release](https://github.com/testwithsuraj/kunji/releases/latest), rename it to
 `kunji.exe` and run it from a terminal in that folder.
 
@@ -69,7 +73,8 @@ like Cascadia Mono, which is the default.
 
 ## Troubleshooting
 
-- **"kunji is not recognized"**: run `python -m kunji` instead, or see
-  [Troubleshooting](/kunji/docs/help/troubleshooting/) to fix your PATH.
+- **"kunji is not recognized"**: open a new terminal window after installing. If you used
+  pip, use the one-line installer above instead, or see
+  [Troubleshooting](/docs/help/troubleshooting/).
 - **Windows SmartScreen warns about the .exe**: the file is new and not yet widely
-  downloaded. You can check it against the checksums on the release page, or install with pip.
+  downloaded. You can check it against the checksums on the release page, or use the one-line installer instead.

@@ -2,11 +2,19 @@
   <div>
     <h1><span>Your keys.</span> <span>Every AI model.</span> <span>One terminal.</span></h1>
     <p class="lede">kunji is a free, open-source chat app for your terminal. Bring your own API key from any provider, switch models mid-conversation, and see what every reply costs.</p>
-    <div class="install">
-      <code>pip install kunji</code>
-      <button class="copy" type="button" data-copy="pip install kunji" data-copied="Copied">Copy</button>
+    <div class="install-os" role="tablist" aria-label="macOS / Linux / Windows">
+      <button type="button" role="tab" data-os="unix" aria-selected="true">macOS / Linux</button>
+      <button type="button" role="tab" data-os="win" aria-selected="false">Windows</button>
     </div>
-    <p class="alt">If <code>pip</code> isn't found, use <code>python -m pip install kunji</code>.<br>No Python on Windows? <a href="https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe">Download kunji.exe</a></p>
+    <div class="install" data-os-panel="unix">
+      <code>curl -fsSL https://kunji.iamsuraj.me/install.sh | sh</code>
+      <button class="copy" type="button" data-copy="curl -fsSL https://kunji.iamsuraj.me/install.sh | sh" data-copied="Copied">Copy</button>
+    </div>
+    <div class="install win" data-os-panel="win" hidden>
+      <code>irm https://kunji.iamsuraj.me/install.ps1 | iex</code>
+      <button class="copy" type="button" data-copy="irm https://kunji.iamsuraj.me/install.ps1 | iex" data-copied="Copied">Copy</button>
+    </div>
+    <p class="alt">No Python needed. Open a new terminal afterwards and type <code>kunji</code>.<br>Prefer pip? <code>pip install kunji</code> · <a href="docs/getting-started/installation/">All install options</a></p>
     <p class="facts"><a href="https://github.com/testwithsuraj/kunji/releases/latest" data-version="Version">Version 0.1.2</a> <span>Free and open source</span> <span>Windows, macOS, Linux</span></p>
   </div>
 
@@ -82,9 +90,9 @@
 <section id="install">
   <div class="wrap">
     <h2>Start in a minute</h2>
-    <p class="intro">Needs Python 3.11 or newer. Full guide: <a href="docs/getting-started/installation/">installation docs</a>.</p>
+    <p class="intro">Windows, macOS and Linux. No Python needed. Full guide: <a href="docs/getting-started/installation/">installation docs</a>.</p>
     <ol class="steps">
-      <li><h3>Install</h3><p>Works on Windows, macOS and Linux. If <code>pip</code> isn't found, run <code>python -m pip install kunji</code>.</p><pre>pip install kunji</pre></li>
+      <li><h3>Install</h3><p>On Windows, run <code>irm https://kunji.iamsuraj.me/install.ps1 | iex</code> in PowerShell. On macOS and Linux:</p><pre>curl -fsSL https://kunji.iamsuraj.me/install.sh | sh</pre></li>
       <li><h3>Open kunji</h3><p>The menu helps you add a key. kunji checks it works, then keeps it in your OS keychain.</p><pre>kunji</pre></li>
       <li><h3>Chat</h3><p>Pick <strong>Start a new chat</strong>. Type <code>/</code> to see every command.</p><pre>› hello</pre></li>
     </ol>

@@ -1,6 +1,6 @@
 ---
 title: "Upgrade kunji"
-description: "How to update kunji to the newest version with kunji upgrade or pip, and how update notices work."
+description: "How to update kunji to the newest version with kunji upgrade or the installer, and how update notices work."
 sidebar:
   order: 12
 ---
@@ -11,7 +11,9 @@ sidebar:
 kunji upgrade
 ```
 
-kunji checks PyPI for the newest version and installs it with the same Python it runs on.
+kunji checks PyPI for the newest version and upgrades the same way you installed it: with
+uv if you used the one-line installer, with pip otherwise. Running the installer again
+also upgrades.
 
 - **Windows:** the upgrade runs in a new window, because Windows can't replace kunji while
   it's open. kunji closes; open it again when the window says **Done**.
@@ -43,7 +45,7 @@ kunji config set updates.check false
 
 ## What changed?
 
-See the [changelog](/kunji/docs/releases/changelog/) or the
+See the [changelog](/docs/releases/changelog/) or the
 [GitHub releases](https://github.com/testwithsuraj/kunji/releases).
 
 ## Version numbers

@@ -13,7 +13,7 @@ their normal prices. Ollama models on your own computer cost nothing.
 ## Do I need an API key?
 
 Yes, from at least one provider, unless you use Ollama. Groq and Google Gemini have free
-tiers; see [Quick start](/kunji/docs/getting-started/quickstart/).
+tiers; see [Quick start](/docs/getting-started/quickstart/).
 
 ## Is it the same as ChatGPT Plus or Claude Pro?
 
@@ -24,7 +24,7 @@ models from one place.
 ## Can kunji see my keys or chats?
 
 No. Keys stay in your OS keychain and messages go straight to the provider. See
-[Privacy and security](/kunji/docs/concepts/privacy-and-security/).
+[Privacy and security](/docs/concepts/privacy-and-security/).
 
 ## Which models can I use?
 
@@ -32,12 +32,12 @@ Any model your providers offer. Run `kunji models <provider>` to see the live li
 
 ## Does it work on Windows?
 
-Yes. Windows is a main platform. Install with `python -m pip install kunji` or use the
-standalone `.exe`. macOS and Linux work with pip.
+Yes. Windows is a main platform. Install with `irm https://kunji.iamsuraj.me/install.ps1 | iex` in PowerShell; no Python
+needed. On macOS and Linux: `curl -fsSL https://kunji.iamsuraj.me/install.sh | sh`.
 
 ## Can I use it without internet?
 
-Yes, with [Ollama](/kunji/docs/guides/local-models-ollama/) models on your computer.
+Yes, with [Ollama](/docs/guides/local-models-ollama/) models on your computer.
 
 ## Can I switch models in the middle of a chat?
 
@@ -46,16 +46,16 @@ Yes: `/model provider:model`. The conversation carries over.
 ## How do I see what I've spent?
 
 `kunji usage`, or `/cost` inside a chat. Set limits with `kunji budget set`. See
-[Costs and budgets](/kunji/docs/guides/costs-and-budgets/).
+[Costs and budgets](/docs/guides/costs-and-budgets/).
 
 ## Where are my chats saved?
 
-On your computer only. See [Chat history](/kunji/docs/guides/chat-history/).
+On your computer only. See [Chat history](/docs/guides/chat-history/).
 
 ## Can I use kunji in scripts or CI?
 
 Yes. Use `kunji ask`, `--raw` output and environment variables for keys. See
-[Pipes and scripts](/kunji/docs/guides/pipes-and-scripts/).
+[Pipes and scripts](/docs/guides/pipes-and-scripts/).
 
 ## Will there be paid features?
 

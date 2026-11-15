@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "site-src" / "pages"
 OUT = ROOT / "site"
-SITE = "https://testwithsuraj.github.io/kunji/"
+SITE = "https://kunji.iamsuraj.me/"
 REPO = "https://github.com/testwithsuraj/kunji"
 
 PAGES = {
@@ -149,7 +149,7 @@ def layout(page: str, lang: str, body: str) -> str:
         for href, label in t["links"]
     )
     robots = '<meta name="robots" content="noindex">' if page == "404" else ""
-    base_path = "/kunji/" if page == "404" else up
+    base_path = "/" if page == "404" else up
     canonical = "" if page == "404" else f'<link rel="canonical" href="{url(page, lang)}">'
     og_locale = "hi_IN" if lang == "hi" else "en_US"
 
@@ -185,10 +185,10 @@ def layout(page: str, lang: str, body: str) -> str:
     <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="{t["menu"]}">{BARS}</button>
     <nav id="nav" class="nav" aria-label="Main">
       {nav_link((base_path if page == '404' else '') + 'features.html', t["features"], "features")}
-      {nav_link(('/kunji/' if page == '404' else up) + 'docs/', t["docs"], "docs")}
+      {nav_link(('/' if page == '404' else up) + 'docs/', t["docs"], "docs")}
       <a href="{REPO}" class="gh">GitHub<span class="stars" data-stars hidden>{STAR}<span data-stars-count></span><span class="sr-only"> {t["stars"]}</span></span></a>
       <span class="tools">
-        <a class="lang" href="{('/kunji/hi/' if page == '404' else other_href)}" hreflang="{other}" lang="{other}" title="{t["other_name"]}">{t["other"]}</a>
+        <a class="lang" href="{('/hi/' if page == '404' else other_href)}" hreflang="{other}" lang="{other}" title="{t["other_name"]}">{t["other"]}</a>
         <button class="icon-btn theme-btn" type="button" aria-label="{t["theme"]}" title="{t["theme"]}">{SUN}{MOON}</button>
       </span>
     </nav>

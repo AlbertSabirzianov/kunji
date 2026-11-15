@@ -40,7 +40,7 @@ with them like any other provider: no key, no bill, and nothing leaves your mach
 - Mix local and cloud in one chat: start with a local model, then `/model openai:gpt-4o-mini`
   for a harder question.
 - Use a local model as a fallback when your cloud provider is down; see
-  [Fallback models](/kunji/docs/guides/fallback/).
+  [Fallback models](/docs/guides/fallback/).
 
 ## Ollama on another computer
 

@@ -38,15 +38,15 @@ Type `/` to see them all. The most useful ones:
 
 | Command | What it does |
 | --- | --- |
-| `/model provider:model` | Switch model, keep the conversation ([more](/kunji/docs/guides/models/)) |
-| `/file app.py` | Attach a file to your next message ([more](/kunji/docs/guides/attach-files/)) |
-| `@explain …` | Use a saved prompt ([more](/kunji/docs/guides/saved-prompts/)) |
+| `/model provider:model` | Switch model, keep the conversation ([more](/docs/guides/models/)) |
+| `/file app.py` | Attach a file to your next message ([more](/docs/guides/attach-files/)) |
+| `@explain …` | Use a saved prompt ([more](/docs/guides/saved-prompts/)) |
 | `/cost` | What this chat and today have cost |
 | `/retry` | Get a new answer to your last message |
 | `/new` | Start a fresh conversation |
 | `/save notes.md` | Export the chat as Markdown |
 
-Full list: [Chat commands](/kunji/docs/reference/chat-commands/).
+Full list: [Chat commands](/docs/reference/chat-commands/).
 
 ## System prompts
 
@@ -69,12 +69,12 @@ kunji config set chat.system_prompt "Be concise."
 kunji chat -m openai:gpt-4o-mini
 ```
 
-Models are written as `provider:model`. See [Switch and pick models](/kunji/docs/guides/models/).
+Models are written as `provider:model`. See [Switch and pick models](/docs/guides/models/).
 
 ## Continuing later
 
 Chats are saved automatically. Continue the last one with `kunji chat -c`, or pick any saved
-chat; see [Chat history](/kunji/docs/guides/chat-history/).
+chat; see [Chat history](/docs/guides/chat-history/).
 
 ## One-off questions
 
@@ -84,4 +84,4 @@ For a single question without opening a chat, use `kunji ask`:
 kunji ask "How do I undo the last git commit?"
 ```
 
-See [Pipes and scripts](/kunji/docs/guides/pipes-and-scripts/).
+See [Pipes and scripts](/docs/guides/pipes-and-scripts/).

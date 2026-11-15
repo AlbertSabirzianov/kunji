@@ -43,7 +43,7 @@ Or store a key from a script without typing it:
 echo "$GROQ_API_KEY" | kunji keys add groq --key-stdin --model llama-3.3-70b-versatile
 ```
 
-All variables: [Environment variables](/kunji/docs/reference/environment-variables/).
+All variables: [Environment variables](/docs/reference/environment-variables/).
 
 ## Exit codes
 

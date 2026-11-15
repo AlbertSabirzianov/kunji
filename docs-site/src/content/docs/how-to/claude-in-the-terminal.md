@@ -14,11 +14,11 @@ other major AI provider.
 ## 1. Install kunji
 
 ```bash
-pip install kunji
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
 ```
 
-On Windows, use `python -m pip install kunji`, or download the `.exe` (no Python needed).
-See [Install kunji](/kunji/docs/getting-started/installation/) for every option.
+On Windows, run this in PowerShell instead: `irm https://kunji.iamsuraj.me/install.ps1 | iex`. No Python needed on any system.
+See [Install kunji](/docs/getting-started/installation/) for every option.
 
 ## 2. Get an Anthropic API key
 
@@ -76,7 +76,7 @@ Inside a chat, `/model` switches model and keeps the conversation:
 ```
 
 Useful for a second opinion, or to move cheap follow-up questions to a cheaper model.
-See [Switch and pick models](/kunji/docs/guides/models/).
+See [Switch and pick models](/docs/guides/models/).
 
 ## Keep spending under control
 
@@ -84,10 +84,10 @@ See [Switch and pick models](/kunji/docs/guides/models/).
 kunji budget set anthropic 2     # daily limit, in your display currency
 ```
 
-kunji warns at 80% and stops at 100%. See [Costs and budgets](/kunji/docs/guides/costs-and-budgets/).
+kunji warns at 80% and stops at 100%. See [Costs and budgets](/docs/guides/costs-and-budgets/).
 
 ## Is my data private?
 
 kunji talks to Anthropic directly from your computer. There is no kunji server in between,
 so your key, prompts and answers never pass through anyone else. Details:
-[Privacy and security](/kunji/docs/concepts/privacy-and-security/).
+[Privacy and security](/docs/concepts/privacy-and-security/).

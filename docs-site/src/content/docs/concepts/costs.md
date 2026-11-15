@@ -16,7 +16,7 @@ cost = input tokens × input price + output tokens × output price
 ```
 
 Prices are per million tokens, in US dollars, then converted to your
-[display currency](/kunji/docs/guides/costs-and-budgets/).
+[display currency](/docs/guides/costs-and-budgets/).
 
 ## Where token counts come from
 

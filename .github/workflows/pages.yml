@@ -1,6 +1,6 @@
 # Publishes the website to GitHub Pages (pages built from site-src/ by scripts/build_site.py):
-#   https://testwithsuraj.github.io/kunji/        landing page   (site/)
-#   https://testwithsuraj.github.io/kunji/docs/   documentation  (docs-site/, Starlight)
+#   https://kunji.iamsuraj.me/        landing page   (site/)
+#   https://kunji.iamsuraj.me/docs/   documentation  (docs-site/, Starlight)
 #
 # The command reference, provider pages and changelog are generated from kunji's code by
 # scripts/gen_docs.py, so the docs redeploy whenever the code or CHANGELOG changes.

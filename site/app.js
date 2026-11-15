@@ -38,6 +38,15 @@
     }
   }
 
+  // Install command: macOS/Linux or Windows tab (Windows visitors get Windows first) ------
+  var osTabs = document.querySelectorAll(".install-os [data-os]");
+  function showOs(os) {
+    osTabs.forEach(function (t) { t.setAttribute("aria-selected", t.getAttribute("data-os") === os ? "true" : "false"); });
+    document.querySelectorAll("[data-os-panel]").forEach(function (p) { p.hidden = p.getAttribute("data-os-panel") !== os; });
+  }
+  osTabs.forEach(function (t) { t.addEventListener("click", function () { showOs(t.getAttribute("data-os")); }); });
+  if (osTabs.length && /Win/i.test(navigator.userAgent || "")) showOs("win");
+
   // Copy buttons -------------------------------------------------------------------
   document.querySelectorAll("[data-copy]").forEach(function (btn) {
     var label = btn.textContent;

@@ -7,7 +7,7 @@ sidebar:
 
 kunji writes models as **`provider:model`**, for example `openai:gpt-4o-mini` or
 `groq:llama-3.3-70b-versatile`. The provider part is kunji's id for the company
-(see [Providers](/kunji/docs/providers/)); the model part is the provider's own model name.
+(see [Providers](/docs/providers/)); the model part is the provider's own model name.
 
 ## See which models a provider has
 

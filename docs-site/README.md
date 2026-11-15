@@ -1,6 +1,6 @@
 # kunji docs
 
-Source for https://testwithsuraj.github.io/kunji/docs/, built with
+Source for https://kunji.iamsuraj.me/docs/, built with
 [Starlight](https://starlight.astro.build/) (Astro).
 
 ## Run locally
@@ -26,7 +26,7 @@ npm run dev                       # http://localhost:4321/kunji/docs/
 ## Writing guidelines
 
 - One task per page, written for people new to the terminal; short sentences, real commands.
-- Link with full paths: `/kunji/docs/guides/saved-prompts/` (the build checks every link).
+- Link with full paths: `/docs/guides/saved-prompts/` (the build checks every link).
 - Every page needs a `description` in its frontmatter (used by search engines).
 - Don't invent model names; prefer ones used elsewhere in the docs or `<model>`.
 

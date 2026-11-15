@@ -18,7 +18,7 @@ kunji server in between.
 - Removed from any error message before it's shown.
 
 No keychain on your system (for example a server without a desktop)? Use
-[environment variables](/kunji/docs/reference/environment-variables/) instead. kunji never
+[environment variables](/docs/reference/environment-variables/) instead. kunji never
 falls back to a plain-text file.
 
 ## What leaves your computer
@@ -36,7 +36,7 @@ There are no analytics.
 ## What stays on your computer
 
 Settings, saved chats, saved prompts, usage history and caches; see
-[Files and folders](/kunji/docs/reference/files/). Delete them any time.
+[Files and folders](/docs/reference/files/). Delete them any time.
 
 `@commit` runs `git diff` on your computer to read your changes. kunji runs no other
 programs, except `pip` when you choose `kunji upgrade`.
@@ -53,4 +53,4 @@ All of this can be checked in the
 report it privately through
 [GitHub security advisories](https://github.com/testwithsuraj/kunji/security/advisories/new).
 
-See also the full [privacy policy](https://testwithsuraj.github.io/kunji/privacy.html).
+See also the full [privacy policy](https://kunji.iamsuraj.me/privacy.html).

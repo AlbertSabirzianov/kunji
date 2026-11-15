@@ -62,4 +62,4 @@ for your key. Press Ctrl+C to skip and go to the menu.
 
 Everything in the menu is also a command, and commands are better for scripts and speed.
 For example, **Compare models** is the same as `kunji compare "…"`. See the
-[command reference](/kunji/docs/reference/cli/).
+[command reference](/docs/reference/cli/).
