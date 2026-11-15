@@ -6,6 +6,8 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-15
+
 ### Changed
 - The installer shows three short steps with a progress spinner and timer instead of a long
   list of packages. uv's full output is shown only if something goes wrong.
