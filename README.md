@@ -8,12 +8,13 @@
 pip install kunji
 ```
 
-[![PyPI](https://img.shields.io/pypi/v/kunji?style=flat-square&labelColor=1f2328&color=3ddc84)](https://pypi.org/project/kunji/)
-[![CI](https://img.shields.io/github/actions/workflow/status/testwithsuraj/kunji/ci.yml?branch=main&style=flat-square&label=CI&labelColor=1f2328)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Apache--2.0-3ddc84?style=flat-square&labelColor=1f2328)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11%2B-3ddc84?style=flat-square&labelColor=1f2328&logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![Providers](https://img.shields.io/badge/providers-10%2B-3ddc84?style=flat-square&labelColor=1f2328)](#providers)
-[![Platforms](https://img.shields.io/badge/windows%20%7C%20macos%20%7C%20linux-3ddc84?style=flat-square&labelColor=1f2328&label=runs%20on)](#install)
+[![PyPI](https://img.shields.io/pypi/v/kunji?style=flat-square&labelColor=1f2328&color=2563eb)](https://pypi.org/project/kunji/)
+[![Downloads](https://img.shields.io/pepy/dt/kunji?style=flat-square&label=Downloads&labelColor=1f2328&color=2563eb)](https://pepy.tech/projects/kunji)
+[![CI](https://img.shields.io/github/actions/workflow/status/testwithsuraj/kunji/ci.yml?branch=main&style=flat-square&label=CI&labelColor=1f2328&color=2563eb)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-2563eb?style=flat-square&labelColor=1f2328)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%2B-2563eb?style=flat-square&labelColor=1f2328&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Providers](https://img.shields.io/badge/providers-10%2B-2563eb?style=flat-square&labelColor=1f2328)](#providers)
+[![Platforms](https://img.shields.io/badge/windows%20%7C%20macos%20%7C%20linux-2563eb?style=flat-square&labelColor=1f2328&label=runs%20on)](#install)
 
 <!-- Demo GIF hidden for now. Remove this comment wrapper to show it again.
 <img src="https://raw.githubusercontent.com/testwithsuraj/kunji/main/assets/demo.gif" alt="kunji demo: the menu, a chat with Claude, switching to Groq mid-conversation with /model, and /cost" width="860">
