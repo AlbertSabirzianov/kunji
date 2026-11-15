@@ -7,8 +7,10 @@ never slows startup. Turn it off with: kunji config set updates.check false
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 from rich.text import Text
 
@@ -17,6 +19,8 @@ from kunji.config import Config
 
 RELEASES_URL = "https://github.com/testwithsuraj/kunji/releases/latest"
 EXE_URL = "https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe"
+INSTALL_SH = "https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh"
+INSTALL_PS1 = "https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1"
 
 
 def is_standalone() -> bool:
@@ -48,12 +52,56 @@ def on_windows() -> bool:
     return os.name == "nt"
 
 
+def installed_with_uv() -> bool:
+    """True when kunji was installed with `uv tool install` (what install.sh / install.ps1 do).
+
+    uv writes a receipt into the tool's environment. That environment has no pip, so the pip
+    upgrade would fail there.
+    """
+    return (Path(sys.prefix) / "uv-receipt.toml").is_file()
+
+
+def find_uv() -> str | None:
+    found = shutil.which("uv")
+    if found:
+        return found
+    name = "uv.exe" if on_windows() else "uv"
+    dirs = [os.environ.get("XDG_BIN_HOME", ""), str(Path.home() / ".local" / "bin")]
+    dirs.append(os.path.join(os.environ.get("CARGO_HOME", str(Path.home() / ".cargo")), "bin"))
+    for folder in dirs:
+        candidate = Path(folder) / name if folder else None
+        if candidate and candidate.is_file():
+            return str(candidate)
+    return None
+
+
+def installer_command() -> str:
+    """The one-line installer for this OS (running it again also upgrades)."""
+    if on_windows():
+        return f"irm {INSTALL_PS1} | iex"
+    return f"curl -fsSL {INSTALL_SH} | sh"
+
+
 def pip_command() -> list[str]:
     return [sys.executable, "-m", "pip", "install", "--upgrade", "kunji"]
 
 
+def upgrade_command() -> list[str] | None:
+    """The command that upgrades this install, or None if it can't be run from here."""
+    if installed_with_uv():
+        uv = find_uv()
+        return [uv, "tool", "upgrade", "kunji"] if uv else None
+    return pip_command()
+
+
+def manual_command() -> str:
+    if installed_with_uv():
+        return "uv tool upgrade kunji"
+    return "python -m pip install --upgrade kunji"
+
+
 def start_upgrade(console) -> int:
-    """Upgrade with the same Python that runs kunji. Returns an exit code."""
+    """Upgrade kunji the same way it was installed. Returns an exit code."""
     if is_standalone():
         console.print(
             Text.assemble(
@@ -63,10 +111,19 @@ def start_upgrade(console) -> int:
             )
         )
         return 0
-    cmd = pip_command()
+    cmd = upgrade_command()
+    if cmd is None:
+        console.print(
+            Text.assemble(
+                ("✗ ", "k.err"),
+                "Can't find uv, which installed kunji. Run the installer again to upgrade: ",
+                (installer_command(), "k.accent"),
+            )
+        )
+        return 1
     if on_windows():
-        # Windows locks the running kunji.exe launcher, so pip can't replace it while kunji is
-        # open. Run pip in a new window that starts after this process exits.
+        # Windows locks the running kunji.exe launcher, so pip/uv can't replace it while kunji
+        # is open. Run the upgrade in a new window that starts after this process exits.
         script = (
             "import subprocess, sys, time; time.sleep(1.5); "
             f"code = subprocess.call({cmd!r}); "
@@ -84,9 +141,7 @@ def start_upgrade(console) -> int:
             )
         )
         return 0
-    console.print(
-        Text(" ".join(["$", "python", "-m", "pip", "install", "--upgrade", "kunji"]), style="k.dim")
-    )
+    console.print(Text("Running: " + manual_command(), style="k.dim"))
     code = subprocess.call(cmd)
     if code == 0:
         console.print(
@@ -97,7 +152,7 @@ def start_upgrade(console) -> int:
             Text.assemble(
                 ("✗ ", "k.err"),
                 "Upgrade failed. Try it yourself: ",
-                ("python -m pip install --upgrade kunji", "k.accent"),
+                (manual_command(), "k.accent"),
             )
         )
     return code

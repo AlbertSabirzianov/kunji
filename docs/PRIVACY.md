@@ -13,6 +13,12 @@ servers in the path of your conversations.
 | `raw.githubusercontent.com/…/catalog/pricing.json` | At most once a day | Nothing about you | `kunji config set network.catalog false` |
 | kunji cloud check-in | **Only if you set `cloud.url`** | Random install id, kunji version, OS name, license key if you have one | `kunji config set cloud.checkin false` |
 
+**The one-line installer** (`install.sh` / `install.ps1`) downloads
+[uv](https://docs.astral.sh/uv/) from `astral.sh`, and through uv, kunji from PyPI and — only
+if you don't have Python 3.11+ — a Python build from `github.com` (python-build-standalone).
+It sends nothing about you. `kunji upgrade` then uses uv to fetch the new version from PyPI.
+Don't want that? Install with `pip install kunji` instead.
+
 Kunji never sends API keys, prompts, answers, file contents or usage history to any kunji
 server.
 
