@@ -107,9 +107,14 @@ if [ -n "${KUNJI_VERSION:-}" ]; then
   PACKAGE="kunji==${KUNJI_VERSION}"
 fi
 
-# --upgrade: running the installer again updates kunji. --python: uv downloads one if needed.
+# Always on uv's own Python 3.12, never a Python already on this computer: a broken or odd
+# system Python would make kunji fail to start. --reinstall rebuilds an older install that
+# used one; --force replaces a `kunji` left in the same folder by `pip install --user`.
+# (--python-preference only-managed is the older spelling of --managed-python, so it also
+# works with older uv versions.)
 step "[2/3] Installing kunji (the first time takes a minute)" \
-  "$UV" tool install --upgrade --python ">=3.11" "$PACKAGE" \
+  "$UV" tool install --upgrade --reinstall --force \
+  --python-preference only-managed --python 3.12 "$PACKAGE" \
   || err "uv couldn't install kunji (the reason is above). Fix that and run this again."
 
 BIN_DIR=$("$UV" tool dir --bin 2>/dev/null) || BIN_DIR="$HOME/.local/bin"
@@ -124,8 +129,27 @@ fi
 "$BIN_DIR/kunji" --version >/dev/null 2>&1 \
   || err "kunji was installed but doesn't start. Try: $BIN_DIR/kunji --version"
 
+# Other `kunji` commands (usually from an earlier `pip install kunji`). One that comes before
+# ours on PATH would run instead of this install, so say where each one is.
+OTHERS=""
+old_ifs=$IFS
+IFS=:
+for dir in $PATH; do
+  [ -n "$dir" ] || continue
+  if [ -x "$dir/kunji" ] && [ "$dir" != "$BIN_DIR" ]; then
+    OTHERS="$OTHERS
+  $dir/kunji"
+  fi
+done
+IFS=$old_ifs
+
 say ""
 say "$("$BIN_DIR/kunji" --version) is installed."
+if [ -n "$OTHERS" ]; then
+  say ""
+  say "Warning: other kunji commands are on your PATH, probably from an earlier pip install."
+  say "They can run instead of this one. Remove them with \`pip uninstall kunji\` or delete:$OTHERS"
+fi
 case ":$PATH:" in
   *":$BIN_DIR:"*)
     say "Run: kunji"

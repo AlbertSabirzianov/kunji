@@ -39,12 +39,39 @@ jobs:
       - name: shellcheck install.sh
         if: runner.os == 'Linux'
         run: shellcheck install.sh
+      # Like a user who tried `pip install kunji` first: an old `kunji` already sits in the
+      # folder the installer uses. The installer must replace it.
+      - name: Leftover pip kunji (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p ~/.local/bin
+          printf '#!/bin/sh\necho "old broken kunji"; exit 1\n' > ~/.local/bin/kunji
+          chmod +x ~/.local/bin/kunji
       - name: Run install.sh
         if: runner.os != 'Windows'
         run: |
           sh install.sh
           ~/.local/bin/kunji --version
           "$SHELL" -ic 'kunji --version'  # a new terminal finds it on PATH
+      - name: kunji runs on uv's own Python (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          home=$(grep '^home' "$(uv tool dir)/kunji/pyvenv.cfg")
+          echo "$home"
+          case "$home" in *"$(uv python dir)"*) ;; *) echo "::error::kunji uses a system Python"; exit 1 ;; esac
+
+      # The bug a user hit: an old, broken kunji.exe (from `pip install kunji`) in a folder that
+      # comes earlier in the user PATH. After installing, a new terminal must run the new kunji.
+      - name: Old broken kunji earlier in the user PATH (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $old = "C:\oldpython\Scripts"
+          New-Item -ItemType Directory -Force $old | Out-Null
+          Set-Content "$old\kunji.cmd" "@echo old broken kunji & exit /b 1"
+          $user = [Environment]::GetEnvironmentVariable("Path", "User")
+          [Environment]::SetEnvironmentVariable("Path", "$old;$user", "User")
       - name: Run install.ps1
         if: runner.os == 'Windows'
         shell: pwsh
@@ -52,6 +79,21 @@ jobs:
           ./install.ps1
           kunji --version
           if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: New terminal runs the new kunji, on uv's own Python (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # What a new terminal sees: system PATH, then user PATH, from the registry.
+          $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [Environment]::GetEnvironmentVariable("Path", "User")
+          $found = (Get-Command kunji).Source
+          Write-Host "kunji -> $found"
+          if ($found -notlike "$HOME\.local\bin\*") { Write-Error "an older kunji runs first"; exit 1 }
+          kunji --version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $uv = (Get-Command uv).Source
+          $home_line = Select-String -Path (Join-Path (& $uv tool dir) "kunji\pyvenv.cfg") -Pattern "^home" | Select-Object -ExpandProperty Line
+          Write-Host $home_line
+          if ($home_line -notlike "*$(& $uv python dir)*") { Write-Error "kunji uses a system Python"; exit 1 }
       - name: Run install.ps1 (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
         shell: powershell
