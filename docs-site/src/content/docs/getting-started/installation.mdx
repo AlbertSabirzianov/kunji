@@ -1,89 +1,112 @@
 ---
 title: "Install kunji"
-description: "How to install kunji on Windows, macOS and Linux with pip, or download the standalone Windows exe. Includes fixes for common install errors."
+description: "Install kunji on Windows, macOS and Linux with one command, no Python needed. Also covers uv, pipx, pip and the standalone file."
 sidebar:
   order: 1
 ---
 
 import { Tabs, TabItem, Steps } from "@astrojs/starlight/components";
 
-kunji needs **Python 3.11 or newer**. On Windows you can also use a standalone `.exe` that
-doesn't need Python at all.
+One command installs kunji on Windows, macOS and Linux. You don't need Python: the installer
+sets everything up and adds `kunji` to your PATH, so it works in any folder.
 
-## Install with pip
+## Install
 
 <Tabs syncKey="os">
   <TabItem label="Windows">
-    Open **Command Prompt** or **Windows Terminal** and run:
+    Open **PowerShell** (or **Windows Terminal**) and run:
 
-    ```bash
-    python -m pip install kunji
+    ```powershell
+    irm https://kunji.iamsuraj.me/install.ps1 | iex
     ```
 
-    If `python` isn't found, try `py -m pip install kunji`. If neither works, install Python
-    from [python.org](https://www.python.org/downloads/) and tick **"Add python.exe to PATH"**
-    on the first screen of the installer.
+    In **Command Prompt**, run this instead:
+
+    ```bash
+    powershell -ExecutionPolicy ByPass -c "irm https://kunji.iamsuraj.me/install.ps1 | iex"
+    ```
   </TabItem>
   <TabItem label="macOS">
     Open **Terminal** and run:
 
     ```bash
-    python3 -m pip install kunji
+    curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
     ```
   </TabItem>
   <TabItem label="Linux">
     ```bash
-    python3 -m pip install --user kunji
+    curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
     ```
 
-    If pip says the environment is **externally managed** (Debian, Ubuntu and others), use
-    pipx instead:
-
-    ```bash
-    sudo apt install pipx   # or your distro's package manager
-    pipx install kunji
-    ```
+    No `curl`? Use `wget -qO- https://kunji.iamsuraj.me/install.sh | sh`.
   </TabItem>
 </Tabs>
 
-Check it worked:
+Then open a **new terminal** and check it worked:
 
 ```bash
 kunji --version
 ```
 
-:::tip[“kunji” is not recognized?]
-pip installed kunji, but its folder isn't on your PATH. Run kunji through Python instead,
-which always works:
+The command is lowercase: `kunji`.
+
+### What the installer does
+
+<Steps>
+1. Installs [uv](https://docs.astral.sh/uv/), a small, fast tool that manages Python apps,
+   if you don't have it yet.
+2. Runs `uv tool install kunji`. If you don't have Python 3.11 or newer, uv downloads a
+   private copy just for kunji. Your own Python, if you have one, is not touched.
+3. Adds the folder with the `kunji` command to your PATH.
+</Steps>
+
+Running the installer again updates kunji. You can read the scripts first:
+[install.sh](https://github.com/testwithsuraj/kunji/blob/main/install.sh) and
+[install.ps1](https://github.com/testwithsuraj/kunji/blob/main/install.ps1).
+
+Options, set before running the command:
+
+| Variable | What it does |
+| --- | --- |
+| `KUNJI_VERSION=0.1.3` | Install that version instead of the newest |
+| `KUNJI_NO_MODIFY_PATH=1` | Don't change your PATH |
+
+## Other ways to install
+
+### Already use uv or pipx?
+
+```bash
+uv tool install kunji
+# or
+pipx install kunji
+```
+
+### With pip
+
+Needs Python 3.11 or newer.
+
+```bash
+python -m pip install kunji
+```
+
+On Windows, `py -m pip install kunji` also works; on macOS and Linux, use `python3`.
+
+:::caution[“kunji” is not recognized after pip?]
+pip often installs the `kunji` command into a folder that isn't on your PATH. Use the
+one-line installer above instead, or run kunji through Python, which always works:
 
 ```bash
 python -m kunji
 ```
 
-See [Troubleshooting](/kunji/docs/help/troubleshooting/) to fix your PATH permanently.
+See [Troubleshooting](/kunji/docs/help/troubleshooting/) for more.
 :::
 
-## Windows without Python
+### Single file, no install
 
-<Steps>
-1. Download **kunji-windows-x64.exe** from the
-   [latest release](https://github.com/testwithsuraj/kunji/releases/latest).
-2. Rename it to `kunji.exe` and put it in a folder you like, for example `C:\Tools`.
-3. Open a terminal in that folder and run `kunji.exe`.
-</Steps>
-
-To run it from anywhere, add that folder to your PATH (Windows settings → "Edit the system
-environment variables" → Environment Variables → Path → New).
-
-## Linux without Python
-
-Download **kunji-linux-x64** from the
-[latest release](https://github.com/testwithsuraj/kunji/releases/latest), then:
-
-```bash
-chmod +x kunji-linux-x64
-./kunji-linux-x64 --version
-```
+Download **kunji-windows-x64.exe** or **kunji-linux-x64** from the
+[latest release](https://github.com/testwithsuraj/kunji/releases/latest) and run it from a
+terminal in the folder where you saved it. On Linux, run `chmod +x kunji-linux-x64` first.
 
 ## Check your setup
 
@@ -98,8 +121,16 @@ works, and which providers you've added.
 
 ```bash
 kunji upgrade                    # newest version
-python -m pip uninstall kunji    # remove kunji
 ```
+
+To remove kunji:
+
+| Installed with | Uninstall |
+| --- | --- |
+| The installer, or uv | `uv tool uninstall kunji` |
+| pipx | `pipx uninstall kunji` |
+| pip | `python -m pip uninstall kunji` |
+| Single file | Delete the file |
 
 Before uninstalling, you can delete your saved keys with `kunji keys remove <provider>`.
 More in [Upgrade kunji](/kunji/docs/guides/upgrading/).

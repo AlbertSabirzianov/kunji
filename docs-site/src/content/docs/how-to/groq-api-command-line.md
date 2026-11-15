@@ -26,7 +26,7 @@ CLI makes it pleasant.
 ## With kunji
 
 ```bash
-pip install kunji
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh   # Windows: irm https://kunji.iamsuraj.me/install.ps1 | iex
 kunji keys add groq
 ```
 

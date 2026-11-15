@@ -12,7 +12,7 @@ body that explains what changed.
 ## Set up once
 
 ```bash
-pip install kunji
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh   # Windows: irm https://kunji.iamsuraj.me/install.ps1 | iex
 kunji keys add groq        # or openai, anthropic, gemini, ollama, …
 ```
 

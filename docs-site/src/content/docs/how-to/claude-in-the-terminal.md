@@ -14,10 +14,10 @@ other major AI provider.
 ## 1. Install kunji
 
 ```bash
-pip install kunji
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
 ```
 
-On Windows, use `python -m pip install kunji`, or download the `.exe` (no Python needed).
+On Windows, run this in PowerShell instead: `irm https://kunji.iamsuraj.me/install.ps1 | iex`. No Python needed on any system.
 See [Install kunji](/kunji/docs/getting-started/installation/) for every option.
 
 ## 2. Get an Anthropic API key

@@ -16,6 +16,28 @@ wrong.
 
 ## Installing
 
+The easiest fix for almost every install problem is the one-line installer. It doesn't need
+Python or pip and adds `kunji` to your PATH for you:
+
+- Windows (PowerShell): `irm https://kunji.iamsuraj.me/install.ps1 | iex`
+- macOS / Linux: `curl -fsSL https://kunji.iamsuraj.me/install.sh | sh`
+
+### `kunji` isn't found right after the installer
+
+Your terminal was open before the PATH changed. Close it and open a new one. On macOS and
+Linux you can also run the `export PATH=…` line the installer printed. The command is
+lowercase: `kunji`.
+
+### `irm` or `iex` is not recognized
+
+You're in Command Prompt, not PowerShell. Run:
+`powershell -ExecutionPolicy ByPass -c "irm https://kunji.iamsuraj.me/install.ps1 | iex"`.
+
+### The installer says it couldn't download uv
+
+Something blocks `astral.sh` (a firewall, proxy or no internet). Try another network, or
+install with pip below.
+
 ### `'pip' is not recognized` or `Fatal error in launcher`
 
 Your `pip` command points to a Python that's missing or moved. Run pip through Python:
@@ -29,7 +51,8 @@ If `python` isn't found either, try `py -m pip install kunji`, or reinstall Pyth
 
 ### `'kunji' is not recognized`
 
-kunji is installed but its folder isn't on your PATH. This always works:
+pip installed kunji but put it in a folder that isn't on your PATH. Use the one-line
+installer above, or run it through Python, which always works:
 
 ```bash
 python -m kunji
@@ -41,7 +64,8 @@ box ticked.
 
 ### `error: externally-managed-environment` (Linux)
 
-Your system Python is managed by the OS. Use pipx: `pipx install kunji`.
+Your system Python is managed by the OS, so pip won't install into it. Use the installer
+(`curl -fsSL https://kunji.iamsuraj.me/install.sh | sh`) or `pipx install kunji`.
 
 ## Keys and providers
 
@@ -100,11 +124,12 @@ kunji doesn't know that model's price. See
 
 ### `kunji upgrade` says I'm up to date, but there's a new version
 
-The check is cached for a day. Run `python -m pip install --upgrade kunji`.
+The check is cached for a day. Run the installer again, or `uv tool upgrade kunji`
+(pip installs: `python -m pip install --upgrade kunji`).
 
 ### Upgrade fails on Windows with a "file in use" error
 
-Close every kunji window and run `python -m pip install --upgrade kunji` again.
+Close every kunji window and run `kunji upgrade` again from a new terminal.
 
 ## Still stuck?
 

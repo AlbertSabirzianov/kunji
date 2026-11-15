@@ -70,7 +70,7 @@ Two things push the API cost up:
 answer and keeps a local usage log:
 
 ```bash
-pip install kunji
+curl -fsSL https://kunji.iamsuraj.me/install.sh | sh   # Windows: irm https://kunji.iamsuraj.me/install.ps1 | iex
 kunji keys add openai
 kunji chat -m openai:gpt-4o-mini
 ```

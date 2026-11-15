@@ -2,11 +2,19 @@
   <div>
     <h1><span>अपनी key.</span> <span>हर AI मॉडल.</span> <span>एक टर्मिनल.</span></h1>
     <p class="lede">kunji आपके टर्मिनल के लिए एक मुफ़्त, ओपन-सोर्स चैट ऐप है। किसी भी प्रोवाइडर की अपनी API key लगाइए, बातचीत के बीच मॉडल बदलिए, और हर जवाब का खर्च देखिए।</p>
-    <div class="install">
-      <code>pip install kunji</code>
-      <button class="copy" type="button" data-copy="pip install kunji" data-copied="कॉपी हो गया">कॉपी</button>
+    <div class="install-os" role="tablist" aria-label="macOS / Linux / Windows">
+      <button type="button" role="tab" data-os="unix" aria-selected="true">macOS / Linux</button>
+      <button type="button" role="tab" data-os="win" aria-selected="false">Windows</button>
     </div>
-    <p class="alt">अगर <code>pip</code> न मिले, तो <code>python -m pip install kunji</code> चलाइए।<br>Windows पर Python नहीं है? <a href="https://github.com/testwithsuraj/kunji/releases/latest/download/kunji-windows-x64.exe">kunji.exe डाउनलोड करें</a></p>
+    <div class="install" data-os-panel="unix">
+      <code>curl -fsSL https://kunji.iamsuraj.me/install.sh | sh</code>
+      <button class="copy" type="button" data-copy="curl -fsSL https://kunji.iamsuraj.me/install.sh | sh" data-copied="कॉपी हो गया">कॉपी</button>
+    </div>
+    <div class="install win" data-os-panel="win" hidden>
+      <code>irm https://kunji.iamsuraj.me/install.ps1 | iex</code>
+      <button class="copy" type="button" data-copy="irm https://kunji.iamsuraj.me/install.ps1 | iex" data-copied="कॉपी हो गया">कॉपी</button>
+    </div>
+    <p class="alt">Python की ज़रूरत नहीं। इसके बाद नया टर्मिनल खोलकर <code>kunji</code> लिखिए।<br>pip पसंद है? <code>pip install kunji</code> · <a href="../docs/getting-started/installation/">इंस्टॉल के सारे तरीके</a></p>
     <p class="facts"><a href="https://github.com/testwithsuraj/kunji/releases/latest" data-version="वर्ज़न">वर्ज़न 0.1.2</a> <span>मुफ़्त और ओपन सोर्स</span> <span>Windows, macOS, Linux</span></p>
   </div>
 
@@ -73,9 +81,9 @@
 <section id="install">
   <div class="wrap">
     <h2>एक मिनट में शुरू करें</h2>
-    <p class="intro">Python 3.11 या नया चाहिए। पूरी गाइड: <a href="../docs/getting-started/installation/">इंस्टॉलेशन डॉक्स</a> (अंग्रेज़ी में)।</p>
+    <p class="intro">Windows, macOS और Linux पर चलता है, Python की ज़रूरत नहीं। पूरी गाइड: <a href="../docs/getting-started/installation/">इंस्टॉलेशन डॉक्स</a> (अंग्रेज़ी में)।</p>
     <ol class="steps">
-      <li><h3>इंस्टॉल करें</h3><p>Windows, macOS और Linux पर चलता है। अगर <code>pip</code> न मिले तो <code>python -m pip install kunji</code> चलाइए।</p><pre>pip install kunji</pre></li>
+      <li><h3>इंस्टॉल करें</h3><p>Windows पर PowerShell में <code>irm https://kunji.iamsuraj.me/install.ps1 | iex</code> चलाइए। macOS और Linux पर:</p><pre>curl -fsSL https://kunji.iamsuraj.me/install.sh | sh</pre></li>
       <li><h3>kunji खोलें</h3><p>मेन्यू key जोड़ने में मदद करता है। kunji पहले जाँचता है कि key काम करती है, फिर उसे OS keychain में रखता है।</p><pre>kunji</pre></li>
       <li><h3>चैट करें</h3><p><strong>Start a new chat</strong> चुनिए। सारी कमांड देखने के लिए <code>/</code> लिखिए।</p><pre>› नमस्ते</pre></li>
     </ol>

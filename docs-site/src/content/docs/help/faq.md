@@ -32,8 +32,8 @@ Any model your providers offer. Run `kunji models <provider>` to see the live li
 
 ## Does it work on Windows?
 
-Yes. Windows is a main platform. Install with `python -m pip install kunji` or use the
-standalone `.exe`. macOS and Linux work with pip.
+Yes. Windows is a main platform. Install with `irm https://kunji.iamsuraj.me/install.ps1 | iex` in PowerShell; no Python
+needed. On macOS and Linux: `curl -fsSL https://kunji.iamsuraj.me/install.sh | sh`.
 
 ## Can I use it without internet?
 
