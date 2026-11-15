@@ -1,9 +1,34 @@
 name: CI
 
+# Skipped when a change only touches the website, docs, Markdown or the installer scripts:
+# the Pages workflow builds and checks the docs when it deploys, and installer.yml tests the
+# installers. That keeps docs-only PRs free of CI runs.
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "docs-site/**"
+      - "site/**"
+      - "site-src/**"
+      - "docs/**"
+      - "assets/**"
+      - "**.md"
+      - "install.sh"
+      - "install.ps1"
+      - ".github/workflows/pages.yml"
+      - ".github/workflows/installer.yml"
   pull_request:
+    paths-ignore:
+      - "docs-site/**"
+      - "site/**"
+      - "site-src/**"
+      - "docs/**"
+      - "assets/**"
+      - "**.md"
+      - "install.sh"
+      - "install.ps1"
+      - ".github/workflows/pages.yml"
+      - ".github/workflows/installer.yml"
 
 permissions:
   contents: read
@@ -52,44 +77,6 @@ jobs:
           kunji providers
           kunji config path
 
-  # The one-line installers (install.sh / install.ps1) on clean machines. They install the
-  # published kunji from PyPI, so this tests the scripts, not this commit's code.
-  installer:
-    needs: lint
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - name: shellcheck install.sh
-        if: runner.os == 'Linux'
-        run: shellcheck install.sh
-      - name: Run install.sh
-        if: runner.os != 'Windows'
-        run: |
-          sh install.sh
-          ~/.local/bin/kunji --version
-          "$SHELL" -ic 'kunji --version'  # a new terminal finds it on PATH
-      - name: Run install.ps1
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          ./install.ps1
-          kunji --version
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-      - name: Run install.ps1 (Windows PowerShell 5.1)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          Get-Content -Raw install.ps1 | Invoke-Expression
-          kunji --version
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-
   build:
     needs: lint
     runs-on: ubuntu-latest
@@ -103,23 +90,3 @@ jobs:
       - run: python -m pip install build twine
       - run: python -m build
       - run: python -m twine check dist/*
-
-  docs:
-    needs: lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-      - run: python -m pip install -e . && python scripts/gen_docs.py
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: docs-site/package-lock.json
-      - name: Build docs (fails on broken links)
-        working-directory: docs-site
-        run: npm ci && npm run build

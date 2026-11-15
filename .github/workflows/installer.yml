@@ -1,0 +1,61 @@
+# Tests the one-line installers (install.sh / install.ps1) on clean machines.
+# Runs only when an installer changes. They install the published kunji from PyPI, so this
+# tests the scripts, not kunji's code (ci.yml does that).
+name: Installer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "install.sh"
+      - "install.ps1"
+      - ".github/workflows/installer.yml"
+  pull_request:
+    paths:
+      - "install.sh"
+      - "install.ps1"
+      - ".github/workflows/installer.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  installer:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: shellcheck install.sh
+        if: runner.os == 'Linux'
+        run: shellcheck install.sh
+      - name: Run install.sh
+        if: runner.os != 'Windows'
+        run: |
+          sh install.sh
+          ~/.local/bin/kunji --version
+          "$SHELL" -ic 'kunji --version'  # a new terminal finds it on PATH
+      - name: Run install.ps1
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./install.ps1
+          kunji --version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Run install.ps1 (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          Get-Content -Raw install.ps1 | Invoke-Expression
+          kunji --version
+          if ($LASTEXITCODE -ne 0) { exit 1 }

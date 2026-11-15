@@ -3,6 +3,13 @@ name: CodeQL
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "docs-site/**"
+      - "site/**"
+      - "site-src/**"
+      - "docs/**"
+      - "assets/**"
+      - "**.md"
   schedule:
     - cron: "23 4 * * 1"
 
