@@ -21,6 +21,7 @@
     # Not "Stop": uv prints progress on stderr, which Windows PowerShell 5.1 would treat as an
     # error. Every step checks its own result instead.
     $ErrorActionPreference = "Continue"
+    $ProgressPreference = "SilentlyContinue"  # the progress bar makes downloads very slow in 5.1
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
     $noModifyPath = $env:KUNJI_NO_MODIFY_PATH -eq "1"
 
@@ -35,8 +36,9 @@
     }
 
     function Fail($message) {
+        # Not `throw`: that prints a scary stack trace, and `exit` would close the user's window.
         Write-Host "kunji installer: $message" -ForegroundColor Red
-        throw "kunji install failed"
+        $global:LASTEXITCODE = 1
     }
 
     Write-Host "Installing kunji..."
@@ -44,14 +46,25 @@
     $uv = Find-Uv
     if (-not $uv) {
         Write-Host "Installing uv (kunji uses it to manage Python for you)..."
-        if ($noModifyPath) { $env:UV_NO_MODIFY_PATH = "1" }
+        # Run uv's installer as a file in its own PowerShell process, not with `iex` here: it has
+        # a param() block, refuses some execution policies, and calls `exit 1` on failure, which
+        # would close this window.
+        $uvInstaller = Join-Path ([System.IO.Path]::GetTempPath()) "uv-installer-$([guid]::NewGuid()).ps1"
         try {
-            Invoke-RestMethod https://astral.sh/uv/install.ps1 -ErrorAction Stop | Invoke-Expression
+            Invoke-WebRequest https://astral.sh/uv/install.ps1 -OutFile $uvInstaller -UseBasicParsing -ErrorAction Stop
         } catch {
-            Fail "couldn't install uv. Check your internet connection and run this again."
+            Fail "couldn't download uv from astral.sh: $($_.Exception.Message)"
+            return
         }
+        $shell = (Get-Process -Id $PID).Path
+        $uvArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $uvInstaller)
+        if ($noModifyPath) { $uvArgs += "-NoModifyPath" }
+        & $shell @uvArgs
+        $uvExit = $LASTEXITCODE
+        Remove-Item $uvInstaller -ErrorAction SilentlyContinue
+        if ($uvExit -ne 0) { Fail "uv's installer failed (see above)."; return }
         $uv = Find-Uv
-        if (-not $uv) { Fail "uv was installed but can't be found. Open a new terminal and run this again." }
+        if (-not $uv) { Fail "uv was installed but can't be found. Open a new terminal and run this again."; return }
     }
 
     $package = "kunji"
@@ -61,6 +74,7 @@
     & $uv tool install --upgrade --python ">=3.11" $package
     if ($LASTEXITCODE -ne 0) {
         Fail "uv couldn't install kunji. If kunji is open, close it first. Then run this again."
+        return
     }
 
     $binDir = (& $uv tool dir --bin 2>$null)
@@ -76,7 +90,7 @@
 
     $exe = Join-Path $binDir "kunji.exe"
     $version = (& $exe --version 2>$null)
-    if ($LASTEXITCODE -ne 0) { Fail "kunji was installed but doesn't start. Try: & `"$exe`" --version" }
+    if ($LASTEXITCODE -ne 0) { Fail "kunji was installed but doesn't start. Try: & `"$exe`" --version"; return }
 
     Write-Host ""
     Write-Host "kunji is installed: $version" -ForegroundColor Green
