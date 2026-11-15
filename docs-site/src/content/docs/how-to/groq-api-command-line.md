@@ -78,7 +78,7 @@ If your main provider is rate-limited or down, kunji can retry on Groq automatic
 kunji config set fallback '["groq:llama-3.3-70b-versatile"]'
 ```
 
-See [Fallback models](/kunji/docs/guides/fallback/).
+See [Fallback models](/docs/guides/fallback/).
 
 ## How fast is it, really?
 
@@ -89,4 +89,4 @@ kunji compare "explain big-O notation" -m groq:llama-3.3-70b-versatile -m openai
 ```
 
 The summary table marks the **fastest** and **cheapest**. See
-[Compare models](/kunji/docs/guides/compare-models/).
+[Compare models](/docs/guides/compare-models/).

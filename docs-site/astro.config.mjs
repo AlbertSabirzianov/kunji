@@ -1,12 +1,12 @@
-// kunji documentation — https://testwithsuraj.github.io/kunji/docs/
+// kunji documentation — https://kunji.iamsuraj.me/docs/
 // Build: python scripts/gen_docs.py && npm run build   (see docs-site/README.md)
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import starlightLinksValidator from "starlight-links-validator";
 
-const SITE = "https://testwithsuraj.github.io";
-const BASE = "/kunji/docs";
-const OG_IMAGE = `${SITE}/kunji/og.png`;
+const SITE = "https://kunji.iamsuraj.me";
+const BASE = "/docs";
+const OG_IMAGE = `${SITE}/og.png`;
 
 export default defineConfig({
   site: SITE,
@@ -114,7 +114,7 @@ export default defineConfig({
             { label: "FAQ", slug: "help/faq" },
             { label: "Changelog", slug: "releases/changelog" },
             { label: "Contributing", slug: "help/contributing" },
-            { label: "kunji website", link: "/kunji/" },
+            { label: "kunji website", link: "/" },
           ],
         },
       ],

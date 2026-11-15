@@ -45,7 +45,7 @@ kunji config set updates.check false
 
 ## What changed?
 
-See the [changelog](/kunji/docs/releases/changelog/) or the
+See the [changelog](/docs/releases/changelog/) or the
 [GitHub releases](https://github.com/testwithsuraj/kunji/releases).
 
 ## Version numbers

@@ -32,5 +32,5 @@ kunji tries your model first, then each fallback in order:
 | Model not found (404) | No; check the name |
 | The answer had already started | No; you see an error instead |
 
-Fallbacks without a saved key are skipped. A local [Ollama](/kunji/docs/guides/local-models-ollama/)
+Fallbacks without a saved key are skipped. A local [Ollama](/docs/guides/local-models-ollama/)
 model makes a good last fallback because it works offline.

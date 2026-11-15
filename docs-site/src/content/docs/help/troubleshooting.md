@@ -77,7 +77,7 @@ The key is wrong, expired or has no credit. Create a new key on the provider's s
 ### `rate limit or quota reached (429)`
 
 You've hit the provider's limit or run out of credit. Wait a minute, check your billing on
-the provider's site, or set a [fallback model](/kunji/docs/guides/fallback/).
+the provider's site, or set a [fallback model](/docs/guides/fallback/).
 
 ### `not found (404)`
 
@@ -87,7 +87,7 @@ The model name is wrong or not available to your account. List real names with
 ### `No API key found for …`
 
 Add one with `kunji keys add <provider>`, or set the provider's
-[environment variable](/kunji/docs/reference/environment-variables/).
+[environment variable](/docs/reference/environment-variables/).
 
 ### `No secure OS keychain is available`
 
@@ -118,7 +118,7 @@ You've hit a limit you set. Raise it (`kunji budget set openai 5`) or remove it
 ### Costs show `—`
 
 kunji doesn't know that model's price. See
-[When a price is unknown](/kunji/docs/guides/costs-and-budgets/#when-a-price-is-unknown).
+[When a price is unknown](/docs/guides/costs-and-budgets/#when-a-price-is-unknown).
 
 ## Upgrading
 

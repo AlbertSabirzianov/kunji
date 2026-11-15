@@ -22,7 +22,7 @@ Windows: `irm https://kunji.iamsuraj.me/install.ps1 | iex`
 <img src="https://raw.githubusercontent.com/testwithsuraj/kunji/main/assets/demo.gif" alt="kunji demo: the menu, a chat with Claude, switching to Groq mid-conversation with /model, and /cost" width="860">
 -->
 
-[Website](https://testwithsuraj.github.io/kunji/) · [Documentation](https://testwithsuraj.github.io/kunji/docs/) · [Install](#install) · [Commands](#commands) · *Kunji (कुंजी) means "key" in Hindi.*
+[Website](https://kunji.iamsuraj.me/) · [Documentation](https://kunji.iamsuraj.me/docs/) · [Install](#install) · [Commands](#commands) · *Kunji (कुंजी) means "key" in Hindi.*
 
 </div>
 
@@ -196,7 +196,7 @@ kunji budget set all 200                      # ₹200/day across every provider
 kunji config set fallback '["groq:llama-3.3-70b-versatile", "ollama:qwen2.5"]'
 ```
 
-All options: [docs/CONFIG.md](docs/CONFIG.md). Every command with examples: [docs/COMMANDS.md](docs/COMMANDS.md). Full documentation: **[testwithsuraj.github.io/kunji/docs](https://testwithsuraj.github.io/kunji/docs/)**.
+All options: [docs/CONFIG.md](docs/CONFIG.md). Every command with examples: [docs/COMMANDS.md](docs/COMMANDS.md). Full documentation: **[kunji.iamsuraj.me/docs](https://kunji.iamsuraj.me/docs/)**.
 
 ## Free and Pro
 

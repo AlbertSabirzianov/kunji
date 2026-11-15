@@ -1,6 +1,6 @@
 # Website source
 
-Pages for https://testwithsuraj.github.io/kunji/ (the docs live in `docs-site/`).
+Pages for https://kunji.iamsuraj.me/ (the docs live in `docs-site/`).
 
 - `pages/<page>.<lang>.html` — the body of each page (`en` and `hi`).
 - `scripts/build_site.py` wraps each body in the shared header, footer, theme script and SEO

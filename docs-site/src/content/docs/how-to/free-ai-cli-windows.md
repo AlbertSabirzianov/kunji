@@ -75,6 +75,6 @@ like Cascadia Mono, which is the default.
 
 - **"kunji is not recognized"**: open a new terminal window after installing. If you used
   pip, use the one-line installer above instead, or see
-  [Troubleshooting](/kunji/docs/help/troubleshooting/).
+  [Troubleshooting](/docs/help/troubleshooting/).
 - **Windows SmartScreen warns about the .exe**: the file is new and not yet widely
   downloaded. You can check it against the checksums on the release page, or use the one-line installer instead.
