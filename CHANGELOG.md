@@ -6,6 +6,16 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Changed
+- The installer shows three short steps with a progress spinner and timer instead of a long
+  list of packages. uv's full output is shown only if something goes wrong.
+- Docs and website: install with the one-line installer everywhere (install page,
+  troubleshooting, FAQ, how-to guides, home page with macOS/Linux and Windows tabs).
+
+### Fixed
+- The docs at https://kunji.iamsuraj.me/docs/ showed without styles or logo: they were
+  still built for the old testwithsuraj.github.io/kunji/ address.
+
 ## [0.1.3] - 2026-11-15
 
 ### Added

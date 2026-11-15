@@ -41,11 +41,41 @@
         $global:LASTEXITCODE = 1
     }
 
-    Write-Host "Installing kunji..."
+    # Runs a program quietly with a one-line progress display: "[2/3] Installing kunji  / 12s".
+    # Its own output goes to log files that are shown only if it fails.
+    function Invoke-Step($label, $file, [string[]]$arguments) {
+        $out = [System.IO.Path]::GetTempFileName()
+        $errLog = [System.IO.Path]::GetTempFileName()
+        # Quote each argument for the command line (Start-Process joins them with spaces).
+        $argLine = ($arguments | ForEach-Object { '"' + ($_ -replace '"', '\"') + '"' }) -join " "
+        $proc = Start-Process -FilePath $file -ArgumentList $argLine -NoNewWindow -PassThru `
+            -RedirectStandardOutput $out -RedirectStandardError $errLog
+        $null = $proc.Handle  # makes ExitCode available after exit in Windows PowerShell 5.1
+        $spin = "|/-\"
+        $secs = 0
+        while (-not $proc.HasExited) {
+            Write-Host -NoNewline ("`r$label  " + $spin[$secs % 4] + " ${secs}s ")
+            Start-Sleep -Seconds 1
+            $secs++
+        }
+        $proc.WaitForExit()
+        Write-Host -NoNewline ("`r" + (" " * ($label.Length + 12)) + "`r")
+        $ok = $proc.ExitCode -eq 0
+        if ($ok) {
+            Write-Host "$label  done"
+        } else {
+            Write-Host "$label  failed:" -ForegroundColor Red
+            Get-Content $out, $errLog -ErrorAction SilentlyContinue | Write-Host
+        }
+        Remove-Item $out, $errLog -ErrorAction SilentlyContinue
+        return $ok
+    }
+
+    Write-Host "Installing kunji"
+    Write-Host ""
 
     $uv = Find-Uv
     if (-not $uv) {
-        Write-Host "Installing uv (kunji uses it to manage Python for you)..."
         # Run uv's installer as a file in its own PowerShell process, not with `iex` here: it has
         # a param() block, refuses some execution policies, and calls `exit 1` on failure, which
         # would close this window.
@@ -59,21 +89,22 @@
         $shell = (Get-Process -Id $PID).Path
         $uvArgs = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $uvInstaller)
         if ($noModifyPath) { $uvArgs += "-NoModifyPath" }
-        & $shell @uvArgs
-        $uvExit = $LASTEXITCODE
+        $ok = Invoke-Step "[1/3] Getting uv (manages Python for kunji)" $shell $uvArgs
         Remove-Item $uvInstaller -ErrorAction SilentlyContinue
-        if ($uvExit -ne 0) { Fail "uv's installer failed (see above)."; return }
+        if (-not $ok) { Fail "uv's installer failed (the reason is above)."; return }
         $uv = Find-Uv
         if (-not $uv) { Fail "uv was installed but can't be found. Open a new terminal and run this again."; return }
+    } else {
+        Write-Host "[1/3] Getting uv (manages Python for kunji)  already installed"
     }
 
     $package = "kunji"
     if ($env:KUNJI_VERSION) { $package = "kunji==$($env:KUNJI_VERSION)" }
 
     # --upgrade: running the installer again updates kunji. --python: uv downloads one if needed.
-    & $uv tool install --upgrade --python ">=3.11" $package
-    if ($LASTEXITCODE -ne 0) {
-        Fail "uv couldn't install kunji. If kunji is open, close it first. Then run this again."
+    $ok = Invoke-Step "[2/3] Installing kunji (the first time takes a minute)" $uv @("tool", "install", "--upgrade", "--python", ">=3.11", $package)
+    if (-not $ok) {
+        Fail "uv couldn't install kunji (the reason is above). If kunji is open, close it first. Then run this again."
         return
     }
 
@@ -86,6 +117,9 @@
         # Make `kunji` work in this window too, not only in new ones.
         $inPath = ($env:Path -split ";") | Where-Object { $_.TrimEnd("\") -ieq $binDir.TrimEnd("\") }
         if (-not $inPath) { $env:Path = "$binDir;$env:Path" }
+        Write-Host "[3/3] Adding kunji to your PATH  done"
+    } else {
+        Write-Host "[3/3] Adding kunji to your PATH  skipped (KUNJI_NO_MODIFY_PATH=1)"
     }
 
     $exe = Join-Path $binDir "kunji.exe"
@@ -93,7 +127,7 @@
     if ($LASTEXITCODE -ne 0) { Fail "kunji was installed but doesn't start. Try: & `"$exe`" --version"; return }
 
     Write-Host ""
-    Write-Host "kunji is installed: $version" -ForegroundColor Green
+    Write-Host "$version is installed." -ForegroundColor Green
     if ($noModifyPath) {
         Write-Host "Run: & `"$exe`""
     } else {
