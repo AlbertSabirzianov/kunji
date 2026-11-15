@@ -7,6 +7,11 @@ All notable changes are listed here. The format follows
 ## [Unreleased]
 
 ### Added
+- **One-line installer, no Python needed.** macOS/Linux:
+  `curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh | sh`,
+  Windows: `irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex`.
+  It installs kunji with [uv](https://docs.astral.sh/uv/) (and Python, if needed) and puts
+  `kunji` on your PATH, so it works in any folder — no more "kunji is not recognized".
 - Documentation site at https://testwithsuraj.github.io/kunji/docs/ with guides, provider
   setup pages, a full command reference generated from the code, troubleshooting and FAQ.
 - New website: interactive terminal demos (chat, switch model, compare, @commit, budget),
@@ -16,6 +21,8 @@ All notable changes are listed here. The format follows
   from the command line, ChatGPT API vs Plus cost, and AI commit messages.
 
 ### Fixed
+- `kunji upgrade` now upgrades with uv when kunji was installed by the installer (pip isn't
+  there in that case).
 - The end of a chat said "1 replies"; it now says "1 reply".
 
 ## [0.1.2] - 2026-11-04

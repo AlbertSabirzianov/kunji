@@ -20,18 +20,17 @@ INTRO = """**Your keys. Every AI model. One terminal.**
 kunji is a free, open-source chat app for your terminal. Bring your own API key from any
 provider, switch models mid-conversation, and see what every reply costs."""
 
-INSTALL = """## Install or upgrade
+INSTALL = f"""## Install or upgrade
 
 | | Command |
 | --- | --- |
-| New install | `pip install kunji` |
-| Already on 0.1.2 or newer | `kunji upgrade` |
-| Upgrading from 0.1.0 | `pip install --upgrade kunji` |
+| macOS / Linux | `curl -fsSL {REPO}/releases/latest/download/install.sh \\| sh` |
+| Windows (PowerShell) | `irm {REPO}/releases/latest/download/install.ps1 \\| iex` |
+| Already installed | `kunji upgrade` |
+| With pip | `pip install --upgrade kunji` |
 
-If `pip` isn't found, use `python -m pip install --upgrade kunji` on Windows or
-`python3 -m pip install --upgrade kunji` on macOS and Linux.
-No Python on Windows? Download **kunji-windows-x64.exe** below and run it from a terminal.
-Linux: **kunji-linux-x64**.
+The installer needs no Python: it sets everything up and adds `kunji` to your PATH.
+Prefer a single file? Download **kunji-windows-x64.exe** or **kunji-linux-x64** below.
 
 Then just run `kunji`: the menu walks you through adding a key and starting a chat."""
 

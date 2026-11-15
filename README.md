@@ -5,8 +5,10 @@
 **Every AI model in one terminal, with your own keys. See what every answer costs.**
 
 ```bash
-pip install kunji
+curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh | sh
 ```
+
+Windows: `irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex`
 
 [![PyPI](https://img.shields.io/pypi/v/kunji?style=flat-square&labelColor=1f2328&color=2563eb)](https://pypi.org/project/kunji/)
 [![Downloads](https://img.shields.io/pepy/dt/kunji?style=flat-square&label=Downloads&labelColor=1f2328&color=2563eb)](https://pepy.tech/projects/kunji)
@@ -62,26 +64,42 @@ You pay each provider directly. Kunji never sees your bill, your keys or your pr
 
 ## Install
 
-Requires Python 3.11+.
+One command. No Python needed, and `kunji` works in any folder afterwards.
+
+**macOS / Linux**
 
 ```bash
-pip install kunji
+curl -fsSL https://github.com/testwithsuraj/kunji/releases/latest/download/install.sh | sh
 ```
 
-If `pip` isn't found or shows an error, run it through Python instead:
+**Windows** (PowerShell)
 
-| System | Command |
+```powershell
+irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex
+```
+
+From Command Prompt instead:
+`powershell -ExecutionPolicy ByPass -c "irm https://github.com/testwithsuraj/kunji/releases/latest/download/install.ps1 | iex"`
+
+The installer uses [uv](https://docs.astral.sh/uv/) to install kunji (and Python 3.11+ if you
+don't have it) in its own folder, and adds `kunji` to your PATH. Open a new terminal and run
+`kunji`. Update with `kunji upgrade`; uninstall with `uv tool uninstall kunji`.
+
+<details>
+<summary>Other ways: pip, pipx, uv, single file</summary>
+
+| Method | Command |
 | --- | --- |
-| Windows | `python -m pip install kunji` (or `py -m pip install kunji`) |
-| macOS | `python3 -m pip install kunji` |
-| Linux | `python3 -m pip install --user kunji` (if it says "externally managed", use `pipx install kunji`) |
+| uv | `uv tool install kunji` |
+| pipx | `pipx install kunji` |
+| pip (Python 3.11+) | `python -m pip install kunji` (Windows: `py -m pip install kunji`) |
+| Single file, no install | `kunji-windows-x64.exe` or `kunji-linux-x64` from the [latest release](https://github.com/testwithsuraj/kunji/releases/latest) |
 
-No Python on Windows? Download `kunji-windows-x64.exe` from the
-[latest release](https://github.com/testwithsuraj/kunji/releases/latest) and run it from a terminal.
-Linux: `kunji-linux-x64`.
+With pip, if `kunji` isn't found afterwards ("not recognized" / "command not found"), pip put
+it in a folder that isn't on your PATH. `python -m kunji` always works, or use the installer
+above. The command is lowercase: `kunji`.
 
-Update later with `pip install -U kunji`. If the `kunji` command isn't found after installing,
-`python -m kunji` always works.
+</details>
 
 `winget`, Scoop and Homebrew packages are on the [roadmap](ROADMAP.md).
 
