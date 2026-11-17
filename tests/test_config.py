@@ -1,6 +1,6 @@
 import pytest
 
-from kunji.config import Config, ConfigError, config_path
+from kunji.config import Config, ConfigError
 
 
 def test_invalid_toml_produces_config_error(tmp_path, isolated):
