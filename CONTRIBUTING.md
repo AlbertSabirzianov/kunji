@@ -9,7 +9,7 @@ git clone https://github.com/testwithsuraj/kunji
 cd kunji
 python -m venv .venv
 # Windows: .venv\\Scripts\\activate    macOS/Linux: source .venv/bin/activate
-python -m pip install -e "[dev]"
+python -m pip install -e ".[dev]"
 kunji --version
 ```
 
