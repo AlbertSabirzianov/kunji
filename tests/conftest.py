@@ -42,6 +42,15 @@ def isolated(tmp_path, monkeypatch):
         "KUNJI_DEV_PUBLIC_KEY",
     ):
         monkeypatch.delenv(var, raising=False)
+    # Never download real price lists. `kunji chat` and `kunji compare` refresh them in a
+    # background thread that can outlive its test; if it finishes during a later test it writes
+    # real prices over that test's fake cache (this made test_price_lookup_order flaky on CI).
+    from kunji import catalog
+
+    def _no_network(url, timeout=6.0):
+        raise OSError(f"network disabled in tests: {url}")
+
+    monkeypatch.setattr(catalog, "_fetch_json", _no_network)
     backend = MemoryKeyring()
     previous = keyring.get_keyring()
     keyring.set_keyring(backend)
