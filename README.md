@@ -11,7 +11,7 @@ curl -fsSL https://kunji.iamsuraj.me/install.sh | sh
 Windows: `irm https://kunji.iamsuraj.me/install.ps1 | iex`
 
 [![PyPI](https://img.shields.io/pypi/v/kunji?style=flat-square&labelColor=1f2328&color=2563eb)](https://pypi.org/project/kunji/)
-[![Downloads](https://img.shields.io/pepy/dt/kunji?style=flat-square&label=Downloads&labelColor=1f2328&color=2563eb)](https://pepy.tech/projects/kunji)
+[![Downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftestwithsuraj%2Fkunji%2Fstats%2Fdownloads.json&style=flat-square&label=downloads&labelColor=1f2328&color=2563eb)](https://pypistats.org/packages/kunji)
 [![CI](https://img.shields.io/github/actions/workflow/status/testwithsuraj/kunji/ci.yml?branch=main&style=flat-square&label=CI&labelColor=1f2328&color=2563eb)](https://github.com/testwithsuraj/kunji/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-2563eb?style=flat-square&labelColor=1f2328)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%2B-2563eb?style=flat-square&labelColor=1f2328&logo=python&logoColor=white)](https://www.python.org/downloads/)
