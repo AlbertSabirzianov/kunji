@@ -1,0 +1,54 @@
+# Updates the README "downloads" badge once a day.
+#
+# pypistats.org (free, no key) only keeps 180 days, so scripts/download_stats.py merges each
+# day into a history file kept on the `stats` branch and writes the badge file next to it.
+# The README badge reads it through shields.io:
+#   https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/testwithsuraj/kunji/stats/downloads.json
+#
+# Only the `stats` branch gets commits, so this never starts CI or a Pages deploy.
+# Run it by hand: Actions -> Downloads badge -> Run workflow.
+name: Downloads badge
+
+on:
+  schedule:
+    - cron: "17 3 * * *" # daily, 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write # push to the stats branch
+
+concurrency:
+  group: downloads
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python -m pip install pypistats
+      - name: Check out the stats branch (created on the first run)
+        run: |
+          if git fetch --depth=1 origin stats; then
+            git worktree add stats-data FETCH_HEAD
+            git -C stats-data switch -c stats
+          else
+            git worktree add --orphan -b stats stats-data
+          fi
+      - name: Update history and badge
+        run: python scripts/download_stats.py stats-data/history.json stats-data/downloads.json
+      - name: Commit and push
+        working-directory: stats-data
+        run: |
+          git add history.json downloads.json
+          if git diff --cached --quiet; then
+            echo "No change."
+            exit 0
+          fi
+          git -c user.name="Suraj" -c user.email="testwithsuraj.dev@gmail.com" \
+            commit -q -m "Update download stats"
+          git push origin stats
